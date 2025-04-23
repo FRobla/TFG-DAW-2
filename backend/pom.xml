@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     
-    <groupId>com.evidenlibrary</groupId>
+    <groupId>com.proyecto3d</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -114,7 +114,7 @@
 			<scope>test</scope>
 		</dependency>
 
-			spring.datasource.url=jdbc:mysql://localhost:33060/evidenlibrarydb
+			spring.datasource.url=jdbc:mysql://localhost:33060/proyecto3d
 			spring.datasource.username=****
 			spring.datasource.password=****
 			spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
