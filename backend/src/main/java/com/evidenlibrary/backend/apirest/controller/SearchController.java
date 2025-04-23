@@ -60,9 +60,10 @@ public class SearchController {
 		return ResponseEntity.ok(anuncios);
 	}
 	
+	/*
 	@GetMapping("/search/anuncios/anio/{anio}")
 	public ResponseEntity<List<Anuncio>> getAnunciosByAnio(@PathVariable String anio) {
 		List<Anuncio> anuncios = searchService.findAnunciosByAnio(anio);
 		return ResponseEntity.ok(anuncios);
-	}
+	}  */
 }

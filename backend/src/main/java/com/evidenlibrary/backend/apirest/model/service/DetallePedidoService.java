@@ -10,7 +10,7 @@ public interface DetallePedidoService {
 	
 	public DetallePedido findById(Long id);
 	
-	public List<DetallePedido> findByLibroId(Long libroId);
+	public List<DetallePedido> findByAnuncioId(Long anuncioId);
 	
 	public List<DetallePedido> findByPedidoId(Long pedidoId);
 	

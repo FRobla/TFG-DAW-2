@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.evidenlibrary.backend.apirest.model.entity.Anuncio;
+import com.evidenlibrary.backend.apirest.model.entity.Impresora;
 
 public interface AnuncioService {
 
@@ -17,8 +18,6 @@ public interface AnuncioService {
 	public Page<Anuncio> findByImpresoraIdPaginado(Long autorId, Pageable pageable); // Paginacion con autor
 
 	public Page<Anuncio> findByCategoriaIdPaginado(Long categoriaId, Pageable pageable); // Paginacion con categoria
-
-	public Page<Anuncio> findByCategoriaIdAndImpresoraIdPaginado(Long categoriaId, Long autorId, Pageable pageable);
 
 	public List<Anuncio> getMejorValorados(); // Mejor valorados
 
@@ -39,5 +38,7 @@ public interface AnuncioService {
 	public void deleteAll();
 
 	public Anuncio findByTitulo(String titulo);
+
+	public List<Impresora> findImpresorasByAnuncioId(Long anuncioId);
 
 }

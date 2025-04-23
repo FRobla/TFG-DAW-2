@@ -186,6 +186,10 @@ public class Anuncio implements Serializable {
 		this.estado = estado;
 	}
 
+	public List<Impresora> getImpresora() {
+		return impresora;
+	}
+
 	// Valoracion media
 	public Double getValoracionMedia() {
 		if (valoraciones.isEmpty()) { // No hay valoraciones

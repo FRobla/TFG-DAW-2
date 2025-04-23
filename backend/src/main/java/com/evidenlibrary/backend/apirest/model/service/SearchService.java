@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,8 +55,9 @@ public class SearchService{
         	//Busqueda por titulo
         	allResults.addAll(anuncioDao.findByTituloContainingIgnoreCase(term));
         	
+            /*
         	//Busqueda por año
-        	allResults.addAll(anuncioDao.findByAnio(term));
+        	allResults.addAll(anuncioDao.findByAnio(term)); */
         	
             //allResults.addAll(anuncioDao.findByTerm(term));
         }
@@ -108,9 +110,8 @@ public class SearchService{
         // autor existe
         Impresora autor = autorDao.findById(autorId)
             .orElseThrow(() -> new RuntimeException("Impresora no encontrada con ID: " + autorId));
-        
-        // anuncios asociados a este autor
-        return anuncioDao.findByImpresorasContaining(autor);
+        // anuncios asociados a este autor (ManyToOne)
+        return anuncioDao.findByImpresoraId(autor.getId(), Pageable.unpaged()).getContent();
     }
     
     //Todos los anuncios asociados a un género 
@@ -123,10 +124,10 @@ public class SearchService{
         // anuncios asociados a este género
         return anuncioDao.findByCategoriasContaining(categoria);
     }
-    
+    /* 
     //Busqueda por año de publicacion
     @Transactional(readOnly = true)
     public List<Anuncio> findAnunciosByAnio(String anio) {
         return anuncioDao.findByAnio(anio);
-    }
+    } */
 }

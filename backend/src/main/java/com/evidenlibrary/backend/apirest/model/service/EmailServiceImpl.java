@@ -58,8 +58,7 @@ public class EmailServiceImpl implements EmailService {
             return false;
         }
     }
-    
-    @SuppressWarnings("deprecation")
+
     private String generarContenidoEmailPedido(Pedido pedido) {
         StringBuilder contenido = new StringBuilder();
         NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));

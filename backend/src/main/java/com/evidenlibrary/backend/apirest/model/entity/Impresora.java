@@ -1,15 +1,10 @@
 package com.evidenlibrary.backend.apirest.model.entity;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +12,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,15 +60,14 @@ public class Impresora implements Serializable {
     @Column(nullable = false)
 	private Integer volumen_impresion_z;
 
-    @ManyToMany(mappedBy = "autores", fetch = FetchType.LAZY)
-    @JsonBackReference
-    private final Set<Anuncio> anuncios = new HashSet<>();
+    // Relación ManyToOne: muchas impresoras pueden estar asociadas a un solo anuncio
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "anuncio_id")
+    private Anuncio anuncio;
 
-    @JsonProperty("anuncios")
-    public Set<AnuncioSimple> getAnunciosSimples() {
-        return anuncios.stream()
-            .map(anuncio -> new AnuncioSimple(anuncio.getId(), anuncio.getTitulo(), anuncio.getPrecioBase(), anuncio.getDescripcion()))
-            .collect(Collectors.toSet());
+    @JsonProperty("anuncio")
+    public AnuncioSimple getAnuncioSimple() {
+        return new AnuncioSimple(anuncio.getId(), anuncio.getTitulo(), anuncio.getPrecioBase(), anuncio.getDescripcion());
     }
 
     public static class AnuncioSimple {
@@ -86,13 +81,6 @@ public class Impresora implements Serializable {
             this.titulo = titulo;
             this.precio = precio;
             this.descripcion = descripcion;
-        }
-
-        public AnuncioSimple(Long id, Double precio, String descripcion, String titulo) {
-            this.id = id;
-            this.precio = precio;
-            this.descripcion = descripcion;
-            this.titulo = titulo;
         }
 
         // Getters
@@ -196,7 +184,11 @@ public class Impresora implements Serializable {
         this.marca = marca;
     }
 
-    public Set<Anuncio> getAnuncios() {
-        return anuncios;
+    public Anuncio getAnuncio() {
+        return anuncio;
+    }
+
+    public void setAnuncio(Anuncio anuncio) {
+        this.anuncio = anuncio;
     }
 }

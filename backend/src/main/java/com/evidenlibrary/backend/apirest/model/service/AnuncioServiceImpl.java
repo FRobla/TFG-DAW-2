@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.evidenlibrary.backend.apirest.model.dao.AnuncioDao;
+import com.evidenlibrary.backend.apirest.model.dao.ImpresoraDao;
 import com.evidenlibrary.backend.apirest.model.entity.Impresora;
 import com.evidenlibrary.backend.apirest.model.entity.DetallePedido;
 import com.evidenlibrary.backend.apirest.model.entity.Categoria;
@@ -19,6 +20,9 @@ public class AnuncioServiceImpl implements AnuncioService {
 
     @Autowired
     private AnuncioDao anuncioDao;
+
+    @Autowired
+    private ImpresoraDao impresoraDao;
 
     @Autowired
     private DetallePedidoService detallePedidoService;
@@ -38,19 +42,13 @@ public class AnuncioServiceImpl implements AnuncioService {
     @Override
     @Transactional(readOnly = true)
     public Page<Anuncio> findByImpresoraIdPaginado(Long impresoraId, Pageable pageable) {
-        return anuncioDao.findByImpresorasId(impresoraId, pageable);
+        return anuncioDao.findByImpresoraId(impresoraId, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<Anuncio> findByCategoriaIdPaginado(Long categoriaId, Pageable pageable) {
         return anuncioDao.findByCategoriasId(categoriaId, pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Anuncio> findByCategoriaIdAndImpresoraIdPaginado(Long categoriaId, Long impresoraId, Pageable pageable) {
-        return anuncioDao.findByCategoriasIdAndImpresorasId(categoriaId, impresoraId, pageable);
     }
 
     @Override
@@ -104,9 +102,22 @@ public class AnuncioServiceImpl implements AnuncioService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Impresora> findImpresorasByAnuncioId(Long anuncioId) {
+        // Devuelve todas las impresoras cuyo campo anuncio.id coincida
+        return impresoraDao.findAll().stream()
+            .filter(i -> i.getAnuncio() != null && i.getAnuncio().getId().equals(anuncioId))
+            .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Anuncio> findAnunciosByImpresoraId(Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        // Ahora, cada impresora solo tiene un anuncio, así que busca la impresora y devuelve su anuncio si existe
+        Impresora impresora = impresoraDao.findById(id).orElse(null);
+        if (impresora != null && impresora.getAnuncio() != null) {
+            return List.of(impresora.getAnuncio());
+        }
+        return List.of();
     }
 
     @Override
@@ -135,18 +146,19 @@ public class AnuncioServiceImpl implements AnuncioService {
         // Obtener los detalles de pedido relacionados con este anuncio
         List<DetallePedido> detallesPedido = detallePedidoService.findByPedidoId(anuncio.getId());
 
-        // Desasociar el anuncio de todas sus impresoras
-        for (Impresora impresora : anuncio.getImpresora()) {
-            impresora.getAnuncios().remove(anuncio);
+        // Desasociar el anuncio de todas sus impresoras (ahora ManyToOne)
+        List<Impresora> impresoras = impresoraDao.findAll();
+        for (Impresora impresora : impresoras) {
+            if (impresora.getAnuncio() != null && impresora.getAnuncio().getId().equals(anuncio.getId())) {
+                impresora.setAnuncio(null);
+                impresoraDao.save(impresora);
+            }
         }
-
-        anuncio.getImpresora().clear();
 
         // Desasociar el anuncio de todas sus categorias
         for (Categoria categoria : anuncio.getCategorias()) {
             categoria.getAnuncios().remove(anuncio);
         }
-
         anuncio.getCategorias().clear();
 
         // Desasociar de pedidos
@@ -166,19 +178,19 @@ public class AnuncioServiceImpl implements AnuncioService {
     public void deleteAll() {
         // Obtener todos los anuncios
         List<Anuncio> anuncios = findAll();
-
+        // Obtener todos los impresoras
+        List<Impresora> impresoras = impresoraDao.findAll();
         // Obtener los detalles de los pedidos
         List<DetallePedido> detallesPedido = detallePedidoService.findAll();
 
-        // Para cada anuncio, desasociar todas sus impresoras y categorias
-        for (Anuncio anuncio : anuncios) {
-            // Desasociar el anuncio de todas sus impresoras
-            for (Impresora impresora : anuncio.getImpresora()) {
-                impresora.getAnuncios().remove(anuncio);
-            }
-            anuncio.getImpresora().clear();
+        // Desasociar impresoras de anuncios
+        for (Impresora impresora : impresoras) {
+            impresora.setAnuncio(null);
+            impresoraDao.save(impresora);
+        }
 
-            // Desasociar el anuncio de todos sus géneros
+        // Para cada anuncio, desasociar todas sus categorias
+        for (Anuncio anuncio : anuncios) {
             for (Categoria categoria : anuncio.getCategorias()) {
                 categoria.getAnuncios().remove(anuncio);
             }
@@ -188,11 +200,6 @@ public class AnuncioServiceImpl implements AnuncioService {
         // Desasociar de pedidos
         for (DetallePedido detalle : detallesPedido) {
             detallePedidoService.delete(detalle);
-        }
-
-        // Actualizar los anuncios con las asociaciones eliminadas
-        for (Anuncio anuncio : anuncios) {
-            anuncioDao.save(anuncio);
         }
 
         // Eliminar todos los anuncios

@@ -29,8 +29,8 @@ public class DetallePedidoServiceImpl implements DetallePedidoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<DetallePedido> findByLibroId(Long libroId) {
-	    return detallePedidoDao.findByLibroId(libroId);
+	public List<DetallePedido> findByAnuncioId(Long anuncioId) {
+	    return detallePedidoDao.findByAnuncioId(anuncioId);
 	}
 	
 	@Override

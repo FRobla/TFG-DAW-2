@@ -171,11 +171,11 @@ public class ImpresoraController {
 		} catch(DataAccessException e) {
 		    response.put("mensaje", "Error al eliminar las impresoras en la base de datos");
 		    response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-		    return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		    return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		response.put("mensaje", "Todas las impresoras han sido eliminadas con éxito");
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 }
