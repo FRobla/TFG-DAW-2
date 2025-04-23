@@ -66,9 +66,12 @@ public class Anuncio implements Serializable {
 	@Column(nullable = true)
 	private Integer vistas;
 
+	@Column(name = "valoracion_media", nullable = true)
+	private Double valoracionMedia;
+
 	// Relaciones
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "anuncio_categoria", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
 	private final Set<Categoria> categorias = new HashSet<>();
 
@@ -85,8 +88,9 @@ public class Anuncio implements Serializable {
 	@JsonIgnore
 	private final List<Favorito> favoritos = new ArrayList<>();
 
-	@Column(name = "valoracion_media", nullable = true)
-	private Double valoracionMedia;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "anuncio_material", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "material_id"))
+	private final Set<Material> materiales = new HashSet<>();
 
 	// Getter/Setter
 
