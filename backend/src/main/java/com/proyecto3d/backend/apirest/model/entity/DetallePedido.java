@@ -1,6 +1,7 @@
 package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -30,6 +31,15 @@ public class DetallePedido implements Serializable{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+	@Column(nullable = true)
+	private String instrucciones;
+
+	@Column(nullable = false)
+	private Date inicio_produccion;
+
+	@Column(nullable = true)
+	private Date fin_produccion;
     
 	@JsonBackReference
     @ManyToOne
@@ -80,6 +90,34 @@ public class DetallePedido implements Serializable{
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getInstrucciones() {
+		return instrucciones;
+	}
+
+	public void setInstrucciones(String instrucciones) {
+		this.instrucciones = instrucciones;
+	}
+
+	public Date getInicio_produccion() {
+		return inicio_produccion;
+	}
+
+	public void setInicio_produccion(Date inicio_produccion) {
+		this.inicio_produccion = inicio_produccion;
+	}
+
+	public Date getFin_produccion() {
+		return fin_produccion;
+	}
+
+	public void setFin_produccion(Date fin_produccion) {
+		this.fin_produccion = fin_produccion;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
     
     
