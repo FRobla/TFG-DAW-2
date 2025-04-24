@@ -13,8 +13,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -79,9 +77,9 @@ public class Usuario implements Serializable{
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
 	public final List<Favorito> favoritos = new ArrayList<>();
 	
-	@ManyToOne
-	@JoinColumn(name = "anuncio_id")
-	private Anuncio anuncio;
+	@JsonIgnore
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	private List<Anuncio> anuncios;
 
 	
 	//Getters y setters
@@ -175,12 +173,12 @@ public class Usuario implements Serializable{
 		return favoritos;
 	}
 
-	public Anuncio getAnuncio() {
-		return anuncio;
+	public List<Anuncio> getAnuncios() {
+		return anuncios;
 	}
 
-	public void setAnuncio(Anuncio anuncio) {
-		this.anuncio = anuncio;
+	public void setAnuncios(List<Anuncio> anuncios) {
+		this.anuncios = anuncios;
 	}
 	
 	

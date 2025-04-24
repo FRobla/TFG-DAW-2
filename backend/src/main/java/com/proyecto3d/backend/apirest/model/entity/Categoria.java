@@ -1,10 +1,9 @@
 package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,8 +38,8 @@ public class Categoria implements Serializable{
     private String descripcion;
     
     @ManyToMany(mappedBy = "categorias")
-    @JsonBackReference
-    public final Set<Anuncio> anuncios = new HashSet<>();
+    @JsonIgnore
+    private Set<Anuncio> anuncios;
 
     // Getter/Setter
 	public Long getId() {
@@ -69,5 +68,9 @@ public class Categoria implements Serializable{
 
 	public Set<Anuncio> getAnuncios() {
 		return anuncios;
+	}
+
+	public void setAnuncios(Set<Anuncio> anuncios) {
+		this.anuncios = anuncios;
 	}
 }

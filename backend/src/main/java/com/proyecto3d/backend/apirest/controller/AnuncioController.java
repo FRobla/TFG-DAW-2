@@ -148,19 +148,15 @@ public class AnuncioController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 
-		// Procesamos impresoras y categorias
-		if (anuncio.getImpresora() != null && !anuncio.getImpresora().isEmpty()) {
-			for (Impresora impresora : anuncio.getImpresora()) {
-				if (impresora.getId() != null) {
-					Impresora impresoraExistente = impresoraService.findById(impresora.getId());
-					if (impresoraExistente != null) {
-						anuncio.getImpresora().remove(impresora);
-						anuncio.getImpresora().add(impresoraExistente);
-					}
-				}
-			}
-		}
+		// Procesamos impresora (ahora es solo una, no lista)
+        if (anuncio.getImpresora() != null && anuncio.getImpresora().getId() != null) {
+            Impresora impresoraExistente = impresoraService.findById(anuncio.getImpresora().getId());
+            if (impresoraExistente != null) {
+                anuncio.setImpresora(impresoraExistente);
+            }
+        }
 
+		// Procesamos categorias (esto sí sigue siendo una colección)
 		if (anuncio.getCategorias() != null && !anuncio.getCategorias().isEmpty()) {
 			for (Categoria categoria : anuncio.getCategorias()) {
 				if (categoria.getId() != null) {
@@ -228,21 +224,13 @@ public class AnuncioController {
 				currentAnuncio.setImagen(anuncio.getImagen());
 			}
 
-			// Procesamos impresoras
-			if (anuncio.getImpresora() != null && !anuncio.getImpresora().isEmpty()) {
-				// Limpiamos las impresoras actuales
-				currentAnuncio.getImpresora().clear();
-
-				// Añadimos las nuevos impresoras
-				for (Impresora impresora : anuncio.getImpresora()) {
-					if (impresora.getId() != null) {
-						Impresora impresoraExistente = impresoraService.findById(impresora.getId());
-						if (impresoraExistente != null) {
-							currentAnuncio.getImpresora().add(impresoraExistente);
-						}
-					}
-				}
-			}
+			// Procesamos impresora (ahora es solo una, no lista)
+            if (anuncio.getImpresora() != null && anuncio.getImpresora().getId() != null) {
+                Impresora impresoraExistente = impresoraService.findById(anuncio.getImpresora().getId());
+                if (impresoraExistente != null) {
+                    currentAnuncio.setImpresora(impresoraExistente);
+                }
+            }
 
 			// Procesamos géneros
 			if (anuncio.getCategorias() != null && !anuncio.getCategorias().isEmpty()) {

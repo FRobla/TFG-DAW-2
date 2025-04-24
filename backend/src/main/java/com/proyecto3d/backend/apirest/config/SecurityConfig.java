@@ -27,15 +27,15 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
             		 // Permitir acceso público a endpoints específicos
-                    .requestMatchers("/api/login", "/api/registro", "/api/principal", "/api/generos", "/api/valoraciones", "/api/valoracion", "/api/favorito", "/api/libros", "/api/libros/**", "/api/libros/mejor-valorados", "/api/libro/**", "/api/autores", "/usuario", "/api/detalles-carrito", "/api/pedido", "/api/search/**").permitAll()
+                    .requestMatchers("/api/login", "/api/registro", "/api/principal", "/api/categorias", "/api/valoraciones", "/api/valoracion", "/api/favorito", "/api/anuncios", "/api/anuncios/**", "/api/anuncios/mejor-valorados", "/api/anuncio/**", "/api/impresoras", "/usuario", "/api/detalles-carrito", "/api/pedido", "/api/search/**").permitAll()
  
                     // Requerir autenticación para ciertos endpoints, tanto para USER como para ADMIN
                     .requestMatchers("/api/valoraciones", "/api/detalles-carrito").hasRole("USER")
  
                     // Requerir ADMIN para endpoints específicos
-                    .requestMatchers("/api/autor", "/api/carritos", "/api/carrito", "/api/pedidos", "/api/pedido",
-                                     "/api/favoritos", "/api/genero", "/api/usuarios", "/api/usuario", "/api/valoracion", 
-                                     "/api/libro", "/api/libros").hasRole("ADMIN")
+                    .requestMatchers("/api/impresora", "/api/carritos", "/api/carrito", "/api/pedidos", "/api/pedido",
+                                     "/api/favoritos", "/api/categoria", "/api/usuarios", "/api/usuario", "/api/valoracion", 
+                                     "/api/anuncio", "/api/anuncios").hasRole("ADMIN")
                     
                     .anyRequest().authenticated()
             )
@@ -47,10 +47,10 @@ public class SecurityConfig {
             	        if (!requestPath.startsWith("/api/login") &&
             	            !requestPath.startsWith("/api/registro") &&
             	            !requestPath.startsWith("/api/principal") &&
-            	            !requestPath.startsWith("/api/libros") &&
-            	            !requestPath.startsWith("/api/libro") &&
-            	            !requestPath.startsWith("/api/autores") &&
-            	            !requestPath.startsWith("/api/generos") &&
+            	            !requestPath.startsWith("/api/anuncios") &&
+            	            !requestPath.startsWith("/api/anuncio") &&
+            	            !requestPath.startsWith("/api/impresoras") &&
+            	            !requestPath.startsWith("/api/categorias") &&
             	            !requestPath.startsWith("/api/search") &&
                             !requestPath.startsWith("/api/pedido")) {
             	            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

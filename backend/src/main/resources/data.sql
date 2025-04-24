@@ -1,3 +1,5 @@
+SET SQL_SAFE_UPDATES = 0;
+
 -- Ejemplo de datos para la tabla usuarios
 INSERT INTO usuarios (id, nombre, apellido, direccion, email, password, rol, foto, fecha_registro) VALUES
 (1, 'Juan', 'Pérez', 'Calle Uno', 'juan1@mail.com', 'pass1', 'USER', NULL, '2024-04-01'),
@@ -51,17 +53,19 @@ INSERT INTO autores (id, nombre, marca, modelo, tipo, volumen_impresion_x, volum
 (10, 'Impresora J', 'Creality', 'CR-10', 'filamento', 300, 300, 400);
 
 -- Ejemplo de datos para la tabla anuncios
-INSERT INTO anuncios (id, titulo, descripcion, estado, imagen, precio_base, tiempo_estimado, fecha_publicacion) VALUES
-(1, 'Juguete Dinosaurio', 'Figura 3D de dinosaurio', 'activo', NULL, 10.0, '2 días', '2024-04-01'),
-(2, 'Lámpara Decorativa', 'Lámpara impresa en 3D', 'activo', NULL, 25.0, '3 días', '2024-04-02'),
-(3, 'Soporte Móvil', 'Soporte ajustable para móvil', 'activo', NULL, 8.0, '1 día', '2024-04-03'),
-(4, 'Caja Organizadora', 'Caja multiusos impresa', 'activo', NULL, 12.0, '2 días', '2024-04-04'),
-(5, 'Figura de Ajedrez', 'Pieza de ajedrez personalizada', 'activo', NULL, 5.0, '1 día', '2024-04-05'),
-(6, 'Pendientes Modernos', 'Pendientes impresos', 'activo', NULL, 7.0, '1 día', '2024-04-06'),
-(7, 'Organizador Escritorio', 'Organizador multifunción', 'activo', NULL, 15.0, '2 días', '2024-04-07'),
-(8, 'Escultura Abstracta', 'Escultura para decoración', 'activo', NULL, 30.0, '4 días', '2024-04-08'),
-(9, 'Portabotellas Bicicleta', 'Accesorio para bicicleta', 'activo', NULL, 6.0, '1 día', '2024-04-09'),
-(10, 'Soporte Portátil', 'Soporte para portátil', 'activo', NULL, 18.0, '2 días', '2024-04-10');
+DELETE FROM anuncios;
+
+INSERT INTO anuncios (id, titulo, descripcion, estado, imagen, precio_base, tiempo_estimado, fecha_publicacion, usuario_id, impresora_id, vistas) VALUES
+(1, 'Juguete Dinosaurio', 'Figura 3D de dinosaurio', 'activo', NULL, 10.0, '2 días', '2024-04-01', 1, 1, 10),
+(2, 'Lámpara Decorativa', 'Lámpara impresa en 3D', 'activo', NULL, 25.0, '3 días', '2024-04-02', 2, 2, 15),
+(3, 'Soporte Móvil', 'Soporte ajustable para móvil', 'activo', NULL, 8.0, '1 día', '2024-04-03', 3, 3, 8),
+(4, 'Caja Organizadora', 'Caja multiusos impresa', 'activo', NULL, 12.0, '2 días', '2024-04-04', 4, 4, 12),
+(5, 'Figura de Ajedrez', 'Pieza de ajedrez personalizada', 'activo', NULL, 5.0, '1 día', '2024-04-05', 5, 5, 5),
+(6, 'Pendientes Modernos', 'Pendientes impresos', 'activo', NULL, 7.0, '1 día', '2024-04-06', 6, 6, 7),
+(7, 'Organizador Escritorio', 'Organizador multifunción', 'activo', NULL, 15.0, '2 días', '2024-04-07', 7, 7, 15),
+(8, 'Escultura Abstracta', 'Escultura para decoración', 'activo', NULL, 30.0, '4 días', '2024-04-08', 8, 8, 30),
+(9, 'Portabotellas Bicicleta', 'Accesorio para bicicleta', 'activo', NULL, 6.0, '1 día', '2024-04-09', 9, 9, 6),
+(10, 'Soporte Portátil', 'Soporte para portátil', 'activo', NULL, 18.0, '2 días', '2024-04-10', 10, 10, 18);
 
 -- Ejemplo de datos para la tabla carritos
 INSERT INTO carritos (id, usuario_id, fecha_creacion, estado) VALUES
@@ -144,8 +148,11 @@ INSERT INTO valoraciones (id, usuario_id, anuncio_id, puntuacion, comentario, fe
 -- Ejemplo de datos para la tabla anuncio_categoria
 INSERT INTO anuncio_categoria (anuncio_id, categoria_id) VALUES
 (1, 1),
+(1, 5),
 (2, 2),
+(2, 7),
 (3, 3),
+(3, 10),
 (4, 4),
 (5, 5),
 (6, 6),
@@ -157,8 +164,10 @@ INSERT INTO anuncio_categoria (anuncio_id, categoria_id) VALUES
 -- Ejemplo de datos para la tabla anuncio_material
 INSERT INTO anuncio_material (anuncio_id, material_id) VALUES
 (1, 1),
+(1, 3),
 (2, 2),
 (3, 3),
+(3, 4),
 (4, 4),
 (5, 5),
 (6, 6),
@@ -166,3 +175,5 @@ INSERT INTO anuncio_material (anuncio_id, material_id) VALUES
 (8, 8),
 (9, 9),
 (10, 10);
+
+SET SQL_SAFE_UPDATES = 1;

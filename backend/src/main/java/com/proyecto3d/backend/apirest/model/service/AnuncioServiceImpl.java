@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.proyecto3d.backend.apirest.model.dao.AnuncioDao;
 import com.proyecto3d.backend.apirest.model.dao.ImpresoraDao;
-import com.proyecto3d.backend.apirest.model.entity.Impresora;
-import com.proyecto3d.backend.apirest.model.entity.DetallePedido;
-import com.proyecto3d.backend.apirest.model.entity.Categoria;
 import com.proyecto3d.backend.apirest.model.entity.Anuncio;
+import com.proyecto3d.backend.apirest.model.entity.Categoria;
+import com.proyecto3d.backend.apirest.model.entity.DetallePedido;
+import com.proyecto3d.backend.apirest.model.entity.Impresora;
 
 @Service
 public class AnuncioServiceImpl implements AnuncioService {
@@ -105,7 +105,7 @@ public class AnuncioServiceImpl implements AnuncioService {
     public List<Impresora> findImpresorasByAnuncioId(Long anuncioId) {
         // Devuelve todas las impresoras cuyo campo anuncio.id coincida
         return impresoraDao.findAll().stream()
-            .filter(i -> i.getAnuncio() != null && i.getAnuncio().getId().equals(anuncioId))
+            .filter(i -> i.getAnuncios() != null && i.getAnuncios().stream().anyMatch(a -> a.getId().equals(anuncioId)))
             .toList();
     }
 
@@ -114,8 +114,8 @@ public class AnuncioServiceImpl implements AnuncioService {
     public List<Anuncio> findAnunciosByImpresoraId(Long id) {
         // Ahora, cada impresora solo tiene un anuncio, así que busca la impresora y devuelve su anuncio si existe
         Impresora impresora = impresoraDao.findById(id).orElse(null);
-        if (impresora != null && impresora.getAnuncio() != null) {
-            return List.of(impresora.getAnuncio());
+        if (impresora != null && impresora.getAnuncios() != null) {
+            return impresora.getAnuncios();
         }
         return List.of();
     }
@@ -149,12 +149,12 @@ public class AnuncioServiceImpl implements AnuncioService {
         // Desasociar el anuncio de todas sus impresoras (ahora ManyToOne)
         List<Impresora> impresoras = impresoraDao.findAll();
         for (Impresora impresora : impresoras) {
-            if (impresora.getAnuncio() != null && impresora.getAnuncio().getId().equals(anuncio.getId())) {
-                impresora.setAnuncio(null);
+            if (impresora.getAnuncios() != null && impresora.getAnuncios().stream().anyMatch(a -> a.getId().equals(anuncio.getId()))) {
+                impresora.setAnuncios(null);
                 impresoraDao.save(impresora);
             }
         }
-
+        
         // Desasociar el anuncio de todas sus categorias
         for (Categoria categoria : anuncio.getCategorias()) {
             categoria.getAnuncios().remove(anuncio);
@@ -185,7 +185,7 @@ public class AnuncioServiceImpl implements AnuncioService {
 
         // Desasociar impresoras de anuncios
         for (Impresora impresora : impresoras) {
-            impresora.setAnuncio(null);
+            impresora.setAnuncios(null);
             impresoraDao.save(impresora);
         }
 

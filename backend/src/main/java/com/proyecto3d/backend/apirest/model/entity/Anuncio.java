@@ -3,7 +3,6 @@ package com.proyecto3d.backend.apirest.model.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -71,15 +71,21 @@ public class Anuncio implements Serializable {
 
 	// Relaciones
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuario;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "impresora_id")
+	private Impresora impresora;
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "anuncio_categoria", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-	private final Set<Categoria> categorias = new HashSet<>();
+	private Set<Categoria> categorias;
 
-	@OneToMany(mappedBy = "anuncio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private final List<Usuario> usuario = new ArrayList<>();
-
-	@OneToMany(mappedBy = "anuncio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private final List<Impresora> impresora = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "anuncio_material", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "material_id"))
+	private Set<Material> materiales;
 
 	@OneToMany(mappedBy = "anuncio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private final List<Valoracion> valoraciones = new ArrayList<>();
@@ -87,10 +93,6 @@ public class Anuncio implements Serializable {
 	@OneToMany(mappedBy = "anuncio", fetch = FetchType.EAGER)
 	@JsonIgnore
 	private final List<Favorito> favoritos = new ArrayList<>();
-
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name = "anuncio_material", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "material_id"))
-	private final Set<Material> materiales = new HashSet<>();
 
 	// Getter/Setter
 
@@ -130,12 +132,28 @@ public class Anuncio implements Serializable {
 		this.precio_base = precio_base;
 	}
 
-	public List<Usuario> getUsuario() {
+	public Usuario getUsuario() {
 		return usuario;
+	}
+
+	public Impresora getImpresora() {
+		return impresora;
 	}
 
 	public Set<Categoria> getCategorias() {
 		return categorias;
+	}
+
+	public void setCategorias(Set<Categoria> categorias) {
+		this.categorias = categorias;
+	}
+
+	public Set<Material> getMateriales() {
+		return materiales;
+	}
+
+	public void setMateriales(Set<Material> materiales) {
+		this.materiales = materiales;
 	}
 
 	public List<Valoracion> getValoraciones() {
@@ -190,8 +208,12 @@ public class Anuncio implements Serializable {
 		this.estado = estado;
 	}
 
-	public List<Impresora> getImpresora() {
-		return impresora;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public void setImpresora(Impresora impresora) {
+		this.impresora = impresora;
 	}
 
 	// Valoracion media

@@ -1,9 +1,11 @@
 package com.proyecto3d.backend.apirest.model.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.proyecto3d.backend.apirest.model.dao.ImpresoraDao;
 import com.proyecto3d.backend.apirest.model.entity.Impresora;
 
@@ -28,7 +30,7 @@ public class ImpresoraServiceImpl implements ImpresoraService {
 	@Transactional(readOnly = true)
 	public Impresora findByAnuncioId(Long anuncioId) {
         return impresoraDao.findAll().stream()
-            .filter(i -> i.getAnuncio() != null && i.getAnuncio().getId().equals(anuncioId))
+            .filter(i -> i.getAnuncios() != null && i.getAnuncios().stream().anyMatch(a -> a.getId().equals(anuncioId)))
             .findFirst().orElse(null);
 	}
 	

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -31,8 +32,9 @@ public class KeycloakService {
     @Value("${keycloak.resource:eviden-library-rest-api}")
     private String clientId;
     
+    /* 
     @Value("${keycloak.credentials.secret:}")
-    private String clientSecret;
+    private String clientSecret; */
     
     @Value("${keycloak.admin.username:admin}")
     private String adminUsername;
@@ -86,8 +88,7 @@ public class KeycloakService {
             );
 
             return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RestClientException e) {
             return false;
         }
     }
@@ -118,8 +119,7 @@ public class KeycloakService {
                 return (String) response.getBody().get("access_token");
             }
             return null;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RestClientException e) {
             return null;
         }
     }

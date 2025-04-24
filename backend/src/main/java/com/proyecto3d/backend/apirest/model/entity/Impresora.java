@@ -1,19 +1,21 @@
 package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,14 +62,17 @@ public class Impresora implements Serializable {
     @Column(nullable = false)
 	private Integer volumen_impresion_z;
 
-    // Relación ManyToOne: muchas impresoras pueden estar asociadas a un solo anuncio
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "anuncio_id")
-    private Anuncio anuncio;
+    // Relación OneToMany: una impresora puede tener varios anuncios asociados
+    @OneToMany(mappedBy = "impresora", cascade = CascadeType.ALL)
+    private List<Anuncio> anuncios;
 
-    @JsonProperty("anuncio")
-    public AnuncioSimple getAnuncioSimple() {
-        return new AnuncioSimple(anuncio.getId(), anuncio.getTitulo(), anuncio.getPrecioBase(), anuncio.getDescripcion());
+    @JsonProperty("anuncios")
+    public List<AnuncioSimple> getAnunciosSimple() {
+        List<AnuncioSimple> anunciosSimple = new ArrayList<>();
+        for (Anuncio anuncio : anuncios) {
+            anunciosSimple.add(new AnuncioSimple(anuncio.getId(), anuncio.getTitulo(), anuncio.getPrecioBase(), anuncio.getDescripcion()));
+        }
+        return anunciosSimple;
     }
 
     public static class AnuncioSimple {
@@ -184,11 +189,11 @@ public class Impresora implements Serializable {
         this.marca = marca;
     }
 
-    public Anuncio getAnuncio() {
-        return anuncio;
+    public List<Anuncio> getAnuncios() {
+        return anuncios;
     }
 
-    public void setAnuncio(Anuncio anuncio) {
-        this.anuncio = anuncio;
+    public void setAnuncios(List<Anuncio> anuncios) {
+        this.anuncios = anuncios;
     }
 }
