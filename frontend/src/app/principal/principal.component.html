@@ -1,6 +1,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
   <div class="container">
+    <!-- Logo -->
     <a class="navbar-brand" href="#">
       <svg class="navbar-logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
@@ -11,27 +12,36 @@
       </svg>
       <span class="ms-2">PrintLab3D</span>
     </a>
+    
+    <!-- Barra de búsqueda y botón de inicio de sesión para pantallas grandes -->
+    <div class="d-none d-lg-flex flex-grow-1 justify-content-between align-items-center ms-4">
+      <div class="search-nav-container flex-grow-1 mx-4">
+        <div class="input-group">
+          <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios de impresión 3D, modelado, etc." aria-label="Buscar servicios">
+          <button class="btn btn-outline-light" type="button" (click)="buscar()">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-login ms-3" (click)="iniciarSesion()">Iniciar Sesión</button>
+    </div>
+    
+    <!-- Botón de hamburguesa para pantallas pequeñas -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+    
+    <!-- Menú colapsado para pantallas pequeñas -->
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/">Inicio</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="/servicios">Servicios</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Fabricantes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Mi Cuenta</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contacto</a>
-        </li>
-      </ul>
+      <div class="d-lg-none mt-3">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios" aria-label="Buscar servicios">
+          <button class="btn btn-outline-light" type="button" (click)="buscar()">Buscar</button>
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -76,7 +86,7 @@
                   <option value="3+">3+ estrellas</option>
                 </select>
               </div>
-              <div class="col-md-2">
+              <div class="col-md-2 limpiar-filtros">
                 <button class="btn btn-outline-light w-100" (click)="limpiarFiltros()">Limpiar</button>
               </div>
             </div>
@@ -432,14 +442,14 @@
         <h5>Contacto</h5>
         <ul class="footer-contact">
           <li>info&#64;printlab3d.es</li>
-          <li>+34 912 345 678</li>
+          <li>+34 638 260 817</li>
           <li>Calle Innovación, 123</li>
           <li>28001 Madrid, España</li>
         </ul>
       </div>
     </div>
     <div class="copyright text-center mt-4">
-      <p>&copy; 2023 PrintLab3D. Todos los derechos reservados.</p>
+      <p>&copy; 2025 PrintLab3D. Todos los derechos reservados.</p>
     </div>
   </div>
 </footer>

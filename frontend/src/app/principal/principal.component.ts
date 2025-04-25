@@ -185,4 +185,13 @@ export class PrincipalComponent implements OnInit {
     this.filtroValoracion = '';
     this.serviciosFiltrados = [...this.servicios];
   }
+
+  /**
+   * Redirige al usuario a la página de inicio de sesión
+   */
+  iniciarSesion(): void {
+    // Aquí se añadiría la navegación a la página de login
+    console.log('Redirigiendo a página de inicio de sesión');
+    // Ejemplo: this.router.navigate(['/login']);
+  }
 }

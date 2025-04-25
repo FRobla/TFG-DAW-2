@@ -91,6 +91,60 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
+/* Estilos para la barra de búsqueda en el navbar */
+.search-nav-container {
+  max-width: 600px;
+}
+
+.search-nav-container .input-group {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.search-nav-container .form-control {
+  border-right: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.2);
+  padding-left: 15px;
+}
+
+.search-nav-container .form-control:focus {
+  box-shadow: none;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.search-nav-container .btn {
+  border-left: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Botón de login */
+.btn-login {
+  background: linear-gradient(135deg, #836FFF 0%, #5D4FFF 100%);
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(93, 79, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background: linear-gradient(135deg, #9683FF 0%, #7A6DFF 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(93, 79, 255, 0.5);
+  color: white;
+}
+
+.btn-login:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(93, 79, 255, 0.4);
+}
+
 /* Botones */
 .btn {
   transition: all 0.3s ease;
@@ -206,6 +260,10 @@ section:nth-child(even) {
   border-color: rgba(120, 120, 120, 0.8);
   color: var(--color-text-primary);
   box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+}
+
+.limpiar-filtros {
+  margin-top: 13px;
 }
 
 /* Sección de servicios destacados */

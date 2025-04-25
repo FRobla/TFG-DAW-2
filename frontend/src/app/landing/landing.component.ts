@@ -7,8 +7,8 @@ import { Component, OnInit, HostListener } from '@angular/core';
   styleUrl: './landing.component.css'
 })
 export class LandingComponent implements OnInit {
-  isScrolled = false;
   
+  isScrolled = false;
   constructor() { }
 
   @HostListener('window:scroll', [])
