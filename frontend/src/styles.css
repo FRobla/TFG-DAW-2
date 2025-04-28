@@ -1,0 +1,97 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importar fuentes primero */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Estilos globales para toda la aplicación */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #FFFFFF;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Sobrescribir estilos de Bootstrap para corregir colores del texto */
+p, span, div, label, li, a {
+  color: #E0E0E0 !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: #FFFFFF !important;
+}
+
+/* Sobrescribir el color del texto que está en gris #212529 de Bootstrap */
+.text-body, .text-dark, .card-text, .form-text {
+  color: #E0E0E0 !important;
+}
+
+/* Asegurar que todos los elementos de formulario tengan texto visible */
+input, select, textarea, .form-control, .form-select {
+  color: #FFFFFF !important;
+  background-color: rgba(30, 30, 30, 0.8) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(230, 230, 230, 0.7) !important;
+}
+
+/* Otros textos auxiliares */
+.text-muted {
+  color: #E0E0E0 !important;
+}
+
+/* Clases específicas que necesitan sobrescritura */
+.service-description, 
+.provider-name, 
+.ad-content p, 
+.category-card p,
+.footer-links a, 
+.footer-contact li,
+.rating-count,
+.process-description,
+.specs-list li {
+  color: #E0E0E0 !important;
+}
+
+/* Asegurarse de que los componentes nativos de Bootstrap sean consistentes */
+.dropdown-menu {
+  background-color: #2A2A2A !important;
+}
+
+.dropdown-item {
+  color: #E0E0E0 !important;
+}
+
+.dropdown-item:hover {
+  background-color: #3C3C3C !important;
+  color: #FFFFFF !important;
+}
+
+.card {
+  background-color: #2A2A2A !important;
+  border-color: #3C3C3C !important;
+}
+
+.modal-content {
+  background-color: #1E1E1E !important;
+  color: #E0E0E0 !important;
+}
+
+.navbar-dark .navbar-brand, .navbar-dark .navbar-nav .nav-link {
+  color: rgba(230, 230, 230, 0.9) !important;
+}
+
+/* Anular cualquier color heredado o específico que no sea apropiado */
+* {
+  color-scheme: dark;
+}
+
+:root {
+  --bs-body-color: #E0E0E0;
+  --bs-body-color-rgb: 224, 224, 224;
+  --bs-secondary-color: #E0E0E0;
+  --bs-secondary-color-rgb: 224, 224, 224;
+  --bs-heading-color: #FFFFFF;
+}
