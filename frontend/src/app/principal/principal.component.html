@@ -61,7 +61,7 @@
           <div class="search-filters">
             <div class="row g-2">
               <div class="col-md-4">
-                <select class="form-select" [(ngModel)]="filtroCategoria" (change)="buscar()">
+                <select class="form-select" [(ngModel)]="filtroCategoria">
                   <option value="">Categoría</option>
                   <option value="impresion-fdm">Impresión de prototipos</option>
                   <option value="modelado">Modelado 3D</option>
@@ -70,7 +70,7 @@
                 </select>
               </div>
               <div class="col-md-3">
-                <select class="form-select" [(ngModel)]="filtroUbicacion" (change)="buscar()">
+                <select class="form-select" [(ngModel)]="filtroUbicacion">
                   <option value="">Ubicación</option>
                   <option value="Madrid">Madrid</option>
                   <option value="Barcelona">Barcelona</option>
@@ -80,7 +80,7 @@
                 </select>
               </div>
               <div class="col-md-3">
-                <select class="form-select" [(ngModel)]="filtroValoracion" (change)="buscar()">
+                <select class="form-select" [(ngModel)]="filtroValoracion">
                   <option value="">Valoración</option>
                   <option value="5">5 estrellas</option>
                   <option value="4+">4+ estrellas</option>
@@ -673,22 +673,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA final -->
-<section class="cta-section">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-10 text-center">
-        <h2>¿Listo para materializar tu proyecto?</h2>
-        <p class="lead">Conectamos tus ideas con los mejores profesionales de la impresión 3D. Crea tu cuenta ahora y comienza.</p>
-        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
-          <button class="btn btn-cta-lg">Buscar servicios</button>
-          <button class="btn btn-outline-light btn-lg">Registrarme como proveedor</button>
         </div>
       </div>
     </div>

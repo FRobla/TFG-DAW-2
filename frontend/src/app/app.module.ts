@@ -8,13 +8,17 @@ import { LandingComponent } from './landing/landing.component';
 import { PrincipalComponent } from './principal/principal.component';
 import { ResultadoBusquedaComponent } from './resultado-busqueda/resultado-busqueda.component';
 import { RouterModule, Routes } from '@angular/router';
+import { DetallesAnuncioComponent } from './detalles-anuncio/detalles-anuncio.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingComponent,
     PrincipalComponent,
-    ResultadoBusquedaComponent
+    ResultadoBusquedaComponent,
+    DetallesAnuncioComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

@@ -39,29 +39,32 @@ export class ResultadoBusquedaComponent implements OnInit {
   ngOnInit(): void {
     // Obtener parámetros de la URL
     this.route.queryParams.subscribe((params) => {
+      // Valores por defecto si no se especifican en la URL
       this.busquedaTexto = params["q"] || ""
       this.terminoBusqueda = this.busquedaTexto // Para mostrar en la UI
       this.filtroCategoria = params["categoria"] || ""
       this.filtroUbicacion = params["ubicacion"] || ""
       this.filtroValoracion = params["valoracion"] || ""
 
-      // Obtener filtros de precio
+      // Obtener filtros de precio con valores por defecto
       this.filtroPrecioMin = params["precioMin"] ? Number.parseInt(params["precioMin"]) : 10
       this.filtroPrecioMax = params["precioMax"] ? Number.parseInt(params["precioMax"]) : 500
 
       // Obtener filtros de arrays
-      if (params["material"]) {
+      if (params["material"] && params["material"].trim() !== '') {
         this.filtroMaterial = params["material"].split(",")
       } else {
         this.filtroMaterial = []
       }
 
-      if (params["tiempoEntrega"]) {
+      if (params["tiempoEntrega"] && params["tiempoEntrega"].trim() !== '') {
         this.filtroTiempoEntrega = params["tiempoEntrega"].split(",")
       } else {
         this.filtroTiempoEntrega = []
       }
 
+      console.log("Parámetros de búsqueda recibidos:", params)
+      
       // Cargar resultados basados en los filtros
       this.cargarResultados()
     })
@@ -83,11 +86,10 @@ export class ResultadoBusquedaComponent implements OnInit {
 
   buscar(): void {
     // Crear un objeto con todos los filtros seleccionados
-    const queryParams: any = {
-      q: this.busquedaTexto || null,
-    }
+    const queryParams: any = {}
 
     // Añadir filtros solo si tienen valor
+    if (this.busquedaTexto && this.busquedaTexto.trim() !== '') queryParams.q = this.busquedaTexto.trim()
     if (this.filtroCategoria) queryParams.categoria = this.filtroCategoria
     if (this.filtroUbicacion) queryParams.ubicacion = this.filtroUbicacion
     if (this.filtroValoracion) queryParams.valoracion = this.filtroValoracion
@@ -100,13 +102,18 @@ export class ResultadoBusquedaComponent implements OnInit {
     if (this.filtroMaterial.length > 0) queryParams.material = this.filtroMaterial.join(",")
     if (this.filtroTiempoEntrega.length > 0) queryParams.tiempoEntrega = this.filtroTiempoEntrega.join(",")
 
+    console.log("Actualizando búsqueda con parámetros:", queryParams)
+    
     // Actualizar la URL con los parámetros de búsqueda
-    this.router.navigate(["/resultados-busqueda"], {
+    this.router.navigate(["resultados-busqueda"], {
       queryParams: queryParams,
+      replaceUrl: true // Reemplazar URL actual para evitar historial innecesario
     })
   }
 
   limpiarFiltros(): void {
+    this.busquedaTexto = ""
+    this.terminoBusqueda = ""
     this.filtroCategoria = ""
     this.filtroUbicacion = ""
     this.filtroValoracion = ""
@@ -115,7 +122,9 @@ export class ResultadoBusquedaComponent implements OnInit {
     this.filtroMaterial = []
     this.filtroTiempoEntrega = []
 
-    this.buscar()
+    // Limpiar URL y cargar resultados sin filtros
+    this.router.navigate(["resultados-busqueda"], {replaceUrl: true});
+    this.cargarResultados();
   }
 
   cambiarOrden(orden: string): void {
@@ -184,12 +193,19 @@ export class ResultadoBusquedaComponent implements OnInit {
         }
         break
     }
-
-    this.buscar()
   }
 
   iniciarSesion(): void {
     // Redirigir a la página de inicio de sesión
     this.router.navigate(["/login"])
+  }
+
+  /**
+   * Navega a la página de detalles del anuncio
+   * @param id Identificador del anuncio
+   */
+  verDetalles(id: number): void {
+    // Redirigir a la página de detalles del anuncio
+    this.router.navigate(["/detalles-anuncio", id])
   }
 }

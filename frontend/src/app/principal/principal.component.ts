@@ -131,12 +131,19 @@ export class PrincipalComponent implements OnInit {
    * Solo se ejecuta cuando el usuario hace clic en el botón de buscar
    */
   buscar(): void {
-    // Crear un objeto con todos los filtros seleccionados
-    const queryParams: any = {
-      q: this.busquedaTexto || null,
+    // No proceder si todos los filtros están vacíos
+    if (!this.busquedaTexto && !this.filtroCategoria && !this.filtroUbicacion && !this.filtroValoracion &&
+        this.filtroPrecioMin === 10 && this.filtroPrecioMax === 500 && 
+        this.filtroMaterial.length === 0 && this.filtroTiempoEntrega.length === 0) {
+      console.log("No hay criterios de búsqueda especificados")
+      return
     }
+    
+    // Crear un objeto con todos los filtros seleccionados
+    const queryParams: any = {}
 
     // Añadir filtros solo si tienen valor
+    if (this.busquedaTexto && this.busquedaTexto.trim() !== '') queryParams.q = this.busquedaTexto.trim()
     if (this.filtroCategoria) queryParams.categoria = this.filtroCategoria
     if (this.filtroUbicacion) queryParams.ubicacion = this.filtroUbicacion
     if (this.filtroValoracion) queryParams.valoracion = this.filtroValoracion
@@ -150,8 +157,9 @@ export class PrincipalComponent implements OnInit {
     if (this.filtroTiempoEntrega.length > 0) queryParams.tiempoEntrega = this.filtroTiempoEntrega.join(",")
 
     // Redirigir a la página de resultados de búsqueda con todos los parámetros
-    this.router.navigate(["/resultados-busqueda"], {
-      queryParams: queryParams,
+    console.log("Redirigiendo a resultados de búsqueda con parámetros:", queryParams)
+    this.router.navigate(["resultados-busqueda"], {
+      queryParams: queryParams
     })
   }
 
@@ -197,6 +205,12 @@ export class PrincipalComponent implements OnInit {
     this.filtroPrecioMax = 500
     this.filtroMaterial = []
     this.filtroTiempoEntrega = []
+    
+    // Si estamos en la página de resultados, hacer una búsqueda vacía
+    // para refrescar la página con los filtros limpios
+    if (this.router.url.includes('resultados-busqueda')) {
+      this.router.navigate(['resultados-busqueda']);
+    }
   }
 
   /**

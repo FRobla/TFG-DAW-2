@@ -98,31 +98,31 @@
             <div class="filter-section">
               <h4>Categoría</h4>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="cat1" checked>
+                <input class="form-check-input" type="checkbox" value="impresion-fdm" id="cat1" [(ngModel)]="filtroCategoria" [value]="'impresion-fdm'">
                 <label class="form-check-label" for="cat1">
                   Impresión FDM (24)
                 </label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="cat2">
+                <input class="form-check-input" type="checkbox" value="impresion-sla" id="cat2" [(ngModel)]="filtroCategoria" [value]="'impresion-sla'">
                 <label class="form-check-label" for="cat2">
                   Impresión SLA/Resina (16)
                 </label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="cat3">
+                <input class="form-check-input" type="checkbox" value="modelado" id="cat3" [(ngModel)]="filtroCategoria" [value]="'modelado'">
                 <label class="form-check-label" for="cat3">
                   Modelado 3D (12)
                 </label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="cat4">
+                <input class="form-check-input" type="checkbox" value="produccion" id="cat4" [(ngModel)]="filtroCategoria" [value]="'produccion'">
                 <label class="form-check-label" for="cat4">
                   Producción en serie (8)
                 </label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="cat5">
+                <input class="form-check-input" type="checkbox" value="consultoria" id="cat5" [(ngModel)]="filtroCategoria" [value]="'consultoria'">
                 <label class="form-check-label" for="cat5">
                   Consultoría (5)
                 </label>
@@ -265,7 +265,7 @@
             </div>
             
             <div class="filter-actions mt-4">
-              <button class="btn btn-cta w-100">Aplicar filtros</button>
+              <button class="btn btn-cta w-100" (click)="buscar()">Aplicar filtros</button>
             </div>
           </div>
         </div>
@@ -317,7 +317,7 @@
                 <div class="service-price">
                   <span>Desde 15€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(1)">Ver detalles</button>
               </div>
             </div>
             
@@ -350,7 +350,7 @@
                 <div class="service-price">
                   <span>Desde 20€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(2)">Ver detalles</button>
               </div>
             </div>
             
@@ -384,7 +384,7 @@
                 <div class="service-price">
                   <span>Desde 18€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(3)">Ver detalles</button>
               </div>
             </div>
             
@@ -417,7 +417,7 @@
                 <div class="service-price">
                   <span>Desde 25€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(4)">Ver detalles</button>
               </div>
             </div>
             
@@ -451,7 +451,7 @@
                 <div class="service-price">
                   <span>Desde 40€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(5)">Ver detalles</button>
               </div>
             </div>
             
@@ -484,7 +484,7 @@
                 <div class="service-price">
                   <span>Desde 22€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(6)">Ver detalles</button>
               </div>
             </div>
             
@@ -518,7 +518,7 @@
                 <div class="service-price">
                   <span>Desde 12€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(7)">Ver detalles</button>
               </div>
             </div>
             
@@ -551,7 +551,7 @@
                 <div class="service-price">
                   <span>Desde 24€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(8)">Ver detalles</button>
               </div>
             </div>
             
@@ -585,7 +585,7 @@
                 <div class="service-price">
                   <span>Desde 28€</span>
                 </div>
-                <button class="btn btn-cta w-100">Ver detalles</button>
+                <button class="btn btn-cta w-100" (click)="verDetalles(9)">Ver detalles</button>
               </div>
             </div>
           </div>

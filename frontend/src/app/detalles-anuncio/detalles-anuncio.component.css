@@ -1,0 +1,473 @@
+/* Estilos generales */
+:host {
+  display: block;
+  color: #f1f1f1;
+  background-color: #121212;
+}
+
+/* Navbar (igual que en la página principal) */
+.navbar {
+  background-color: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 0;
+  z-index: 1030;
+}
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.btn-login {
+  background-color: transparent;
+  border: 1px solid #0dcaf0;
+  color: #0dcaf0;
+  border-radius: 4px;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background-color: #0dcaf0;
+  color: #121212;
+}
+
+/* Contenedor principal con padding superior para compensar la navbar */
+.main-container {
+  padding-top: 5rem;
+  min-height: calc(100vh - 350px);
+}
+
+/* Breadcrumb */
+.breadcrumb-section {
+  background-color: #1a1a1a;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.breadcrumb {
+  margin-bottom: 0;
+}
+
+.breadcrumb-item a {
+  color: #0dcaf0;
+  text-decoration: none;
+}
+
+.breadcrumb-item.active {
+  color: #f1f1f1;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #6c757d;
+}
+
+/* Card para el contenido principal */
+.detail-card {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Badge para características especiales */
+.service-badge {
+  display: inline-block;
+  background-color: #0dcaf0;
+  color: #121212;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+/* Imágenes del servicio */
+.service-image-container {
+  position: relative;
+  background-color: #232323;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-image-container svg {
+  width: 150px;
+  height: 150px;
+}
+
+/* Proveedor y valoración */
+.service-provider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.provider-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #0dcaf0;
+  color: #121212;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.provider-info {
+  display: flex;
+  align-items: center;
+}
+
+.provider-name {
+  font-weight: 500;
+  color: #f1f1f1;
+}
+
+.rating {
+  color: #FFC107;
+  font-weight: 500;
+}
+
+.rating-count {
+  color: #adb5bd;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+/* Tabla de características */
+.specs-table {
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+.specs-table th {
+  color: #adb5bd;
+  font-weight: normal;
+  width: 40%;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.specs-table td {
+  color: #f1f1f1;
+  font-weight: 500;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Sección de opciones de personalización */
+.options-section {
+  margin: 2rem 0;
+}
+
+.option-group {
+  margin-bottom: 1.5rem;
+}
+
+.option-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #adb5bd;
+}
+
+.option-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.option-chip {
+  background-color: #232323;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.option-chip:hover {
+  background-color: #2a2a2a;
+}
+
+.option-chip.active {
+  background-color: #0dcaf0;
+  color: #121212;
+  border-color: #0dcaf0;
+}
+
+/* Control de cantidad */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  background-color: #232323;
+  border-radius: 4px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.quantity-btn {
+  background-color: #232323;
+  border: none;
+  color: #f1f1f1;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quantity-btn:hover {
+  background-color: #2a2a2a;
+}
+
+.quantity-input {
+  width: 60px;
+  background-color: #232323;
+  border: none;
+  color: #f1f1f1;
+  text-align: center;
+  font-weight: 500;
+  height: 40px;
+}
+
+/* Servicios adicionales */
+.additional-service {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #232323;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.additional-service:hover {
+  background-color: #2a2a2a;
+}
+
+.additional-service.active {
+  border: 1px solid #0dcaf0;
+}
+
+.service-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 1rem;
+}
+
+.service-info {
+  flex-grow: 1;
+}
+
+.service-name {
+  font-weight: 500;
+  color: #f1f1f1;
+  margin-bottom: 0.25rem;
+}
+
+.service-description {
+  color: #adb5bd;
+  font-size: 0.9rem;
+}
+
+.service-price {
+  color: #0dcaf0;
+  font-weight: 500;
+  margin-left: 1rem;
+}
+
+/* Resumen de precio */
+.price-summary {
+  background-color: #232323;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.price-label {
+  color: #adb5bd;
+}
+
+.price-value {
+  color: #f1f1f1;
+  font-weight: 500;
+}
+
+.price-total {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0dcaf0;
+}
+
+/* Botones CTA */
+.btn-cta {
+  background-color: #0dcaf0;
+  color: #121212;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-cta:hover {
+  background-color: #0bb8da;
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #0dcaf0;
+  color: #0dcaf0;
+}
+
+.btn-outline:hover {
+  background-color: #0dcaf0;
+  color: #121212;
+}
+
+/* Valoraciones */
+.reviews-section {
+  margin-top: 3rem;
+}
+
+.review-card {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.reviewer-info {
+  display: flex;
+  align-items: center;
+}
+
+.reviewer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #0dcaf0;
+  color: #121212;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.reviewer-name {
+  font-weight: 500;
+}
+
+.review-date {
+  color: #adb5bd;
+  font-size: 0.9rem;
+}
+
+.review-rating {
+  color: #FFC107;
+  font-size: 1.2rem;
+  margin-left: auto;
+}
+
+.review-content {
+  color: #f1f1f1;
+  margin-bottom: 1rem;
+}
+
+.review-response {
+  background-color: #232323;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.response-header {
+  color: #0dcaf0;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.response-content {
+  color: #adb5bd;
+}
+
+/* Spinner de carga */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: #0dcaf0;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsivo */
+@media (max-width: 992px) {
+  .service-image-container {
+    height: 250px;
+    margin-bottom: 1.5rem;
+  }
+
+  .options-container {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-card {
+    padding: 1.5rem;
+  }
+
+  .service-provider {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rating {
+    margin-top: 0.5rem;
+  }
+
+  .options-section {
+    margin-top: 1rem;
+  }
+}
