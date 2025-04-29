@@ -1,0 +1,11 @@
+package com.proyecto3d.backend.apirest.model.dao;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.proyecto3d.backend.apirest.model.entity.Carrito;
+
+public interface CarritoDao extends JpaRepository<Carrito, Long> {
+    List<Carrito> findByUsuarioId(Long usuarioId);
+}

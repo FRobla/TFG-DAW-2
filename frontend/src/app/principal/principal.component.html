@@ -1,0 +1,802 @@
+<style>
+  body, html {
+    background-color: #121212 !important;
+    color: #E0E0E0 !important;
+  }
+  
+  section:nth-child(odd) {
+    background-color: #121212 !important;
+  }
+  
+  section:nth-child(even) {
+    background-color: #1E1E1E !important;
+  }
+  
+  .service-card, .provider-card, .project-card, .testimonial-card, .category-card {
+    background-color: #2A2A2A !important;
+  }
+  
+  p, span, div, label, li, a {
+    color: #E0E0E0 !important;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #FFFFFF !important;
+  }
+
+  /* Asegurar que las estrellas sean amarillas */
+  .rating span:first-child {
+    color: #FFD700 !important;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Forzar el fondo oscuro en el footer */
+  .footer-section {
+    background-color: #121212 !important;
+    color: #E0E0E0 !important;
+  }
+  
+  .footer-section * {
+    background-color: transparent !important;
+  }
+  
+  /* Asegurar que todos los elementos del footer tengan el color correcto */
+  .footer-section h5,
+  .footer-section p,
+  .footer-section li,
+  .footer-section a,
+  .footer-section span {
+    color: #E0E0E0 !important;
+  }
+  
+  .footer-section h5 {
+    color: #FFFFFF !important;
+  }
+</style>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <!-- Logo -->
+    <a class="navbar-brand" href="#">
+      <svg class="navbar-logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+        <path d="M5 27.5L20 35L35 27.5" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+        <path d="M20 20V35" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+        <path d="M12.5 16.25L12.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+        <path d="M27.5 16.25L27.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+      </svg>
+      <span class="ms-2">PrintLab3D</span>
+    </a>
+    
+    <!-- Barra de búsqueda y botón de inicio de sesión para pantallas grandes -->
+    <div class="d-none d-lg-flex flex-grow-1 justify-content-between align-items-center ms-4">
+      <div class="search-nav-container flex-grow-1 mx-4">
+        <div class="input-group">
+          <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios de impresión 3D, modelado, etc." aria-label="Buscar servicios">
+          <button class="btn btn-outline-light" type="button" (click)="buscar()">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-login ms-3" (click)="iniciarSesion()">Iniciar Sesión</button>
+    </div>
+    
+    <!-- Botón de hamburguesa para pantallas pequeñas -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- Menú colapsado para pantallas pequeñas -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="d-lg-none mt-3">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios" aria-label="Buscar servicios">
+          <button class="btn btn-outline-light" type="button" (click)="buscar()">Buscar</button>
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section con Búsqueda -->
+<section class="hero-section">
+  <div class="hero-background-effects"></div>
+  <div class="container position-relative z-index-1">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 text-center">
+        <h1 class="display-4 fw-bold mb-4">Encuentra el servicio perfecto para tu proyecto</h1>
+        <div class="search-container">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios de impresión 3D, modelado, etc." aria-label="Buscar servicios">
+            <button class="btn btn-cta" type="button" (click)="buscar()">Buscar</button>
+          </div>
+          <div class="search-filters">
+            <div class="row g-2">
+              <div class="col-md-4">
+                <select class="form-select" [(ngModel)]="filtroCategoria" (change)="buscar()">
+                  <option value="">Categoría</option>
+                  <option value="impresion-fdm">Impresión de prototipos</option>
+                  <option value="modelado">Modelado 3D</option>
+                  <option value="produccion">Producción en serie</option>
+                  <option value="consultoria">Consultoría</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" [(ngModel)]="filtroUbicacion" (change)="buscar()">
+                  <option value="">Ubicación</option>
+                  <option value="Madrid">Madrid</option>
+                  <option value="Barcelona">Barcelona</option>
+                  <option value="Valencia">Valencia</option>
+                  <option value="Sevilla">Sevilla</option>
+                  <option value="Bilbao">Bilbao</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" [(ngModel)]="filtroValoracion" (change)="buscar()">
+                  <option value="">Valoración</option>
+                  <option value="5">5 estrellas</option>
+                  <option value="4+">4+ estrellas</option>
+                  <option value="3+">3+ estrellas</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-outline-light w-100" (click)="limpiarFiltros()">Limpiar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categorías de servicios -->
+<section class="categories-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Explora por categoría</h2>
+      <p class="section-subtitle">Encuentra el servicio que necesitas entre nuestras categorías especializadas</p>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path d="M12,2 L2,8 L12,14 L22,8 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M2,16 L12,22 L22,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M12,14 L12,22" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Impresión FDM</h3>
+          <p>12 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path d="M6,3 L18,3 L22,9 L12,21 L2,9 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M12,21 L12,9 L22,9" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M2,9 L12,9" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Impresión SLA/Resina</h3>
+          <p>8 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M7,12 L17,12 M7,8 L13,8 M7,16 L15,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Modelado 3D</h3>
+          <p>15 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path d="M7,8 C7,5.24 9.24,3 12,3 C14.76,3 17,5.24 17,8 C17,10.76 14.76,13 12,13" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M12,13 L12,21" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M9,16 L15,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Consultoría</h3>
+          <p>6 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <circle cx="12" cy="12" r="10" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M12,2 L12,4 M12,20 L12,22 M2,12 L4,12 M20,12 L22,12" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M4.93,4.93 L6.34,6.34 M17.66,17.66 L19.07,19.07 M4.93,19.07 L6.34,17.66 M17.66,6.34 L19.07,4.93" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Producción en serie</h3>
+          <p>9 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path d="M3,22 V8 L12,2 L21,8 V22 H15 V16 H9 V22 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M9,10 H15" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M9,14 H15" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Maquetas arquitectónicas</h3>
+          <p>7 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M12,8 L12,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M8,12 L16,12" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Prototipos médicos</h3>
+          <p>5 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path d="M20,12 L4,12" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M20,6 L4,6" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <path d="M20,18 L4,18" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <circle cx="8" cy="6" r="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <circle cx="16" cy="12" r="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              <circle cx="8" cy="18" r="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3>Personalización</h3>
+          <p>11 proveedores</p>
+          <div class="category-overlay">
+            <button class="btn btn-sm btn-light">Explorar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Servicios destacados -->
+<section class="featured-services-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Servicios destacados</h2>
+      <p class="section-subtitle">Los servicios mejor valorados por nuestra comunidad</p>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="service-card">
+          <div class="service-badge">Popular</div>
+          <div class="service-image">
+            <svg viewBox="0 0 100 100" width="100" height="100">
+              <rect x="20" y="20" width="60" height="60" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+              <path d="M30,50 L70,50 M50,30 L50,70" stroke="#FFFFFF" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Impresión PLA de alta resolución</h3>
+          <div class="service-provider">
+            <span class="provider-name">TechPrint Madrid</span>
+            <div class="rating">
+              <span>★★★★★</span>
+              <span class="rating-count">(128)</span>
+            </div>
+          </div>
+          <p class="service-description">Impresión de prototipos con alta precisión. Material PLA ecológico disponible en diferentes colores.</p>
+          <div class="service-price">
+            <span>Desde 15€</span>
+          </div>
+          <button class="btn btn-cta w-100">Solicitar presupuesto</button>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="service-card">
+          <div class="service-badge">Mejor valor</div>
+          <div class="service-image">
+            <svg viewBox="0 0 100 100" width="100" height="100">
+              <path d="M30,70 L50,30 L70,70 Z" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Modelado 3D profesional</h3>
+          <div class="service-provider">
+            <span class="provider-name">3DDesign Barcelona</span>
+            <div class="rating">
+              <span>★★★★☆</span>
+              <span class="rating-count">(96)</span>
+            </div>
+          </div>
+          <p class="service-description">Diseño y modelado 3D para todo tipo de proyectos. Incluye 3 iteraciones de revisión.</p>
+          <div class="service-price">
+            <span>Desde 45€</span>
+          </div>
+          <button class="btn btn-cta w-100">Solicitar presupuesto</button>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="service-card">
+          <div class="service-badge">Rápido</div>
+          <div class="service-image">
+            <svg viewBox="0 0 100 100" width="100" height="100">
+              <circle cx="50" cy="50" r="30" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+              <path d="M50,30 L50,50 L65,65" stroke="#FFFFFF" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Impresión SLA ultra detallada</h3>
+          <div class="service-provider">
+            <span class="provider-name">ResinMasters Valencia</span>
+            <div class="rating">
+              <span>★★★★★</span>
+              <span class="rating-count">(84)</span>
+            </div>
+          </div>
+          <p class="service-description">Impresión de alta resolución con resina. Ideal para modelos que requieren alta precisión.</p>
+          <div class="service-price">
+            <span>Desde 30€</span>
+          </div>
+          <button class="btn btn-cta w-100">Solicitar presupuesto</button>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="service-card">
+          <div class="service-badge">Eco</div>
+          <div class="service-image">
+            <svg viewBox="0 0 100 100" width="100" height="100">
+              <path d="M30,50 C30,30 70,30 70,50 C70,70 30,70 30,50 Z" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+              <circle cx="50" cy="50" r="10" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Producción en serie sostenible</h3>
+          <div class="service-provider">
+            <span class="provider-name">EcoPrint Sevilla</span>
+            <div class="rating">
+              <span>★★★★☆</span>
+              <span class="rating-count">(62)</span>
+            </div>
+          </div>
+          <p class="service-description">Producción de múltiples piezas con materiales biodegradables. Descuentos por volumen.</p>
+          <div class="service-price">
+            <span>Desde 12€/unidad</span>
+          </div>
+          <button class="btn btn-cta w-100">Solicitar presupuesto</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-light btn-lg">Ver más servicios</button>
+    </div>
+  </div>
+</section>
+
+<!-- Fabricantes destacados -->
+<section class="featured-providers-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Fabricantes destacados</h2>
+      <p class="section-subtitle">Profesionales con las mejores valoraciones y experiencia</p>
+    </div>
+    
+    <div class="providers-grid">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="provider-card">
+            <div class="provider-header">
+              <div class="provider-avatar">
+                <svg viewBox="0 0 100 100" width="60" height="60">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                  <path d="M30,50 L45,65 L70,40" stroke="#FFFFFF" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="provider-info">
+                <h3>TechPrint Madrid</h3>
+                <div class="rating">
+                  <span>★★★★★</span>
+                  <span class="rating-count">(128 reseñas)</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-body">
+              <p>Especialistas en impresión FDM y SLA con más de 5 años de experiencia en el sector.</p>
+              <div class="provider-stats">
+                <div class="stat">
+                  <i class="bi bi-clock"></i>
+                  <span>Tiempo medio: 2-3 días</span>
+                </div>
+                <div class="stat">
+                  <i class="bi bi-check-circle"></i>
+                  <span>98% satisfacción</span>
+                </div>
+                <div class="stat">
+                  <i class="bi bi-geo-alt"></i>
+                  <span>Madrid, España</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-footer">
+              <button class="btn btn-cta w-100">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="provider-card">
+            <div class="provider-header">
+              <div class="provider-avatar">
+                <svg viewBox="0 0 100 100" width="60" height="60">
+                  <rect x="20" y="20" width="60" height="60" rx="10" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                  <path d="M35,50 L65,50 M50,35 L50,65" stroke="#FFFFFF" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="provider-info">
+                <h3>3DDesign Barcelona</h3>
+                <div class="rating">
+                  <span>★★★★☆</span>
+                  <span class="rating-count">(96 reseñas)</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-body">
+              <p>Expertos en modelado y diseño 3D para aplicaciones industriales y creativas.</p>
+              <div class="provider-stats">
+                <div class="stat">
+                  <i class="bi bi-clock"></i>
+                  <span>Tiempo medio: 4-5 días</span>
+                </div>
+                <div class="stat">
+                  <i class="bi bi-check-circle"></i>
+                  <span>96% satisfacción</span>
+                </div>
+                <div class="stat">
+                  <i class="bi bi-geo-alt"></i>
+                  <span>Barcelona, España</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-footer">
+              <button class="btn btn-cta w-100">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="provider-card">
+            <div class="provider-header">
+              <div class="provider-avatar">
+                <svg viewBox="0 0 100 100" width="60" height="60">
+                  <circle cx="50" cy="30" r="20" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                  <path d="M20,90 C20,60 80,60 80,90" stroke="#FFFFFF" stroke-width="2"/>
+                  <path d="M30,50 L50,70 L70,50" stroke="#FFFFFF" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="provider-info">
+                <h3>ResinMasters Valencia</h3>
+                <div class="rating">
+                  <span>★★★★★</span>
+                  <span class="rating-count">(84 reseñas)</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-body">
+              <p>Especialistas en impresión SLA de alta precisión para modelos detallados y maquetas.</p>
+              <div class="provider-stats">
+                <div class="stat">
+                  <i class="bi bi-clock"></i>
+                  <span>Tiempo medio: 1-2 días</span>
+                </div>
+                <div class="stat">
+                  <i class="bi bi-check-circle"></i>
+                  <span>99% satisfacción</span>
+                </div>
+                <div class="stat">
+                  <i class="bi bi-geo-alt"></i>
+                  <span>Valencia, España</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-footer">
+              <button class="btn btn-cta w-100">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-light btn-lg">Ver todos los fabricantes</button>
+    </div>
+  </div>
+</section>
+
+<!-- Proyectos recientes -->
+<section class="recent-projects-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Proyectos recientes</h2>
+      <p class="section-subtitle">Descubre los últimos trabajos realizados por nuestros fabricantes</p>
+    </div>
+    
+    <div class="projects-grid">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="project-card">
+            <div class="project-image">
+              <svg viewBox="0 0 200 150" width="100%" height="150">
+                <rect x="40" y="30" width="120" height="90" rx="5" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                <path d="M70,75 L100,45 L130,75 L150,55" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <circle cx="160" cy="40" r="10" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="project-content">
+              <h3>Prototipo de carcasa para dispositivo médico</h3>
+              <div class="project-meta">
+                <span class="provider">Por TechPrint Madrid</span>
+                <span class="date">Hace 3 días</span>
+              </div>
+              <p class="project-description">Diseño e impresión de un prototipo funcional para un dispositivo médico portátil con acabado de alta precisión.</p>
+              <div class="project-tags">
+                <span class="tag">Médico</span>
+                <span class="tag">Prototipo</span>
+                <span class="tag">PLA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="project-card">
+            <div class="project-image">
+              <svg viewBox="0 0 200 150" width="100%" height="150">
+                <path d="M50,120 L100,40 L150,120 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <path d="M70,120 L100,60 L130,120 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <path d="M85,120 L100,80 L115,120 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="project-content">
+              <h3>Maqueta arquitectónica para concurso</h3>
+              <div class="project-meta">
+                <span class="provider">Por 3DDesign Barcelona</span>
+                <span class="date">Hace 5 días</span>
+              </div>
+              <p class="project-description">Creación de una maqueta arquitectónica a escala para presentación en un concurso internacional de diseño urbano.</p>
+              <div class="project-tags">
+                <span class="tag">Arquitectura</span>
+                <span class="tag">Maqueta</span>
+                <span class="tag">Resina</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="project-card">
+            <div class="project-image">
+              <svg viewBox="0 0 200 150" width="100%" height="150">
+                <circle cx="100" cy="75" r="50" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <path d="M70,75 C70,55 130,55 130,75 C130,95 70,95 70,75 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <circle cx="85" cy="65" r="5" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+                <circle cx="115" cy="65" r="5" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="project-content">
+              <h3>Serie de figuras coleccionables</h3>
+              <div class="project-meta">
+                <span class="provider">Por ResinMasters Valencia</span>
+                <span class="date">Hace 1 semana</span>
+              </div>
+              <p class="project-description">Producción en serie de figuras coleccionables para una tienda especializada en juegos de mesa y rol.</p>
+              <div class="project-tags">
+                <span class="tag">Figuras</span>
+                <span class="tag">Serie</span>
+                <span class="tag">SLA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-light btn-lg">Ver más proyectos</button>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonios -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Lo que dicen nuestros usuarios</h2>
+      <p class="section-subtitle">Experiencias reales de clientes y proveedores</p>
+    </div>
+    
+    <div class="testimonials-carousel">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <div class="quote-icon">
+                <i class="bi bi-quote"></i>
+              </div>
+              <p>"Encontré al proveedor perfecto para mi proyecto de prototipado. La calidad del trabajo superó mis expectativas y el proceso fue muy profesional."</p>
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <svg viewBox="0 0 50 50" width="50" height="50">
+                  <circle cx="25" cy="20" r="10" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                  <path d="M10,45 C10,35 40,35 40,45" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div class="author-info">
+                <h4>Carlos Martínez</h4>
+                <p>Ingeniero de Producto</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <div class="quote-icon">
+                <i class="bi bi-quote"></i>
+              </div>
+              <p>"Como proveedor, PrintLab3D me ha permitido expandir mi negocio y conectar con clientes que realmente valoran la calidad y el servicio personalizado."</p>
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <svg viewBox="0 0 50 50" width="50" height="50">
+                  <circle cx="25" cy="20" r="10" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                  <path d="M10,45 C10,35 40,35 40,45" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div class="author-info">
+                <h4>Laura Torres</h4>
+                <p>Propietaria de 3DDesign</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <div class="quote-icon">
+                <i class="bi bi-quote"></i>
+              </div>
+              <p>"La plataforma facilita todo el proceso, desde la búsqueda del proveedor adecuado hasta el pago y la entrega. Definitivamente volveré a usar PrintLab3D."</p>
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">
+                <svg viewBox="0 0 50 50" width="50" height="50">
+                  <circle cx="25" cy="20" r="10" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                  <path d="M10,45 C10,35 40,35 40,45" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div class="author-info">
+                <h4>Miguel Sánchez</h4>
+                <p>Diseñador Industrial</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA final -->
+<section class="cta-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 text-center">
+        <h2>¿Listo para materializar tu proyecto?</h2>
+        <p class="lead">Conectamos tus ideas con los mejores profesionales de la impresión 3D. Crea tu cuenta ahora y comienza.</p>
+        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+          <button class="btn btn-cta-lg">Buscar servicios</button>
+          <button class="btn btn-outline-light btn-lg">Registrarme como proveedor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="footer-brand">
+          <svg class="navbar-logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            <path d="M5 27.5L20 35L35 27.5" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            <path d="M20 20V35" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            <path d="M12.5 16.25L12.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+            <path d="M27.5 16.25L27.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+          </svg>
+          <span class="ms-2">PrintLab3D</span>
+        </div>
+        <p class="mt-3">La plataforma que conecta talento 3D con clientes de toda España. Materializa tus ideas con los mejores profesionales.</p>
+      </div>
+      <div class="col-md-2">
+        <h5>Plataforma</h5>
+        <ul class="footer-links">
+          <li><a href="#">Cómo funciona</a></li>
+          <li><a href="#">Servicios</a></li>
+          <li><a href="#">Proveedores</a></li>
+          <li><a href="#">Clientes</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2">
+        <h5>Recursos</h5>
+        <ul class="footer-links">
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Tutoriales</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Soporte</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h5>Contacto</h5>
+        <ul class="footer-contact">
+          <li>info&#64;printlab3d.es</li>
+          <li>+34 638 260 817</li>
+          <li>Calle Innovación, 123</li>
+          <li>28001 Madrid, España</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright text-center mt-4">
+      <p>&copy; 2025 PrintLab3D. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
