@@ -6,19 +6,24 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './landing/landing.component';
 import { PrincipalComponent } from './principal/principal.component';
+import { ResultadoBusquedaComponent } from './resultado-busqueda/resultado-busqueda.component';
+import { RouterModule, Routes } from '@angular/router';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingComponent,
-    PrincipalComponent
+    PrincipalComponent,
+    ResultadoBusquedaComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+

@@ -331,6 +331,10 @@ section:nth-child(even) {
   margin-top: 1rem;
 }
 
+.limpiar {
+  margin-top: 13px;
+}
+
 .form-control,
 .form-select {
   background-color: rgba(20, 20, 20, 0.8);
@@ -990,4 +994,58 @@ html section:nth-child(odd) {
 body section:nth-child(even),
 html section:nth-child(even) {
   background-color: #1e1e1e !important;
+}
+
+body, html {
+  background-color: #121212 !important;
+  color: #E0E0E0 !important;
+}
+
+section:nth-child(odd) {
+  background-color: #121212 !important;
+}
+
+section:nth-child(even) {
+  background-color: #1E1E1E !important;
+}
+
+.service-card, .provider-card, .project-card, .testimonial-card, .category-card {
+  background-color: #2A2A2A !important;
+}
+
+p, span, div, label, li, a {
+  color: #E0E0E0 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #FFFFFF !important;
+}
+
+/* Asegurar que las estrellas sean amarillas */
+.rating span:first-child {
+  color: #FFD700 !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Forzar el fondo oscuro en el footer */
+.footer-section {
+  background-color: #121212 !important;
+  color: #E0E0E0 !important;
+}
+
+.footer-section * {
+  background-color: transparent !important;
+}
+
+/* Asegurar que todos los elementos del footer tengan el color correcto */
+.footer-section h5,
+.footer-section p,
+.footer-section li,
+.footer-section a,
+.footer-section span {
+  color: #E0E0E0 !important;
+}
+
+.footer-section h5 {
+  color: #FFFFFF !important;
 }
