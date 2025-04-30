@@ -15,16 +15,17 @@ INSERT INTO usuarios (id, nombre, apellido, direccion, email, password, rol, fot
 
 -- Ejemplo de datos para la tabla categorias
 INSERT INTO categorias (id, nombre, descripcion) VALUES
-(1, 'Juguetes', 'Impresiones 3D para niños'),
-(2, 'Decoración', 'Artículos decorativos'),
-(3, 'Herramientas', 'Herramientas impresas'),
-(4, 'Electrónica', 'Soportes y carcasas'),
-(5, 'Educativo', 'Material educativo'),
-(6, 'Moda', 'Accesorios de moda'),
-(7, 'Hogar', 'Utensilios para el hogar'),
-(8, 'Arte', 'Esculturas y arte'),
-(9, 'Deporte', 'Accesorios deportivos'),
-(10, 'Oficina', 'Artículos de oficina');
+(1, 'Impresión FDM', 'Impresión 3D por extrusión de filamento termoplástico capa por capa'),
+(2, 'Modelado 3D', 'Creación digital de modelos tridimensionales mediante software CAD'),
+(3, 'Escaneado 3D', 'Captura tridimensional de objetos físicos para su reproducción o análisis'),
+(4, 'Consultoría', 'Asesoría técnica y estratégica en proyectos de impresión 3D'),
+(5, 'Producción en serie', 'Fabricación de múltiples copias de una pieza o producto en 3D'),
+(6, 'Impresión FDM/Resina', 'Servicio combinado de impresión FDM y resina según requerimientos'),
+(7, 'Prototipos médicos', 'Desarrollo de modelos médicos personalizados o funcionales'),
+(8, 'Maquetas arquitectónicas', 'Construcción de modelos arquitectónicos detallados en 3D'),
+(9, 'Personalización', 'Modificación o adaptación de objetos a medida del cliente'),
+(10, 'Educación y talleres', 'Capacitación y formación práctica en tecnologías 3D');
+
 
 -- Ejemplo de datos para la tabla materiales
 INSERT INTO materiales (id, nombre, fabricante, color, tipo, precio_kg, stock) VALUES

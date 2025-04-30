@@ -1,87 +1,99 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import swal from 'sweetalert2';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
+export class LoginComponent {
+  
+  loginForm: FormGroup;
+  email: string = '';
+  password: string = '';
   errorMessage: string = '';
-  isLoading: boolean = false;
   showPassword: boolean = false;
+  isLoading: boolean = false;
   
   constructor(
-    private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
-  ) { }
-  
-  ngOnInit(): void {
-    // Redirigir si ya está autenticado
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/servicios']);
-      return;
-    }
-    
-    // Inicializar formulario
+    private router: Router,
+    private fb: FormBuilder
+  ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     });
   }
   
-  /**
-   * Maneja el envío del formulario de login
-   */
-  onSubmit(): void {
+  // Getter para fácil acceso a los campos del formulario
+  get f() { return this.loginForm.controls; }
+  
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+  
+  onSubmit() {
+    // Si el formulario no es válido, marcar todos los campos como tocados para mostrar errores
     if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
+      Object.keys(this.loginForm.controls).forEach(key => {
+        const control = this.loginForm.get(key);
+        control?.markAsTouched();
+      });
       return;
     }
     
     this.isLoading = true;
     this.errorMessage = '';
     
-    const credentials = {
-      username: this.loginForm.value.username,
+    this.authService.login({
+      email: this.loginForm.value.email,
       password: this.loginForm.value.password
-    };
-    
-    this.authService.login(credentials).subscribe({
-      next: (response) => {
+    }).subscribe({
+      next: (usuario) => {
         this.isLoading = false;
-        // Recordar credenciales si está marcada la opción
-        if (this.loginForm.value.rememberMe) {
-          localStorage.setItem('rememberedUser', this.loginForm.value.username);
-        } else {
-          localStorage.removeItem('rememberedUser');
-        }
+        
+        swal(
+          `¡Bienvenido ${usuario.username}!`,
+          '',
+          'success'
+        );
         
         // Redirigir según el rol
-        if (response.rol === 'ROLE_ADMIN') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/servicios']);
+        switch(usuario.rol) {
+          case 'ADMIN':
+            this.router.navigate(['/admin']);
+            break;
+          case 'USER':
+            this.router.navigate(['/principal']);
+            break;
+          default:
+            console.error('Rol no reconocido');
+            this.router.navigate(['/principal']);
         }
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = 'Usuario o contraseña incorrectos';
-        console.error('Error de login:', error);
+        console.error('Error de inicio de sesión:', error);
+        
+        // Almacenar el mensaje de error
+        this.errorMessage = error.error?.mensaje || 'Credenciales inválidas';
+        
+        swal(
+          'Error de inicio de sesión :(',
+          this.errorMessage,
+          'error'
+        );
       }
     });
   }
   
-  /**
-   * Alterna la visibilidad de la contraseña
-   */
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
+  // Método para resetear errores cuando el usuario empieza a escribir
+  onInputFocus() {
+    this.errorMessage = '';
   }
 }

@@ -35,7 +35,6 @@
 
 /* Contenedor principal con padding superior para compensar la navbar */
 .main-container {
-  padding-top: 2.7rem;
   min-height: calc(100vh - 350px);
 }
 

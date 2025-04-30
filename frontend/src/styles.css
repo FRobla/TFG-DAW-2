@@ -93,3 +93,33 @@ input::placeholder, textarea::placeholder {
   --bs-secondary-color-rgb: 224, 224, 224;
   --bs-heading-color: #FFFFFF;
 }
+
+/* Sweetalert */
+/* Puedes poner esto en styles.css o styles.scss */
+.swal2-dark {
+  color: #f8f9fa !important;
+}
+.swal2-popup {
+  background: #23272b !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37) !important;
+}
+.swal2-title {
+  color: #f8f9fa !important;
+  font-weight: 600;
+}
+.swal2-content {
+  color: #b0b3b8 !important;
+}
+.swal2-confirm {
+  background-color: #4ecca3 !important;
+  color: #23272b !important;
+  border: none !important;
+  border-radius: 6px !important;
+}
+.swal2-cancel {
+  background-color: #393e46 !important;
+  color: #f8f9fa !important;
+  border: none !important;
+  border-radius: 6px !important;
+}

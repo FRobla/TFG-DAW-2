@@ -11,6 +11,7 @@ import { ResultadoBusquedaComponent } from './resultado-busqueda/resultado-busqu
 import { RouterModule, Routes } from '@angular/router';
 import { DetallesAnuncioComponent } from './detalles-anuncio/detalles-anuncio.component';
 import { LoginComponent } from './login/login.component';
+import { CategoriasComponent } from './categoria/categoria.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { LoginComponent } from './login/login.component';
     PrincipalComponent,
     ResultadoBusquedaComponent,
     DetallesAnuncioComponent,
-    LoginComponent
+    LoginComponent,
+    CategoriasComponent
   ],
   imports: [
     BrowserModule,
