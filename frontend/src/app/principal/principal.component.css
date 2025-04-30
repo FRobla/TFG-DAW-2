@@ -102,7 +102,65 @@ h6 {
   width: 100%;
   z-index: 1000;
   transition: all var(--transition-speed) ease;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);  
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 6rem;
+  padding-right: 6rem;
+}
+
+@media (max-width: 991px) {
+  .navbar-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .navbar-wrapper {
+    justify-content: center;
+    position: relative;
+  }
+  
+  .navbar-left {
+    width: auto;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  
+  .navbar-toggler {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.navbar-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-column {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left {
+  width: 20%;
+  justify-content: flex-start;
+}
+
+.navbar-center {
+  width: 60%;
+  justify-content: center;
+}
+
+.navbar-right {
+  width: 20%;
+  justify-content: flex-end;
 }
 
 .navbar-brand {
@@ -124,7 +182,8 @@ h6 {
 
 /* Estilos para la barra de búsqueda en el navbar */
 .search-nav-container {
-  max-width: 600px;
+  max-width: 800px;
+  width: 100%;
 }
 
 .search-nav-container .input-group {

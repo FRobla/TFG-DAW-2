@@ -506,7 +506,7 @@ section::before {
   background: linear-gradient(145deg, #2D2D2D, #262626);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 2rem;
+  padding: 1.5rem;
   height: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -569,6 +569,16 @@ section::before {
   height: 100%;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.caso-card h3, 
+.caso-card p, 
+.caso-card .rating {
+  padding-left: 1.5rem;
+}
+
+.caso-card .rating {
+  padding-bottom: 1.5rem;
 }
 
 .caso-card:hover {
