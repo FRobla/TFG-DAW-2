@@ -76,7 +76,7 @@
 .service-badge {
   display: inline-block;
   background-color: #0dcaf0;
-  color: #121212;
+  color: #232323 !important;
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.3rem 0.8rem;
@@ -200,7 +200,7 @@
 
 .option-chip.active {
   background-color: #0dcaf0;
-  color: #121212;
+  color: #121212 !important;
   border-color: #0dcaf0;
 }
 

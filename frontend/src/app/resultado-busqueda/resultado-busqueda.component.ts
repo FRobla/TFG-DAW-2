@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
+import { ResultadoBusquedaService } from "./resultado-busqueda.service"
+import { Categoria } from "../categoria/categoria"
 
 @Component({
   selector: "app-resultado-busqueda",
@@ -17,6 +19,9 @@ export class ResultadoBusquedaComponent implements OnInit {
   filtroPrecioMax = 500
   filtroMaterial: string[] = []
   filtroTiempoEntrega: string[] = []
+  categorias: Categoria[] = []
+  categoriaSeleccionadas: number[] = [] // Array para almacenar IDs de categorías seleccionadas
+  mostrarTodasCategorias = false // Flag para controlar si se muestran todas las categorías
 
   // Variables para los resultados
   resultados: any[] = []
@@ -34,17 +39,35 @@ export class ResultadoBusquedaComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private resultadoBusquedaService: ResultadoBusquedaService
   ) {}
 
   ngOnInit(): void {
+    // Cargar categorías
+    this.resultadoBusquedaService.cargarCategorias().subscribe(
+      categorias => {
+        this.categorias = categorias;
+        console.log('Categorías cargadas:', this.categorias);
+      },
+      error => {
+        console.error('Error al cargar categorías:', error);
+      }
+    );
+    
     // Obtener parámetros de la URL
     this.route.queryParams.subscribe((params) => {
       // Valores por defecto si no se especifican en la URL
       this.busquedaTexto = params["q"] || ""
       this.terminoBusqueda = this.busquedaTexto // Para mostrar en la UI
-      this.filtroCategoria = params["categoria"] || ""
       this.filtroUbicacion = params["ubicacion"] || ""
       this.filtroValoracion = params["valoracion"] || ""
+
+      // Si hay categorías en los parámetros, convertirlas a array de IDs
+      if (params["categoria"] && params["categoria"].trim() !== '') {
+        this.categoriaSeleccionadas = params["categoria"].split(',').map((id: string) => Number(id));
+      } else {
+        this.categoriaSeleccionadas = [];
+      }
 
       // Obtener filtros de precio con valores por defecto
       this.filtroPrecioMin = params["precioMin"] ? Number.parseInt(params["precioMin"]) : 10
@@ -90,7 +113,12 @@ export class ResultadoBusquedaComponent implements OnInit {
 
     // Añadir filtros solo si tienen valor
     if (this.busquedaTexto && this.busquedaTexto.trim() !== '') queryParams.q = this.busquedaTexto.trim()
-    if (this.filtroCategoria) queryParams.categoria = this.filtroCategoria
+    
+    // Añadir categorías seleccionadas como string separado por comas
+    if (this.categoriaSeleccionadas.length > 0) {
+      queryParams.categoria = this.categoriaSeleccionadas.join(',');
+    }
+    
     if (this.filtroUbicacion) queryParams.ubicacion = this.filtroUbicacion
     if (this.filtroValoracion) queryParams.valoracion = this.filtroValoracion
 
@@ -114,7 +142,7 @@ export class ResultadoBusquedaComponent implements OnInit {
   limpiarFiltros(): void {
     this.busquedaTexto = ""
     this.terminoBusqueda = ""
-    this.filtroCategoria = ""
+    this.categoriaSeleccionadas = []
     this.filtroUbicacion = ""
     this.filtroValoracion = ""
     this.filtroPrecioMin = 10
@@ -171,11 +199,61 @@ export class ResultadoBusquedaComponent implements OnInit {
     }
   }
 
-  eliminarFiltro(tipo: string, valor?: string): void {
+  // Método para manejar la selección/deselección de categorías
+  toggleCategoria(categoriaId: number): void {
+    const index = this.categoriaSeleccionadas.indexOf(categoriaId);
+    if (index === -1) {
+      // Si no está seleccionada, añadirla
+      this.categoriaSeleccionadas.push(categoriaId);
+    } else {
+      // Si ya está seleccionada, quitarla
+      this.categoriaSeleccionadas.splice(index, 1);
+    }
+    // Actualizar el filtro de categoría para la URL
+    this.filtroCategoria = this.categoriaSeleccionadas.join(',');
+  }
+
+  // Método para obtener el nombre de una categoría por su ID
+  getNombreCategoria(categoriaId: number): string {
+    const categoria = this.categorias.find(cat => cat.id === categoriaId);
+    return categoria ? categoria.nombre : '';
+  }
+
+  // Método para verificar si una categoría está seleccionada
+  isCategoriaSeleccionada(categoriaId: number): boolean {
+    return this.categoriaSeleccionadas.includes(categoriaId);
+  }
+
+  // Método para eliminar una categoría de los filtros seleccionados
+  eliminarFiltroCategoria(categoriaId: number): void {
+    const index = this.categoriaSeleccionadas.indexOf(categoriaId);
+    if (index !== -1) {
+      this.categoriaSeleccionadas.splice(index, 1);
+      this.filtroCategoria = this.categoriaSeleccionadas.join(',');
+      this.buscar(); // Actualizar la búsqueda con el filtro eliminado
+    }
+  }
+
+  eliminarFiltro(tipo: string, valor?: string | number): void {
     switch (tipo) {
       case "categoria":
-        this.filtroCategoria = ""
-        break
+        if (typeof valor === 'number') {
+          this.eliminarFiltroCategoria(valor);
+        } else if (typeof valor === 'string') {
+          const categoriaId = Number(valor);
+          if (!isNaN(categoriaId)) {
+            this.eliminarFiltroCategoria(categoriaId);
+          } else {
+            this.categoriaSeleccionadas = [];
+            this.filtroCategoria = "";
+            this.buscar();
+          }
+        } else {
+          this.categoriaSeleccionadas = [];
+          this.filtroCategoria = "";
+          this.buscar();
+        }
+        break;
       case "ubicacion":
         this.filtroUbicacion = ""
         break
@@ -183,14 +261,10 @@ export class ResultadoBusquedaComponent implements OnInit {
         this.filtroValoracion = ""
         break
       case "material":
-        if (valor && this.filtroMaterial.includes(valor)) {
-          this.filtroMaterial = this.filtroMaterial.filter((m) => m !== valor)
-        }
+        this.filtroMaterial = []
         break
       case "tiempoEntrega":
-        if (valor && this.filtroTiempoEntrega.includes(valor)) {
-          this.filtroTiempoEntrega = this.filtroTiempoEntrega.filter((t) => t !== valor)
-        }
+        this.filtroTiempoEntrega = []
         break
     }
   }
@@ -207,5 +281,15 @@ export class ResultadoBusquedaComponent implements OnInit {
   verDetalles(id: number): void {
     // Redirigir a la página de detalles del anuncio
     this.router.navigate(["/detalles-anuncio", id])
+  }
+
+  // Método para mostrar todas las categorías
+  verMasCategorias(): void {
+    this.mostrarTodasCategorias = true;
+  }
+
+  // Método para ocultar categorías adicionales
+  verMenosCategorias(): void {
+    this.mostrarTodasCategorias = false;
   }
 }

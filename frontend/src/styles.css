@@ -95,7 +95,6 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Sweetalert */
-/* Puedes poner esto en styles.css o styles.scss */
 .swal2-dark {
   color: #f8f9fa !important;
 }

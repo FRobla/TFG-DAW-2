@@ -132,7 +132,7 @@ export class DetallesAnuncioComponent implements OnInit {
       serviciosAdicionales: [
         { id: 'acabadoPremium', nombre: 'Acabado Premium', descripcion: 'Tratamiento de superficie para un acabado profesional', precio: 10 },
         { id: 'urgente', nombre: 'Entrega Urgente (24h)', descripcion: 'Impresión y entrega en 24 horas', precio: 15 },
-        { id: 'envioGratis', nombre: 'Envío Gratuito', descripcion: 'Envío gratuito a cualquier punto de España', precio: 5 }
+        { id: 'envioGratis', nombre: 'Entrega en casa', descripcion: 'Entrega en una dirección de su elección', precio: 5 }
       ],
       imagenes: [
         'https://ejemplo.com/imagen1.jpg',

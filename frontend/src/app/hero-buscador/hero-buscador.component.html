@@ -1,0 +1,48 @@
+<!-- Hero Section con Búsqueda -->
+<section class="hero-section">
+  <div class="hero-background-effects"></div>
+  <div class="container position-relative z-index-1">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 text-center">
+        <h1 class="display-4 fw-bold mb-4">Encuentra el servicio perfecto para tu proyecto</h1>
+        <div class="search-container">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios de impresión 3D, modelado, etc." aria-label="Buscar servicios">
+            <button class="btn btn-cta text-white" type="button" (click)="buscar()">Buscar</button>
+          </div>
+          <div class="search-filters">
+            <div class="row g-2">
+              <div class="col-md-4">
+                <select class="form-select" [(ngModel)]="filtroCategoria">
+                  <option value="">Categoría</option>
+                  <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" [(ngModel)]="filtroUbicacion">
+                  <option value="">Ubicación</option>
+                  <option value="Madrid">Madrid</option>
+                  <option value="Barcelona">Barcelona</option>
+                  <option value="Valencia">Valencia</option>
+                  <option value="Sevilla">Sevilla</option>
+                  <option value="Bilbao">Bilbao</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" [(ngModel)]="filtroValoracion">
+                  <option value="">Valoración</option>
+                  <option value="5">5 estrellas</option>
+                  <option value="4+">4+ estrellas</option>
+                  <option value="3+">3+ estrellas</option>
+                </select>
+              </div>
+              <div class="col-md-2 limpiar">
+                <button class="btn btn-outline-light w-100" (click)="limpiarFiltros()">Limpiar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

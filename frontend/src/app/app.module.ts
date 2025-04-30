@@ -12,6 +12,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DetallesAnuncioComponent } from './detalles-anuncio/detalles-anuncio.component';
 import { LoginComponent } from './login/login.component';
 import { CategoriasComponent } from './categoria/categoria.component';
+import { HeroBuscadorComponent } from './hero-buscador/hero-buscador.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { CategoriasComponent } from './categoria/categoria.component';
     ResultadoBusquedaComponent,
     DetallesAnuncioComponent,
     LoginComponent,
-    CategoriasComponent
+    CategoriasComponent,
+    HeroBuscadorComponent
   ],
   imports: [
     BrowserModule,
