@@ -33,10 +33,155 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Botones personalizados mejorados con diseño oscuro */
 .btn {
-  transition: all 0.3s ease;
-  border-radius: 4px;
-  font-weight: 500;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-left: 1.5rem;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: all 0.6s ease;
+}
+
+.btn:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-cta {
+  background: linear-gradient(145deg, #2b2b2b, #1a1a1a);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.85rem 1.7rem;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.btn-cta::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #424242, #303030);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.btn-cta:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4),
+              0 0 15px rgba(80, 80, 80, 0.3),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.btn-cta:hover::after {
+  opacity: 1;
+}
+
+.btn-cta:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-cta-lg {
+  background: linear-gradient(145deg, #2b2b2b, #1a1a1a);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 1.1rem 2.2rem;
+  font-size: 1.1rem;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.btn-cta-lg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #424242, #303030);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.btn-cta-lg:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4),
+              0 0 15px rgba(80, 80, 80, 0.3),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.btn-cta-lg:hover::after {
+  opacity: 1;
+}
+
+.btn-outline-light {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.85rem 1.7rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.btn-outline-light::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  transform: skewX(-15deg);
+  z-index: -1;
+}
+
+.btn-outline-light:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3),
+              0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.btn-outline-light:hover::after {
+  width: 120%;
+}
+
+.btn-outline-light:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Navbar personalizado mejorado */
@@ -116,36 +261,6 @@ a:hover {
 .nav-item.active .nav-link::after {
   width: 80%;
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-}
-
-/* Botones personalizados */
-.btn-cta {
-  background-color: #2D2D2D;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-text-primary);
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.btn-cta:hover {
-  background-color: var(--color-text-primary);
-  color: var(--color-bg-main);
-}
-
-.btn-cta-lg {
-  background-color: #2D2D2D;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-text-primary);
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.btn-cta-lg:hover {
-  background-color: var(--color-text-primary);
-  color: var(--color-bg-main);
 }
 
 /* Sección Hero mejorada */
@@ -251,6 +366,31 @@ a:hover {
   margin-bottom: 2rem;
   color: var(--color-text-secondary);
   font-weight: 400;
+}
+
+/* Hero section buttons - Updated to keep inline on all screen sizes */
+.hero-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  white-space: nowrap;
+}
+
+.hero-buttons .btn {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+/* Media query adjustments to ensure buttons stay inline */
+@media (max-width: 576px) {
+  .hero-buttons {
+    justify-content: center;
+  }
+  
+  .hero-buttons .btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
 }
 
 /* Secciones generales */
@@ -801,25 +941,6 @@ section::before {
   pointer-events: none;
 }
 
-/* Botón outline light personalizado */
-.btn-outline-light {
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-text-primary);
-  transition: all 0.3s ease;
-}
-
-.btn-outline-light:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-primary);
-}
-
-.btn-outline-light.btn-lg {
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
 /* Ajustes responsivos para nuevas secciones */
 @media (max-width: 992px) {
   .benefit-content {
@@ -893,4 +1014,3 @@ p {
 .footer-links a, .footer-contact li {
   color: var(--color-text-secondary);
 }
-
