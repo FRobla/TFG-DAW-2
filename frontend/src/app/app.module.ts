@@ -13,6 +13,7 @@ import { DetallesAnuncioComponent } from './detalles-anuncio/detalles-anuncio.co
 import { LoginComponent } from './login/login.component';
 import { CategoriasComponent } from './categoria/categoria.component';
 import { HeroBuscadorComponent } from './hero-buscador/hero-buscador.component';
+import { NavbarBusquedaComponent } from './navbar-busqueda/navbar-busqueda.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { HeroBuscadorComponent } from './hero-buscador/hero-buscador.component';
     DetallesAnuncioComponent,
     LoginComponent,
     CategoriasComponent,
-    HeroBuscadorComponent
+    HeroBuscadorComponent,
+    NavbarBusquedaComponent
   ],
   imports: [
     BrowserModule,

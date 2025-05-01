@@ -74,90 +74,6 @@ body, html {
     margin-bottom: 1.5rem;
   }
   
-  /* Navbar personalizado */
-  .navbar {
-    background-color: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(10px);
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(80, 80, 80, 0.1);
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-    transition: all var(--transition-speed) ease;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-  }
-  
-  .navbar-brand {
-    display: flex;
-    align-items: center;
-  }
-  
-  .navbar-logo {
-    height: 40px;
-    margin-right: 0.5rem;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-    transition: all var(--transition-speed) ease;
-  }
-  
-  .navbar-brand:hover .navbar-logo {
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
-    transform: scale(1.05);
-  }
-  
-  /* Estilos para la barra de búsqueda en el navbar */
-  .search-nav-container {
-    max-width: 600px;
-  }
-  
-  .search-nav-container .input-group {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  .search-nav-container .form-control {
-    border-right: none;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
-    padding-left: 15px;
-  }
-  
-  .search-nav-container .form-control:focus {
-    box-shadow: none;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-  
-  .search-nav-container .btn {
-    border-left: none;
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  /* Botón de login */
-  .btn-login {
-    background: linear-gradient(135deg, #836fff 0%, #5d4fff 100%);
-    color: white;
-    font-weight: 600;
-    padding: 0.5rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    box-shadow: 0 3px 10px rgba(93, 79, 255, 0.3);
-    transition: all var(--transition-speed) ease;
-  }
-  
-  .btn-login:hover {
-    background: linear-gradient(135deg, #9683ff 0%, #7a6dff 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(93, 79, 255, 0.5);
-    color: white;
-  }
-  
-  .btn-login:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(93, 79, 255, 0.4);
-  }
-  
   /* Botones */
   .btn {
     transition: all var(--transition-speed) ease;
@@ -581,4 +497,8 @@ body, html {
       margin-top: 0.25rem;
     }
   }
-  
+
+  /* Asegurar visibilidad en footer */
+  .footer-links a, .footer-contact li {
+    color: var(--color-text-secondary);
+  }

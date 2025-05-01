@@ -269,11 +269,6 @@ export class ResultadoBusquedaComponent implements OnInit {
     }
   }
 
-  iniciarSesion(): void {
-    // Redirigir a la página de inicio de sesión
-    this.router.navigate(["/login"])
-  }
-
   /**
    * Navega a la página de detalles del anuncio
    * @param id Identificador del anuncio

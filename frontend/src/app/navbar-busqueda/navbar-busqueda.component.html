@@ -1,0 +1,55 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container-fluid navbar-container">
+    <div class="navbar-wrapper">
+      <!-- Columna izquierda - Logo -->
+      <div class="navbar-column navbar-left">
+        <a class="navbar-brand" href="#">
+          <svg class="navbar-logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            <path d="M5 27.5L20 35L35 27.5" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            <path d="M20 20V35" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+            <path d="M12.5 16.25L12.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+            <path d="M27.5 16.25L27.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+          </svg>
+          <span class="ms-2">PrintLab3D</span>
+        </a>
+      </div>
+      
+      <!-- Columna central - Barra de búsqueda -->
+      <div class="navbar-column navbar-center d-none d-lg-flex">
+        <div class="search-nav-container">
+          <div class="input-group">
+            <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios de impresión 3D, modelado, etc." aria-label="Buscar servicios">
+            <button class="btn btn-outline-light" type="button" (click)="buscar()">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Columna derecha - Botón de inicio de sesión -->
+      <div class="navbar-column navbar-right d-none d-lg-flex">
+        <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
+      </div>
+      
+      <!-- Botón de hamburguesa para pantallas pequeñas -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    
+    <!-- Menú colapsado para pantallas pequeñas -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="d-lg-none mt-3">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios" aria-label="Buscar servicios">
+          <button class="btn btn-outline-light" type="button" (click)="buscar()">Buscar</button>
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

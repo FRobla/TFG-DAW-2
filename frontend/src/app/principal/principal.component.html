@@ -1,58 +1,5 @@
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-  <div class="container-fluid navbar-container">
-    <div class="navbar-wrapper d-flex justify-content-between align-items-center">
-      <!-- Columna izquierda - Logo -->
-      <div class="navbar-column navbar-left">
-        <a class="navbar-brand" href="#">
-          <svg class="navbar-logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-            <path d="M5 27.5L20 35L35 27.5" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-            <path d="M20 20V35" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-            <path d="M12.5 16.25L12.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
-            <path d="M27.5 16.25L27.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
-          </svg>
-          <span class="ms-2">PrintLab3D</span>
-        </a>
-      </div>
-      
-      <!-- Columna central - Barra de búsqueda -->
-      <div class="navbar-column navbar-center d-none d-lg-flex">
-        <div class="search-nav-container">
-          <div class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios de impresión 3D, modelado, etc." aria-label="Buscar servicios">
-            <button class="btn btn-outline-light" type="button" (click)="buscar()">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Columna derecha - Botón de inicio de sesión -->
-      <div class="navbar-column navbar-right d-none d-lg-flex">
-        <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
-      </div>
-      
-      <!-- Botón de hamburguesa para pantallas pequeñas -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-    
-    <!-- Menú colapsado para pantallas pequeñas -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <div class="d-lg-none mt-3">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios" aria-label="Buscar servicios">
-          <button class="btn btn-outline-light" type="button" (click)="buscar()">Buscar</button>
-        </div>
-        <div class="d-grid">
-          <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
+<!-- Usando el componente navbar-busqueda -->
+<app-navbar-busqueda></app-navbar-busqueda>
 
 <!-- Hero Section con Búsqueda -->
 <app-hero-buscador></app-hero-buscador>
@@ -190,8 +137,9 @@
             <div class="provider-header">
               <div class="provider-avatar">
                 <svg viewBox="0 0 100 100" width="60" height="60">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#FFFFFF" stroke-width="2"/>
-                  <path d="M30,50 L45,65 L70,40" stroke="#FFFFFF" stroke-width="2"/>
+                  <circle cx="50" cy="30" r="20" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                  <path d="M20,90 C20,60 80,60 80,90" stroke="#FFFFFF" stroke-width="2"/>
+                  <path d="M30,50 L50,70 L70,50" stroke="#FFFFFF" stroke-width="2"/>
                 </svg>
               </div>
               <div class="provider-info">
@@ -313,101 +261,6 @@
     </div>
   </div>
 </section>
-
-<!-- Proyectos recientes 
-<section class="recent-projects-section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Proyectos recientes</h2>
-      <p class="section-subtitle">Descubre los últimos trabajos realizados por nuestros fabricantes</p>
-    </div>
-    
-    <div class="projects-grid">
-      <div class="row">
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="project-card">
-            <div class="project-image">
-              <svg viewBox="0 0 200 150" width="100%" height="150">
-                <rect x="40" y="30" width="120" height="90" rx="5" fill="none" stroke="#FFFFFF" stroke-width="2"/>
-                <path d="M70,75 L100,45 L130,75 L150,55" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-                <circle cx="160" cy="40" r="10" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-              </svg>
-            </div>
-            <div class="project-content">
-              <h3>Prototipo de carcasa para dispositivo médico</h3>
-              <div class="project-meta">
-                <span class="provider">Por TechPrint Madrid</span>
-                <span class="date">Hace 3 días</span>
-              </div>
-              <p class="project-description">Diseño e impresión de un prototipo funcional para un dispositivo médico portátil con acabado de alta precisión.</p>
-              <div class="project-tags">
-                <span class="tag">Médico</span>
-                <span class="tag">Prototipo</span>
-                <span class="tag">PLA</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="project-card">
-            <div class="project-image">
-              <svg viewBox="0 0 200 150" width="100%" height="150">
-                <path d="M50,120 L100,40 L150,120 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-                <path d="M70,120 L100,60 L130,120 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-                <path d="M85,120 L100,80 L115,120 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-              </svg>
-            </div>
-            <div class="project-content">
-              <h3>Maqueta arquitectónica para concurso</h3>
-              <div class="project-meta">
-                <span class="provider">Por 3DDesign Barcelona</span>
-                <span class="date">Hace 5 días</span>
-              </div>
-              <p class="project-description">Creación de una maqueta arquitectónica a escala para presentación en un concurso internacional de diseño urbano.</p>
-              <div class="project-tags">
-                <span class="tag">Arquitectura</span>
-                <span class="tag">Maqueta</span>
-                <span class="tag">Resina</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="project-card">
-            <div class="project-image">
-              <svg viewBox="0 0 200 150" width="100%" height="150">
-                <circle cx="100" cy="75" r="50" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-                <path d="M70,75 C70,55 130,55 130,75 C130,95 70,95 70,75 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-                <circle cx="85" cy="65" r="5" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-                <circle cx="115" cy="65" r="5" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-              </svg>
-            </div>
-            <div class="project-content">
-              <h3>Serie de figuras coleccionables</h3>
-              <div class="project-meta">
-                <span class="provider">Por ResinMasters Valencia</span>
-                <span class="date">Hace 1 semana</span>
-              </div>
-              <p class="project-description">Producción en serie de figuras coleccionables para una tienda especializada en juegos de mesa y rol.</p>
-              <div class="project-tags">
-                <span class="tag">Figuras</span>
-                <span class="tag">Serie</span>
-                <span class="tag">SLA</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="text-center mt-4">
-      <button class="btn btn-outline-light btn-lg">Ver más proyectos</button>
-    </div>
-  </div>
-</section>
--->
 
 <!-- Testimonios -->
 <section class="testimonials-section">
