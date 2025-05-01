@@ -14,6 +14,7 @@ import { LoginComponent } from './login/login.component';
 import { CategoriasComponent } from './categoria/categoria.component';
 import { HeroBuscadorComponent } from './hero-buscador/hero-buscador.component';
 import { NavbarBusquedaComponent } from './navbar-busqueda/navbar-busqueda.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { NavbarBusquedaComponent } from './navbar-busqueda/navbar-busqueda.compo
     LoginComponent,
     CategoriasComponent,
     HeroBuscadorComponent,
-    NavbarBusquedaComponent
+    NavbarBusquedaComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

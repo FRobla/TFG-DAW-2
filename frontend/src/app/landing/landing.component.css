@@ -577,6 +577,14 @@ section::before {
   padding-left: 1.5rem;
 }
 
+.caso-card img {
+  max-width: 90%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
 .caso-card .rating {
   padding-bottom: 1.5rem;
 }
@@ -845,6 +853,8 @@ section::before {
     border: 1px solid rgba(60, 60, 60, 0.2);
     margin-top: 1rem;
   }
+
+  
 }
 
 @media (max-width: 768px) {

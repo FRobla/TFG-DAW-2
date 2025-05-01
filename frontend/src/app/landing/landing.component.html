@@ -244,7 +244,7 @@
     <div class="row">
       <div class="col-md-4 mb-4">
         <div class="caso-card">
-          <img src="https://placehold.co/400x300/cccccc/666666" alt="Historia de éxito 1" class="img-fluid rounded mb-3">
+          <img src="https://placehold.co/450x300/cccccc/666666" alt="Historia de éxito 1" class="img-fluid rounded mx-auto my-3 d-block">
           <h3>Prototipado rápido para startup</h3>
           <p class="cliente">Cliente: TechNova Innovations</p>
           <p>"Gracias a PrintLab3D pudimos iterar rápidamente en los prototipos de nuestro producto, reduciendo el tiempo de desarrollo en un 40% y ahorrando costes significativos."</p>
@@ -259,7 +259,7 @@
       </div>
       <div class="col-md-4 mb-4">
         <div class="caso-card">
-          <img src="https://placehold.co/400x300/cccccc/666666" alt="Historia de éxito 2" class="img-fluid rounded mb-3">
+          <img src="https://placehold.co/450x300/cccccc/666666" alt="Historia de éxito 2" class="img-fluid rounded mx-auto my-3 d-block">
           <h3>Producción a escala de componentes</h3>
           <p class="cliente">Cliente: MecaTech Industries</p>
           <p>"Logramos producir 500 componentes personalizados en tiempo récord gracias a la red de proveedores de PrintLab3D. La calidad y precisión superaron nuestras expectativas."</p>
@@ -274,7 +274,9 @@
       </div>
       <div class="col-md-4 mb-4">
         <div class="caso-card">
-          <img src="https://placehold.co/400x300/cccccc/666666" alt="Historia de éxito 3" class="img-fluid rounded mb-3">
+          <div class="d-flex justify-content-center mb-3">
+            <img src="https://placehold.co/450x300/cccccc/666666" alt="Historia de éxito 3" class="img-fluid rounded mx-auto my-3 d-block">
+          </div>
           <h3>Modelo arquitectónico detallado</h3>
           <p class="cliente">Cliente: ArquiVista Proyectos</p>
           <p>"El nivel de detalle y acabado del modelo arquitectónico que recibimos fue excepcional. PrintLab3D nos conectó con el proveedor perfecto para nuestras necesidades específicas."</p>
@@ -355,69 +357,15 @@
 
 <!-- CTA final -->
 <section class="cta-section">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-10 text-center">
-        <h2>¿Listo para materializar tu proyecto?</h2>
-        <p class="lead">Conectamos tus ideas con los mejores profesionales de la impresión 3D. Crea tu cuenta ahora y comienza.</p>
-        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
-          <button class="btn btn-cta-lg">Publicar mi proyecto</button>
-          <button class="btn btn-outline-light btn-lg">Registrarme como proveedor</button>
-        </div>
-      </div>
+  <div class="container text-center">
+    <h2>¿Listo para comenzar?</h2>
+    <p class="lead">Únete a la comunidad líder en servicios de impresión 3D y modelado</p>
+    <div class="cta-buttons">
+      <button class="btn btn-cta-lg">Buscar servicios</button>
+      <button class="btn btn-outline-light btn-lg">Ofrecer mis servicios</button>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
-<footer id="contacto" class="footer-section">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3 mb-4">
-        <div class="d-flex align-items-center mb-3">
-          <svg class="navbar-logo me-2" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-              <path d="M5 27.5L20 35L35 27.5" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-              <path d="M20 20V35" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-              <path d="M12.5 16.25L12.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
-              <path d="M27.5 16.25L27.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
-          </svg>
-          <h4 class="mb-0">PrintLab3D</h4>
-        </div>
-        <p>La plataforma que conecta talento 3D con proyectos innovadores.</p>
-      </div>
-      <div class="col-md-3 mb-4">
-        <h5>Para usuarios</h5>
-        <ul class="footer-links">
-          <li><a href="#">Cómo funciona</a></li>
-          <li><a href="#">Buscar proveedores</a></li>
-          <li><a href="#">Publicar proyecto</a></li>
-          <li><a href="#">Guías y tutoriales</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3 mb-4">
-        <h5>Para proveedores</h5>
-        <ul class="footer-links">
-          <li><a href="#">Regístrate como proveedor</a></li>
-          <li><a href="#">Comisiones y pagos</a></li>
-          <li><a href="#">Consejos para destacar</a></li>
-          <li><a href="#">Centro de recursos</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3 mb-4">
-        <h5>Contacto</h5>
-        <ul class="footer-contact">
-            <li>info&#64;printlab3d.es</li>
-            <li>+34 638 260 817</li>
-            <li>Calle Innovación, 123</li>
-            <li>28001 Madrid, España</li>
-        </ul>
-      </div>
-    </div>
-    <div class="row mt-4">
-      <div class="col-12 text-center">
-        <p class="copyright">&copy; 2025 PrintLab3D. Todos los derechos reservados.</p>
-      </div>
-    </div>
-  </div>
-</footer>
+<!-- Usando el componente footer -->
+<app-footer></app-footer>
