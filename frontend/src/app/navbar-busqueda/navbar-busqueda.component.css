@@ -119,21 +119,17 @@
 
 /* Botón de login */
 .btn-login {
-  background: linear-gradient(135deg, #836fff 0%, #5d4fff 100%);
-  color: white;
-  font-weight: 600;
-  padding: 0.5rem 1.5rem;
-  border: none;
+  background-color: transparent;
+  border: 1px solid #0dcaf0;
+  color: #0dcaf0;
   border-radius: 4px;
-  box-shadow: 0 3px 10px rgba(93, 79, 255, 0.3);
-  transition: all var(--transition-speed) ease;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
 }
 
 .btn-login:hover {
-  background: linear-gradient(135deg, #9683ff 0%, #7a6dff 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(93, 79, 255, 0.5);
-  color: white;
+  background-color: #0dcaf0;
+  color: #121212;
 }
 
 .btn-login:active {
