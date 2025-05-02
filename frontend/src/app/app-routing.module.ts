@@ -5,6 +5,7 @@ import { PrincipalComponent } from './paginas/principal/principal.component';
 import { ResultadoBusquedaComponent } from './paginas/resultado-busqueda/resultado-busqueda.component';
 import { DetallesAnuncioComponent } from './paginas/detalles-anuncio/detalles-anuncio.component';
 import { LoginComponent } from './paginas/login/login.component';
+import { ErrorComponent } from './recursos/error/error.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'resultados-busqueda', component: ResultadoBusquedaComponent },
   { path: 'detalles-anuncio/:id', component: DetallesAnuncioComponent },
   { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '' }
+  { path: 'error', component: ErrorComponent },
+  { path: '**', redirectTo: 'error' }
 ];
 
 @NgModule({

@@ -1,0 +1,170 @@
+/* Error Section */
+.error-section {
+  background: linear-gradient(125deg, #0a0a0a 0%, #151515 50%, #0a0a0a 100%);
+  padding: 10rem 0 6rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.error-background-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(2px 2px at 40px 60px, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 100px 120px, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 200px 50px, rgba(255, 255, 255, 0.13), rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 300px 160px, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0));
+  opacity: 0.15; /* Más tenue que el hero para un aspecto "apagado" */
+  z-index: 0;
+  pointer-events: none;
+  animation: gradientShiftSlow 20s ease infinite; /* Más lento que el original */
+}
+
+@keyframes gradientShiftSlow {
+  0% {
+    background-position: 40px 60px, 100px 120px, 200px 50px, 300px 160px;
+  }
+  50% {
+    background-position: 50px 70px, 110px 130px, 210px 60px, 310px 170px;
+  }
+  100% {
+    background-position: 40px 60px, 100px 120px, 200px 50px, 300px 160px;
+  }
+}
+
+.error-container {
+  background-color: rgba(25, 25, 25, 0.7); /* Más oscuro que el original */
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.05); /* Sombra más fuerte y borde interno sutil */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(60, 60, 60, 0.3); /* Borde más sutil */
+  position: relative;
+  z-index: 1;
+  transform: perspective(1200px) translateZ(-20px) rotateX(2deg); /* Efecto mejorado de hundido */
+  transition: all 0.4s ease;
+}
+
+.error-icon {
+  margin-bottom: 1.5rem;
+  color: rgba(220, 220, 220, 0.6); /* Color más apagado que el texto normal */
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  transform: scale(1);
+  transition: transform 0.5s ease;
+}
+
+.error-icon:hover {
+  transform: scale(1.05);
+  color: rgba(220, 220, 220, 0.8);
+}
+
+.error-section h1 {
+  font-size: 2.5rem;
+  color: rgba(240, 240, 240, 0.85); /* Ligeramente menos brillante */
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
+}
+
+.error-message {
+  font-size: 1.2rem;
+  color: rgba(200, 200, 200, 0.75); /* Más apagado que el título */
+  margin-bottom: 2rem;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-code {
+  display: inline-block;
+  font-family: monospace;
+  font-size: 1.1rem;
+  background: rgba(40, 40, 40, 0.6);
+  color: rgba(180, 180, 180, 0.7);
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+  border-left: 3px solid rgba(120, 120, 120, 0.5);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.error-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Botones con diseño oscuro mejorado y efectos visuales */
+.btn-cta {
+  background: linear-gradient(135deg, #323232 0%, #252525 100%);
+  color: rgba(240, 240, 240, 0.9);
+  border: 1px solid rgba(70, 70, 70, 0.5);
+  padding: 0.75rem 1.8rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cta:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: 0.5s;
+}
+
+.btn-cta:hover {
+  background: linear-gradient(135deg, #3a3a3a 0%, #2d2d2d 100%);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(100, 100, 100, 0.7);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.15),
+              0 0 8px rgba(150, 150, 150, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-cta:hover:before {
+  left: 100%;
+}
+
+.btn-cta:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  color: rgba(200, 200, 200, 0.8);
+  border: 1px solid rgba(100, 100, 100, 0.5);
+  padding: 0.75rem 1.8rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(60, 60, 60, 0.5);
+  color: rgba(220, 220, 220, 0.9);
+  border-color: rgba(120, 120, 120, 0.7);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25),
+              0 0 8px rgba(120, 120, 120, 0.2);
+  transform: translateY(-2px);
+}

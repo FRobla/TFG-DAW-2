@@ -1,1 +1,27 @@
-<p>error works!</p>
+<app-navbar-busqueda></app-navbar-busqueda>
+
+<section class="error-section">
+  <div class="error-background-effects"></div>
+  <div class="container position-relative z-index-1">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 text-center">
+        <div class="error-container">
+          <div class="error-icon mb-4">
+            <svg viewBox="0 0 24 24" width="120" height="120">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
+            </svg>
+          </div>
+          <h1 class="display-4 fw-bold mb-3">{{ errorTitle }}</h1>
+          <p class="error-message mb-5">{{ errorMessage }}</p>
+          <div class="error-code">Error {{ errorCode }}</div>
+          <div class="error-actions">
+            <button class="btn btn-cta me-3" routerLink="/">Volver al inicio</button>
+            <button class="btn btn-outline-secondary" routerLink="/servicios">Explorar servicios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>
