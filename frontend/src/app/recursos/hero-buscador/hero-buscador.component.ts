@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Categoria } from '../categoria/categoria';
+import { Categoria } from '../../entidades/categoria/categoria';
 import { HeroBuscadorService } from './hero-buscador.service';
 
 @Component({

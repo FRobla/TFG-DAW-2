@@ -43,15 +43,19 @@
       <div class="row">
         <!-- Filtros laterales -->
         <div class="col-lg-3 mb-4">
-          <div class="filter-card">
-            <div class="filter-header">
+          <div class="filter-card mb-3">
+            <div class="filter-header my-1">
               <h3>Filtros</h3>
               <button class="btn btn-sm btn-link" (click)="limpiarFiltros()">Limpiar todos</button>
             </div>
-            
+          </div>
+          <div class="filter-card">
             <!-- Categorías -->
             <div class="filter-section">
-              <h4>Categoría</h4>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-box2 mb-3"></i>
+                <h4>Categoría</h4>
+              </div>
               <!-- Mostramos solo las primeras 5 categorías o todas si mostrarTodasCategorias es true -->
               <div class="form-check" *ngFor="let categoria of categorias; let i = index" 
                    [hidden]="!mostrarTodasCategorias && i >= 5">
@@ -68,69 +72,49 @@
                 {{ mostrarTodasCategorias ? 'Ver menos' : 'Ver más' }}
               </button>
             </div>
-            
-            <!-- Ubicación -->
+
+            <!-- Material -->
             <div class="filter-section">
-              <h4>Ubicación</h4>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="loc1">
-                <label class="form-check-label" for="loc1">
-                  Madrid (18)
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-box material mb-2"></i>
+                <h4>Material</h4>
+              </div>
+              <div class="form-check" *ngFor="let material of materiales; let i = index"
+                   [hidden]="!mostrarTodosMateriales && i >= 5">
+                <input class="form-check-input" type="checkbox" [id]="'mat' + material.id"
+                       [checked]="isMaterialSeleccionado(material.id)"
+                       (change)="toggleMaterial(material.id)">
+                <label class="form-check-label" [for]="'mat' + material.id">
+                  {{material.nombre}} ({{material.cantidad}})
                 </label>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="loc2">
-                <label class="form-check-label" for="loc2">
-                  Barcelona (14)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="loc3">
-                <label class="form-check-label" for="loc3">
-                  Valencia (9)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="loc4">
-                <label class="form-check-label" for="loc4">
-                  Sevilla (7)
-                </label>
-              </div>
-              <button class="btn btn-sm btn-link d-block mt-2">Ver más</button>
+              <!-- Botón Ver más / Ver menos según el estado actual -->
+              <button class="btn btn-sm btn-link d-block mt-2" *ngIf="materiales.length > 5" (click)="mostrarTodosMateriales ? verMenosMateriales() : verMasMateriales()">
+                {{ mostrarTodosMateriales ? 'Ver menos' : 'Ver más' }}
+              </button>
             </div>
             
             <!-- Valoración -->
             <div class="filter-section">
-              <h4>Valoración</h4>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="rate5">
-                <label class="form-check-label d-flex align-items-center" for="rate5">
-                  <span class="rating me-2">★★★★★</span> (15)
-                </label>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-star mb-3"></i>
+                <h4>Valoración</h4>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="rate4">
-                <label class="form-check-label d-flex align-items-center" for="rate4">
-                  <span class="rating me-2">★★★★☆</span> (22)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="rate3">
-                <label class="form-check-label d-flex align-items-center" for="rate3">
-                  <span class="rating me-2">★★★☆☆</span> (11)
+              <div class="form-check" *ngFor="let valoracion of valoraciones">
+                <input class="form-check-input" type="checkbox" [id]="'rate' + valoracion.id"
+                       [checked]="isValoracionSeleccionada(valoracion.id)"
+                       (change)="toggleValoracion(valoracion.id)">
+                <label class="form-check-label d-flex align-items-center" [for]="'rate' + valoracion.id">
+                  <span class="rating me-2">{{ '★'.repeat(valoracion.estrellas) }}</span> ({{valoracion.cantidad}})
                 </label>
               </div>
             </div>
             
             <!-- Precio -->
             <div class="filter-section">
-              <h4>Precio</h4>
-              <div class="price-range">
-                <div class="d-flex justify-content-between mb-2">
-                  <span>10€</span>
-                  <span>500€</span>
-                </div>
-                <input type="range" class="form-range" min="10" max="500" step="10" id="priceRange">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-cash-coin mb-2"></i>
+                <h4>Precio</h4>
               </div>
               <div class="price-inputs d-flex mt-2">
                 <div class="input-group input-group-sm me-2">
@@ -143,68 +127,47 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Material -->
+
+            <!-- Ubicación -->
             <div class="filter-section">
-              <h4>Material</h4>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="mat1">
-                <label class="form-check-label" for="mat1">
-                  PLA (20)
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt mb-3"></i>
+                <h4>Ubicación</h4>
+              </div>
+              <div class="form-check" *ngFor="let ubicacion of ubicaciones; let i = index"
+                   [hidden]="!mostrarTodasUbicaciones && i >= 5">
+                <input class="form-check-input" type="checkbox" [id]="'loc' + ubicacion.id"
+                       [checked]="isUbicacionSeleccionada(ubicacion.id)"
+                       (change)="toggleUbicacion(ubicacion.id)">
+                <label class="form-check-label" [for]="'loc' + ubicacion.id">
+                  {{ubicacion.nombre}} ({{ubicacion.cantidad}})
                 </label>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="mat2">
-                <label class="form-check-label" for="mat2">
-                  ABS (14)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="mat3">
-                <label class="form-check-label" for="mat3">
-                  PETG (12)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="mat4">
-                <label class="form-check-label" for="mat4">
-                  Resina (16)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="mat5">
-                <label class="form-check-label" for="mat5">
-                  Nylon (8)
-                </label>
-              </div>
-              <button class="btn btn-sm btn-link d-block mt-2">Ver más</button>
+              <!-- Botón Ver más / Ver menos según el estado actual -->
+              <button class="btn btn-sm btn-link d-block mt-2" *ngIf="ubicaciones.length > 5" (click)="mostrarTodasUbicaciones ? verMenosUbicaciones() : verMasUbicaciones()">
+                {{ mostrarTodasUbicaciones ? 'Ver menos' : 'Ver más' }}
+              </button>
             </div>
-            
+
             <!-- Tiempo de entrega -->
             <div class="filter-section">
-              <h4>Tiempo de entrega</h4>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="time1">
-                <label class="form-check-label" for="time1">
-                  24 horas (6)
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-clock reloj mb-2"></i>
+                <h4>Tiempo de entrega</h4>
+              </div>
+              <div class="form-check" *ngFor="let tiempo of tiemposEntrega; let i = index"
+                   [hidden]="!mostrarTodosTiempos && i >= 4">
+                <input class="form-check-input" type="checkbox" [id]="'time' + tiempo.id"
+                       [checked]="isTiempoEntregaSeleccionado(tiempo.id)"
+                       (change)="toggleTiempoEntrega(tiempo.id)">
+                <label class="form-check-label" [for]="'time' + tiempo.id">
+                  {{tiempo.nombre}} ({{tiempo.cantidad}})
                 </label>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="time2">
-                <label class="form-check-label" for="time2">
-                  2-3 días (18)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="time3">
-                <label class="form-check-label" for="time3">
-                  4-7 días (24)
-                </label>
-              </div>
-            </div>
-            
-            <div class="filter-actions mt-4">
-              <button class="btn btn-cta w-100" (click)="buscar()">Aplicar filtros</button>
+              <!-- Botón Ver más / Ver menos según el estado actual -->
+              <button class="btn btn-sm btn-link d-block mt-2" *ngIf="tiemposEntrega.length > 3" (click)="mostrarTodosTiempos ? verMenosTiempos() : verMasTiempos()">
+                {{ mostrarTodosTiempos ? 'Ver menos' : 'Ver más' }}
+              </button>
             </div>
           </div>
         </div>
@@ -212,24 +175,30 @@
         <!-- Resultados de búsqueda -->
         <div class="col-lg-9">
           <!-- Chips de filtros activos -->
-          <div class="active-filters mb-4" *ngIf="categoriaSeleccionadas.length > 0 || filtroUbicacion || filtroValoracion || filtroMaterial.length > 0 || filtroTiempoEntrega.length > 0">
+          <div class="active-filters mb-4" *ngIf="categoriaSeleccionadas.length > 0 || ubicacionesSeleccionadas.length > 0 || valoracionesSeleccionadas.length > 0 || materialesSeleccionados.length > 0 || tiemposEntregaSeleccionados.length > 0">
             <!-- Chips para categorías seleccionadas -->
-            <span class="filter-chip" *ngFor="let categoriaId of categoriaSeleccionadas">
-              {{ getNombreCategoria(categoriaId) }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltroCategoria(categoriaId)" aria-label="Close"></button>
+            <span class="filter-chip gap-1" *ngFor="let categoriaId of categoriaSeleccionadas">
+            <i class="bi bi-box2 mx-1"></i>{{ getNombreCategoria(categoriaId) }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltroCategoria(categoriaId)" aria-label="Close"></button>
             </span>
             
-            <!-- Otros filtros activos -->
-            <span class="filter-chip" *ngIf="filtroUbicacion">
-              {{ filtroUbicacion }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltro('ubicacion')" aria-label="Close"></button>
+            <!-- Chips para ubicaciones seleccionadas -->
+            <span class="filter-chip gap-1" *ngFor="let ubicacionId of ubicacionesSeleccionadas">
+            <i class="bi bi-geo-alt mx-1"></i>{{ getNombreUbicacion(ubicacionId) }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltroUbicacion(ubicacionId)" aria-label="Close"></button>
             </span>
-            <span class="filter-chip" *ngIf="filtroValoracion">
-              {{ filtroValoracion }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltro('valoracion')" aria-label="Close"></button>
+            
+            <!-- Chips para valoraciones seleccionadas -->
+            <span class="filter-chip gap-1" *ngFor="let valoracionId of valoracionesSeleccionadas">
+            <i class="bi bi-star mx-1"></i>{{ getValoracionEstrellas(valoracionId) }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltroValoracion(valoracionId)" aria-label="Close"></button>
             </span>
-            <span class="filter-chip" *ngFor="let material of filtroMaterial">
-              {{ material }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltro('material', material)" aria-label="Close"></button>
+            
+            <!-- Chips para materiales seleccionados -->
+            <span class="filter-chip gap-1" *ngFor="let materialId of materialesSeleccionados">
+            <i class="bi bi-box mx-1"></i>{{ getNombreMaterial(materialId) }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltroMaterial(materialId)" aria-label="Close"></button>
             </span>
-            <span class="filter-chip" *ngFor="let tiempo of filtroTiempoEntrega">
-              {{ tiempo }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltro('tiempoEntrega', tiempo)" aria-label="Close"></button>
+            
+            <!-- Chips para tiempos de entrega seleccionados -->
+            <span class="filter-chip gap-1" *ngFor="let tiempoId of tiemposEntregaSeleccionados">
+            <i class="bi bi-clock mx-1"></i> {{ getNombreTiempoEntrega(tiempoId) }} <button class="btn-close btn-close-white ms-2" (click)="eliminarFiltroTiempoEntrega(tiempoId)" aria-label="Close"></button>
             </span>
             
             <!-- Botón para limpiar todos los filtros -->

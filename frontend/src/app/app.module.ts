@@ -5,16 +5,17 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LandingComponent } from './landing/landing.component';
-import { PrincipalComponent } from './principal/principal.component';
-import { ResultadoBusquedaComponent } from './resultado-busqueda/resultado-busqueda.component';
+import { LandingComponent } from './paginas/landing/landing.component';
+import { PrincipalComponent } from './paginas/principal/principal.component';
+import { ResultadoBusquedaComponent } from './paginas/resultado-busqueda/resultado-busqueda.component';
 import { RouterModule, Routes } from '@angular/router';
-import { DetallesAnuncioComponent } from './detalles-anuncio/detalles-anuncio.component';
-import { LoginComponent } from './login/login.component';
-import { CategoriasComponent } from './categoria/categoria.component';
-import { HeroBuscadorComponent } from './hero-buscador/hero-buscador.component';
-import { NavbarBusquedaComponent } from './navbar-busqueda/navbar-busqueda.component';
-import { FooterComponent } from './footer/footer.component';
+import { DetallesAnuncioComponent } from './paginas/detalles-anuncio/detalles-anuncio.component';
+import { LoginComponent } from './paginas/login/login.component';
+import { CategoriasComponent } from './entidades/categoria/categoria.component';
+import { HeroBuscadorComponent } from './recursos/hero-buscador/hero-buscador.component';
+import { NavbarBusquedaComponent } from './recursos/navbar-busqueda/navbar-busqueda.component';
+import { FooterComponent } from './recursos/footer/footer.component';
+import { ErrorComponent } from './recursos/error/error.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { FooterComponent } from './footer/footer.component';
     CategoriasComponent,
     HeroBuscadorComponent,
     NavbarBusquedaComponent,
-    FooterComponent
+    FooterComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,

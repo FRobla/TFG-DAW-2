@@ -256,6 +256,27 @@ body, html {
     font-size: 0.7rem;
     padding: 0.15rem;
   }
+
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .filter-title {
+    font-size: 1rem;
+    margin-bottom: 0;
+    color: var(--color-text-primary);
+  }
+
+  .reloj {
+    margin-top: -5px;
+  }
+
+  .material {
+    margin-top: -5px;
+  }
   
   /* Tarjetas de servicios */
   .service-card {

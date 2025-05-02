@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Categoria } from '../categoria/categoria';
+import { Categoria } from '../../entidades/categoria/categoria';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 

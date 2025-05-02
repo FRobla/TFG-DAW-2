@@ -441,11 +441,12 @@ section::before {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   z-index: 1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
 }
 
 .service-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.20);
 }
 
 .service-icon svg {
