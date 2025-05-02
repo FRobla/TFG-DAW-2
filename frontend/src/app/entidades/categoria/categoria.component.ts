@@ -20,9 +20,6 @@ export class CategoriasComponent implements OnInit{
     this.categoriaService.getCategorias().subscribe(
       (categorias: Categoria[]) => {
         this.categorias = categorias;
-      },
-      error => {
-        console.error('Error al obtener los categorias', error);  // Muestra errores si los hay
       }
     );
     // Obtener categorias al cargar el componente

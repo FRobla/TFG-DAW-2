@@ -23,7 +23,6 @@ export class CategoriaService implements OnInit{
       catchError(e => {
         this.router.navigate(['/categorias']);
         console.log(e.error.mensaje);
-        swal('Error al obtener los categorias', e.error.mensaje, 'error');
         return throwError(e);
       })
     );

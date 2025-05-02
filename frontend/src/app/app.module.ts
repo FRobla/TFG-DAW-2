@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,6 +16,7 @@ import { HeroBuscadorComponent } from './recursos/hero-buscador/hero-buscador.co
 import { NavbarBusquedaComponent } from './recursos/navbar-busqueda/navbar-busqueda.component';
 import { FooterComponent } from './recursos/footer/footer.component';
 import { ErrorComponent } from './recursos/error/error.component';
+import { ErrorInterceptor } from './recursos/error/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -38,9 +39,9 @@ import { ErrorComponent } from './recursos/error/error.component';
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
-
