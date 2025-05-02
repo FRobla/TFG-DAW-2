@@ -1,0 +1,254 @@
+/* Variables globales */
+:root {
+  --color-bg-main: #121212;
+  --color-bg-section: #1e1e1e;
+  --color-bg-card: #2a2a2a;
+  --color-border: #3c3c3c;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e0e0e0;
+  --color-accent: #7a6dff;
+  --color-accent-light: #9683ff;
+}
+
+/* Cabecera del dashboard */
+.dashboard-header {
+  margin-bottom: 0;
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+  background-color: #121212;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  color: #ffffff;
+  font-weight: 700;
+  margin: 0;
+  position: relative;
+}
+
+.dashboard-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(135deg, #7a6dff 0%, #0dcaf0 100%);
+  border-radius: 3px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Buscador */
+.search-container {
+  position: relative;
+  width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  background-color: #2a2a2a;
+  border: 1px solid #3c3c3c;
+  border-radius: 6px;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #7a6dff;
+  box-shadow: 0 0 0 3px rgba(122, 109, 255, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e0e0e0;
+  opacity: 0.7;
+}
+
+/* Botones */
+.btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.btn i {
+  font-size: 1rem;
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #7a6dff 0%, #0dcaf0 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(122, 109, 255, 0.25);
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(122, 109, 255, 0.35);
+}
+
+.btn-add:active {
+  transform: translateY(0);
+}
+
+.btn-outline-light {
+  border: 1px solid white;
+}
+
+/* Estilos para la barra de pestañas/tabs */
+.entity-tabs {
+  background-color: #1a1a1a;
+  margin-bottom: 2rem;
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid #333333;
+}
+
+.entity-tabs::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(122, 109, 255, 0.2), rgba(150, 131, 255, 0.4), rgba(122, 109, 255, 0.2));
+}
+
+.tabs-container {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge */
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari y Opera */
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.tab-item i {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+.tab-item:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab-item.active {
+  color: var(--color-accent-light);
+  background-color: rgba(122, 109, 255, 0.1);
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7a6dff, #9683ff);
+}
+
+/* Responsividad */
+@media (max-width: 1157px) {
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .dashboard-title {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .dashboard-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .search-container {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .tabs-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .tab-item {
+    flex-grow: 0;
+    flex-basis: auto;
+    text-align: center;
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-title {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .search-container {
+    width: 100%;
+  }
+  
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}

@@ -59,7 +59,7 @@
   left: 0;
   width: 50px;
   height: 3px;
-  background: linear-gradient(135deg, #7a6dff 0%, #9683ff 100%);
+  background: linear-gradient(135deg, #7a6dff 0%, #0dcaf0 100%);
   border-radius: 3px;
 }
 
@@ -134,7 +134,7 @@
   left: 0;
   width: 6px;
   height: 100%;
-  background: linear-gradient(to bottom, #7a6dff, #9683ff);
+  background: linear-gradient(to bottom, #0dcaf0, #9683ff);
   border-radius: 3px 0 0 3px;
 }
 
@@ -147,7 +147,7 @@
   background: rgba(122, 109, 255, 0.15);
   border-radius: 12px;
   margin-right: 1.25rem;
-  color: #7a6dff;
+  color: #0dcaf0;
   font-size: 1.5rem;
 }
 
@@ -610,15 +610,8 @@
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-.btn-save {
-  background: linear-gradient(135deg, #7a6dff 0%, #9683ff 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(122, 109, 255, 0.25);
-}
-
 .btn-save:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(122, 109, 255, 0.35);
 }
 
 .btn-save:disabled {

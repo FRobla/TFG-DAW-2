@@ -19,6 +19,7 @@ import { ErrorComponent } from './recursos/error/error.component';
 import { ErrorInterceptor } from './recursos/error/error.interceptor';
 import { UsuarioComponent } from './entidades/usuario/usuario.component';
 import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
+import { NavbarAdminComponent } from './recursos/navbar-admin/navbar-admin.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
     ErrorComponent,
     UsuarioComponent,
     AnuncioComponent,
+    NavbarAdminComponent,
   ],
   imports: [
     BrowserModule,

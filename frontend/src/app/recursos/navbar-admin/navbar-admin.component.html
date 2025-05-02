@@ -1,0 +1,38 @@
+<div class="dashboard-header">
+  <div class="header-content">
+    <h1 class="dashboard-title">Administración de Usuarios</h1>
+    <div class="header-actions">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Buscar usuario..." [(ngModel)]="termino" (keyup)="filtrarUsuarios()">
+        <div class="search-icon">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+      <button class="btn btn-add" (click)="exportarUsuarios()">
+        <i class="fas fa-download"></i> Exportar a CSV
+      </button>
+      <button class="btn btn-outline-light btn-lg" routerLink="/">
+        <i class="fas fa-home"></i> Ir a inicio
+      </button>
+    </div>
+  </div>
+</div>
+<div class="entity-tabs">
+  <div class="tabs-container">
+    <a routerLink="/admin/usuarios" class="tab-item active">
+      <i class="fas fa-users"></i> Usuarios
+    </a>
+    <a routerLink="/admin/anuncios" class="tab-item">
+      <i class="fas fa-ad"></i> Anuncios
+    </a>
+    <a routerLink="/admin/categorias" class="tab-item">
+      <i class="fas fa-tags"></i> Categorías
+    </a>
+    <a routerLink="/admin/servicios" class="tab-item">
+      <i class="fas fa-cogs"></i> Servicios
+    </a>
+    <a routerLink="/admin/pedidos" class="tab-item">
+      <i class="fas fa-shopping-cart"></i> Pedidos
+    </a>
+  </div>
+</div>

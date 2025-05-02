@@ -86,6 +86,14 @@ export class UsuarioComponent implements OnInit {
     this.calcularTotalPaginas();
     this.aplicarPaginacion();
   }
+  
+  /**
+   * Recibe el término de búsqueda desde el componente navbar-admin
+   */
+  aplicarFiltro(termino: string): void {
+    this.termino = termino;
+    this.filtrarUsuarios();
+  }
 
   /**
    * Calcula el número total de páginas basado en el número de usuarios y el tamaño de página
