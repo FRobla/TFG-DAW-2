@@ -18,6 +18,7 @@ import { FooterComponent } from './recursos/footer/footer.component';
 import { ErrorComponent } from './recursos/error/error.component';
 import { ErrorInterceptor } from './recursos/error/error.interceptor';
 import { UsuarioComponent } from './entidades/usuario/usuario.component';
+import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { UsuarioComponent } from './entidades/usuario/usuario.component';
     FooterComponent,
     ErrorComponent,
     UsuarioComponent,
+    AnuncioComponent,
   ],
   imports: [
     BrowserModule,
