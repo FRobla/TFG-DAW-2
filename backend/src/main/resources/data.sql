@@ -2,16 +2,16 @@ SET SQL_SAFE_UPDATES = 0;
 
 -- Ejemplo de datos para la tabla usuarios
 INSERT INTO usuarios (id, nombre, apellido, direccion, email, password, rol, foto, fecha_registro) VALUES
-(1, 'Juan', 'Pérez', 'Calle Uno', 'juan1@mail.com', 'pass1', 'USER', NULL, '2024-04-01'),
-(2, 'Ana', 'López', 'Calle Dos', 'ana2@mail.com', 'pass2', 'USER', NULL, '2024-04-02'),
-(3, 'Luis', 'Martínez', 'Calle Tres', 'luis3@mail.com', 'pass3', 'ADMIN', NULL, '2024-04-03'),
-(4, 'Marta', 'García', 'Calle Cuatro', 'marta4@mail.com', 'pass4', 'USER', NULL, '2024-04-04'),
-(5, 'Pedro', 'Sánchez', 'Calle Cinco', 'pedro5@mail.com', 'pass5', 'USER', NULL, '2024-04-05'),
-(6, 'Lucía', 'Ruiz', 'Calle Seis', 'lucia6@mail.com', 'pass6', 'USER', NULL, '2024-04-06'),
-(7, 'Carlos', 'Fernández', 'Calle Siete', 'carlos7@mail.com', 'pass7', 'USER', NULL, '2024-04-07'),
-(8, 'Sara', 'Díaz', 'Calle Ocho', 'sara8@mail.com', 'pass8', 'USER', NULL, '2024-04-08'),
-(9, 'Elena', 'Moreno', 'Calle Nueve', 'elena9@mail.com', 'pass9', 'USER', NULL, '2024-04-09'),
-(10, 'David', 'Muñoz', 'Calle Diez', 'david10@mail.com', 'pass10', 'USER', NULL, '2024-04-10');
+(1, 'Admin', 'Admin', 'Calle Admin', 'admin@mail.com', 'passadmin', 'ADMIN', NULL, '2025-04-01'),
+(2, 'Juan', 'Pérez', 'Calle Uno', 'juan1@mail.com', 'pass1', 'USER', NULL, '2025-04-01'),
+(3, 'Ana', 'López', 'Calle Dos', 'ana2@mail.com', 'pass2', 'USER', NULL, '2025-04-02'),
+(4, 'Luis', 'Martínez', 'Calle Tres', 'luis3@mail.com', 'pass3', 'USER', NULL, '2025-04-03'),
+(5, 'Marta', 'García', 'Calle Cuatro', 'marta4@mail.com', 'pass4', 'USER', NULL, '2025-04-04'),
+(6, 'Pedro', 'Sánchez', 'Calle Cinco', 'pedro5@mail.com', 'pass5', 'USER', NULL, '2025-04-05'),
+(7, 'Lucía', 'Ruiz', 'Calle Seis', 'lucia6@mail.com', 'pass6', 'USER', NULL, '2025-04-06'),
+(8, 'Carlos', 'Fernández', 'Calle Siete', 'carlos7@mail.com', 'pass7', 'USER', NULL, '2025-04-07'),
+(9, 'Sara', 'Díaz', 'Calle Ocho', 'sara8@mail.com', 'pass8', 'USER', NULL, '2025-04-08'),
+(10, 'Elena', 'Moreno', 'Calle Nueve', 'elena9@mail.com', 'pass9', 'USER', NULL, '2025-04-09');
 
 -- Ejemplo de datos para la tabla categorias
 INSERT INTO categorias (id, nombre, descripcion) VALUES

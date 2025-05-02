@@ -88,7 +88,7 @@ export class CategoriasComponent implements OnInit{
       if (result.value) {
         this.categoriaService.deleteAllCategorias().subscribe(
           response => {
-            // Vaciamos el array de categoriaes
+            // Vaciamos el array de categorias
             this.categorias = [];
   
             swal(

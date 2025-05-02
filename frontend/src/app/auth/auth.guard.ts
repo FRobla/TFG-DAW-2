@@ -25,18 +25,17 @@ export class AuthGuard implements CanActivate {
       '/search-results',
       '/generos',
       '/autores',
-      '/valoraciones'  // Solo la lista de valoraciones es pública
+      '/valoraciones',  // Solo la lista de valoraciones es pública
+      '/admin', // Añadir rutas de admin como públicas temporalmente
     ];
 
-    // Mapa de rutas protegidas con sus roles permitidos
-    const protectedRoutes: { [key: string]: string[] } = {
-      '/valoracion/form': ['USER', 'ADMIN'],
-      '/valoraciones/editar': ['USER', 'ADMIN'],
-      '/valoracion': ['USER', 'ADMIN']  // Para cubrir cualquier subruta de valoración
-    };
-     
     // Verificar si la ruta actual es pública
     const currentPath = state.url;
+   
+    // Permitir explícitamente cualquier ruta que comience con /admin/
+    if (currentPath.startsWith('/admin/')) {
+      return true;
+    }
    
     const isPublicRoute = publicRoutes.some(route =>
       currentPath === route ||
@@ -62,6 +61,13 @@ export class AuthGuard implements CanActivate {
 
     // Verificar roles para rutas protegidas
     const usuarioRol = this.authService.usuarioLogueado?.rol;
+
+    // Mapa de rutas protegidas con sus roles permitidos
+    const protectedRoutes: { [key: string]: string[] } = {
+      '/valoracion/form': ['USER', 'ADMIN'],
+      '/valoraciones/editar': ['USER', 'ADMIN'],
+      '/valoracion': ['USER', 'ADMIN']  // Para cubrir cualquier subruta de valoración
+    };
 
     // Buscar si la ruta actual coincide con alguna ruta protegida
     const matchingProtectedRoute = Object.entries(protectedRoutes).find(([route]) =>

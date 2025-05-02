@@ -1,0 +1,214 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">Administración de Usuarios</h1>
+      <div class="header-actions">
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Buscar usuario..." [(ngModel)]="termino" (keyup)="filtrarUsuarios()">
+          <div class="search-icon">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+        <button class="btn btn-add" (click)="abrirModalCrearUsuario()">
+          <i class="fas fa-plus"></i> Nuevo Usuario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{usuarios.length}}</h3>
+        <p class="stat-label">Total Usuarios</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getUsuariosPorRol('ADMIN')}}</h3>
+        <p class="stat-label">Administradores</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getUsuariosPorRol('USER')}}</h3>
+        <p class="stat-label">Usuarios Estándar</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getUsuariosRecientes()}}</h3>
+        <p class="stat-label">Registros Recientes</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="table-container">
+      <table class="usuarios-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Perfil</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Fecha Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuariosFiltrados">
+            <td class="user-id" data-label="ID">{{usuario.id}}</td>
+            <td class="user-avatar" data-label="Perfil">
+              <div class="avatar" [style.background-image]="usuario.fotoPerfil ? 'url(' + usuario.fotoPerfil + ')' : ''">
+                <span *ngIf="!usuario.fotoPerfil">{{usuario.nombre.charAt(0).toUpperCase()}}</span>
+              </div>
+            </td>
+            <td class="user-name" data-label="Nombre">
+              <div class="user-info">
+                <span class="nombre">{{usuario.nombre}} {{usuario.apellido}}</span>
+                <span class="direccion">{{usuario.direccion}}</span>
+              </div>
+            </td>
+            <td class="user-email" data-label="Email">{{usuario.email}}</td>
+            <td class="user-role" data-label="Rol">
+              <span class="role-badge" [ngClass]="{'admin-role': usuario.rol === 'ADMIN', 'user-role': usuario.rol === 'USER'}">
+                {{usuario.rol}}
+              </span>
+            </td>
+            <td class="user-date" data-label="Fecha">{{usuario.fechaRegistro | date:'dd/MM/yyyy'}}</td>
+            <td class="user-actions" data-label="Acciones">
+              <button class="action-btn edit-btn" (click)="editarUsuario(usuario)" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-btn delete-btn" (click)="confirmarEliminar(usuario)" title="Eliminar">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="action-btn details-btn" (click)="verDetallesUsuario(usuario)" title="Ver detalles">
+                <i class="fas fa-info-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="usuariosFiltrados.length === 0" class="no-results">
+      <div class="no-results-content">
+        <i class="fas fa-search no-results-icon"></i>
+        <h3>No se encontraron usuarios</h3>
+        <p>Intenta con otra búsqueda o crea un nuevo usuario</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-container" *ngIf="usuarios.length > itemsPorPagina">
+    <div class="pagination">
+      <button class="pagination-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="pagination-info">Página {{paginaActual}} de {{totalPaginas}}</span>
+      <button class="pagination-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="pagination-select">
+      <select [(ngModel)]="itemsPorPagina" (change)="cambiarItemsPorPagina()">
+        <option [value]="5">5 por página</option>
+        <option [value]="10">10 por página</option>
+        <option [value]="20">20 por página</option>
+        <option [value]="50">50 por página</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dashboard-actions">
+    <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
+      <i class="fas fa-trash-alt"></i> Eliminar Todos
+    </button>
+    <button class="btn btn-export" (click)="exportarUsuarios()">
+      <i class="fas fa-download"></i> Exportar a CSV
+    </button>
+  </div>
+</div>
+
+<!-- Modal para crear/editar usuario -->
+<div class="modal" [class.active]="modalVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>{{modoEdicion ? 'Editar Usuario' : 'Crear Nuevo Usuario'}}</h2>
+      <button class="close-btn" (click)="cerrarModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form #usuarioForm="ngForm">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" [(ngModel)]="usuarioActual.nombre" required>
+        </div>
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" name="apellido" [(ngModel)]="usuarioActual.apellido" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" [(ngModel)]="usuarioActual.email" required email>
+        </div>
+        <div class="form-group">
+          <label for="direccion">Dirección</label>
+          <input type="text" id="direccion" name="direccion" [(ngModel)]="usuarioActual.direccion">
+        </div>
+        <div class="form-group" *ngIf="!modoEdicion">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" [(ngModel)]="usuarioActual.password" required>
+        </div>
+        <div class="form-group">
+          <label for="rol">Rol</label>
+          <select id="rol" name="rol" [(ngModel)]="usuarioActual.rol" required>
+            <option value="USER">Usuario</option>
+            <option value="ADMIN">Admin</option>    
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fotoPerfil">URL de Foto de Perfil</label>
+          <input type="text" id="fotoPerfil" name="fotoPerfil" [(ngModel)]="usuarioActual.fotoPerfil">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-save" [disabled]="!usuarioForm.valid" (click)="guardarUsuario()">
+        {{modoEdicion ? 'Actualizar' : 'Crear'}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="confirmacion-modal" [class.active]="modalConfirmacionVisible">
+  <div class="confirmacion-content">
+    <div class="confirmacion-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h2 class="confirmacion-titulo">{{tituloConfirmacion}}</h2>
+    <p class="confirmacion-mensaje">{{mensajeConfirmacion}}</p>
+    <div class="confirmacion-acciones">
+      <button class="btn btn-cancel" (click)="modalConfirmacionVisible = false">Cancelar</button>
+      <button class="btn btn-confirmar" (click)="ejecutarAccionConfirmacion()">Confirmar</button>
+    </div>
+  </div>
+</div>

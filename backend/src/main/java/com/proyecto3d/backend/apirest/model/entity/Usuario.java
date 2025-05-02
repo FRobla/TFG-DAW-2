@@ -2,8 +2,10 @@ package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -58,8 +60,9 @@ public class Usuario implements Serializable{
 	@Column(columnDefinition = "LONGTEXT")
 	private String foto;
 
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	@Column(nullable = false)
-	private String fecha_registro;
+	private Date fecha_registro;
 	    
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
@@ -112,11 +115,11 @@ public class Usuario implements Serializable{
 		return direccion;
 	}
 
-	public String getFecha_registro() {
+	public Date getFecha_registro() {
 		return fecha_registro;
 	}
 
-	public void setFecha_registro(String fecha_registro) {
+	public void setFecha_registro(Date fecha_registro) {
 		this.fecha_registro = fecha_registro;
 	}
 

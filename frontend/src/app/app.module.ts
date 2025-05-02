@@ -17,6 +17,7 @@ import { NavbarBusquedaComponent } from './recursos/navbar-busqueda/navbar-busqu
 import { FooterComponent } from './recursos/footer/footer.component';
 import { ErrorComponent } from './recursos/error/error.component';
 import { ErrorInterceptor } from './recursos/error/error.interceptor';
+import { UsuarioComponent } from './entidades/usuario/usuario.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ErrorInterceptor } from './recursos/error/error.interceptor';
     NavbarBusquedaComponent,
     FooterComponent,
     ErrorComponent,
+    UsuarioComponent,
   ],
   imports: [
     BrowserModule,

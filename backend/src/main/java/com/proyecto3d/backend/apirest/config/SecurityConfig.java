@@ -27,14 +27,19 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
             		 // Permitir acceso público a endpoints específicos
-                    .requestMatchers("/api/login", "/api/registro", "/api/principal", "/api/categorias", "/api/valoraciones", "/api/valoracion", "/api/favorito", "/api/anuncios", "/api/anuncios/**", "/api/anuncios/mejor-valorados", "/api/anuncio/**", "/api/impresoras", "/usuario", "/api/detalles-carrito", "/api/pedido", "/api/search/**").permitAll()
+                    .requestMatchers("/api/login", "/api/registro", "/api/principal", "/api/categorias", 
+                        "/api/valoraciones", "/api/valoracion", "/api/favorito", "/api/anuncios", 
+                        "/api/anuncios/**", "/api/anuncios/mejor-valorados", "/api/anuncio/**", 
+                        "/api/impresoras", "/usuarios", "/api/usuario", "/api/usuario/**", "/api/usuarios", 
+                        "/api/usuarios/**", "/api/detalles-carrito", "/api/pedido", "/api/search/**", 
+                        "/api/admin/**").permitAll()
  
                     // Requerir autenticación para ciertos endpoints, tanto para USER como para ADMIN
                     .requestMatchers("/api/valoraciones", "/api/detalles-carrito").hasRole("USER")
  
-                    // Requerir ADMIN para endpoints específicos
+                    // Requerir ADMIN para endpoints específicos (excluir los relacionados con usuarios para hacerlos públicos)
                     .requestMatchers("/api/impresora", "/api/carritos", "/api/carrito", "/api/pedidos", "/api/pedido",
-                                     "/api/favoritos", "/api/categoria", "/api/usuarios", "/api/usuario", "/api/valoracion", 
+                                     "/api/favoritos", "/api/categoria", "/api/valoracion", 
                                      "/api/anuncio", "/api/anuncios").hasRole("ADMIN")
                     
                     .anyRequest().authenticated()
@@ -52,7 +57,10 @@ public class SecurityConfig {
             	            !requestPath.startsWith("/api/impresoras") &&
             	            !requestPath.startsWith("/api/categorias") &&
             	            !requestPath.startsWith("/api/search") &&
-                            !requestPath.startsWith("/api/pedido")) {
+                            !requestPath.startsWith("/api/pedido") &&
+                            !requestPath.startsWith("/api/usuario") &&
+                            !requestPath.startsWith("/api/usuarios") &&
+                            !requestPath.startsWith("/api/admin")) {
             	            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             	        } else {
             	            // Para rutas públicas, permitir acceso incluso sin token
