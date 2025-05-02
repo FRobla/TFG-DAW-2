@@ -60,13 +60,13 @@
       <table class="usuarios-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Perfil</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Fecha Registro</th>
-            <th>Acciones</th>
+            <th class="text-center underline">ID</th>
+            <th class="text-center underline">Perfil</th>
+            <th class="text-center underline">Nombre</th>
+            <th class="text-center underline">Email</th>
+            <th class="text-center underline">Rol</th>
+            <th class="text-center underline">Fecha Registro</th>
+            <th class="text-center underline">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -89,7 +89,7 @@
                 {{usuario.rol}}
               </span>
             </td>
-            <td class="user-date" data-label="Fecha">{{usuario.fechaRegistro | date:'dd/MM/yyyy'}}</td>
+            <td class="user-date text-center" data-label="Fecha">{{usuario.fechaRegistro | date:'dd/MM/yyyy'}}</td>
             <td class="user-actions" data-label="Acciones">
               <button class="action-btn edit-btn" (click)="editarUsuario(usuario)" title="Editar">
                 <i class="fas fa-edit"></i>

@@ -160,7 +160,7 @@ export class UsuarioComponent implements OnInit {
         response => {
           this.cerrarModal();
           this.cargarUsuarios();
-          swal('¡Actualizado!', `El usuario "${this.usuarioActual.nombre}" ha sido actualizado con éxito`, 'success');
+          swal('¡Actualizado!', `El usuario ha sido actualizado con éxito`, 'success');
         },
         error => {
           console.error('Error al actualizar el usuario', error);
@@ -176,7 +176,7 @@ export class UsuarioComponent implements OnInit {
         response => {
           this.cerrarModal();
           this.cargarUsuarios();
-          swal('¡Creado!', `El usuario "${this.usuarioActual.nombre}" ha sido creado con éxito`, 'success');
+          swal('¡Creado!', `El usuario ha sido creado con éxito`, 'success');
         },
         error => {
           console.error('Error al crear el usuario', error);
