@@ -94,7 +94,7 @@ h6 {
 
 /* Botón de login */
 .btn-login {
-  background: linear-gradient(135deg, #836fff 0%, #5d4fff 100%);
+  background: linear-gradient(135deg, #7a6dff 0%, #0dcaf0 100%);
   color: white;
   font-weight: 600;
   padding: 0.5rem 1.5rem;
@@ -105,7 +105,7 @@ h6 {
 }
 
 .btn-login:hover {
-  background: linear-gradient(135deg, #9683ff 0%, #7a6dff 100%);
+  background: linear-gradient(135deg, #7a6dff 0%, #0dcaf0 100%);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(93, 79, 255, 0.5);
   color: white;

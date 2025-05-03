@@ -34,13 +34,13 @@
       </div>
       
       <!-- Botón de hamburguesa para pantallas pequeñas -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button #navbarToggler class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
     </div>
     
     <!-- Menú colapsado para pantallas pequeñas -->
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div #navbarCollapse class="collapse navbar-collapse" id="navbarNav">
       <div class="d-lg-none mt-3">
         <div class="input-group mb-3">
           <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios" aria-label="Buscar servicios">

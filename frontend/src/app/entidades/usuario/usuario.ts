@@ -7,9 +7,9 @@ export class Usuario {
     password: string = "";
     rol: string = "";
     fotoPerfil: string = "";
-    fecha_registro: string = ""; // Cambiado de fechaRegistro a fecha_registro para coincidir con el backend
+    fecha_registro: string = "";
     
-    // Propiedad calculada para acceder a la fecha como objeto Date
+    // Propiedad para acceder a la fecha como objeto Date
     get fechaRegistro(): Date {
         return this.fecha_registro ? new Date(this.fecha_registro) : new Date();
     }

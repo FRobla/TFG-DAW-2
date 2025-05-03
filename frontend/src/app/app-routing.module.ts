@@ -7,16 +7,48 @@ import { LoginComponent } from './paginas/login/login.component';
 import { ErrorComponent } from './recursos/error/error.component';
 import { UsuarioComponent } from './entidades/usuario/usuario.component';
 import { LandingComponent } from './paginas/landing/landing.component';
+import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
+import { CategoriasComponent } from './entidades/categoria/categoria.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: LandingComponent },
-  { path: 'servicios', component: PrincipalComponent },
-  { path: 'resultados-busqueda', component: ResultadoBusquedaComponent },
-  { path: 'detalles-anuncio/:id', component: DetallesAnuncioComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'admin/usuarios', component: UsuarioComponent },
-  { path: 'error', component: ErrorComponent },
-  { path: '**', redirectTo: 'error' }
+  { 
+    path: '', 
+    component: LandingComponent 
+  },
+  { 
+    path: 'servicios', 
+    component: PrincipalComponent 
+  },
+  { 
+    path: 'resultados-busqueda', 
+    component: ResultadoBusquedaComponent 
+  },
+  { 
+    path: 'detalles-anuncio/:id', 
+    component: DetallesAnuncioComponent 
+  },
+  { 
+    path: 'login', 
+    component: LoginComponent 
+  },
+  // Rutas administrativas (acceso público temporal)
+  { 
+    path: 'admin', 
+    children: [
+      { path: 'usuarios', component: UsuarioComponent },
+      { path: 'anuncios', component: AnuncioComponent },
+      { path: 'categorias', component: CategoriasComponent }
+    ]
+  },
+  { 
+    path: 'error', 
+    component: ErrorComponent 
+  },
+  { 
+    path: '**', 
+    redirectTo: 'error' 
+  }
 ];
 
 @NgModule({

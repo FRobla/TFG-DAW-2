@@ -1,0 +1,157 @@
+<!-- Categorías de servicios -->
+<section class="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Explora por categoría</h2>
+        <p class="section-subtitle">Encuentra el servicio que necesitas entre nuestras categorías especializadas</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M12,2 L2,8 L12,14 L22,8 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M2,16 L12,22 L22,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M12,14 L12,22" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 0">{{ categorias[0].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 0">Cargando...</h3>
+            <p>12 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M6,3 L18,3 L22,9 L12,21 L2,9 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M12,21 L12,9 L22,9" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M2,9 L12,9" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 1">{{ categorias[1].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 1">Cargando...</h3>
+            <p>8 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M7,12 L17,12 M7,8 L13,8 M7,16 L15,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 2">{{ categorias[2].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 2">Cargando...</h3>
+            <p>15 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M7,8 C7,5.24 9.24,3 12,3 C14.76,3 17,5.24 17,8 C17,10.76 14.76,13 12,13" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M12,13 L12,21" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M9,16 L15,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 3">{{ categorias[3].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 3">Cargando...</h3>
+            <p>6 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <circle cx="12" cy="12" r="10" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M12,2 L12,4 M12,20 L12,22 M2,12 L4,12 M20,12 L22,12" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M4.93,4.93 L6.34,6.34 M17.66,17.66 L19.07,19.07 M4.93,19.07 L6.34,17.66 M17.66,6.34 L19.07,4.93" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 4">{{ categorias[4].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 4">Cargando...</h3>
+            <p>9 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M3,22 V8 L12,2 L21,8 V22 H15 V16 H9 V22 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M9,10 H15" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M9,14 H15" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 5">{{ categorias[5].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 5">Cargando...</h3>
+            <p>7 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M12,8 L12,16" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M8,12 L16,12" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 6">{{ categorias[6].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 6">Cargando...</h3>
+            <p>5 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="category-card">
+            <div class="category-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48">
+                <path d="M20,12 L4,12" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M20,6 L4,6" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <path d="M20,18 L4,18" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <circle cx="8" cy="6" r="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <circle cx="16" cy="12" r="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+                <circle cx="8" cy="18" r="2" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3 *ngIf="categorias.length > 7">{{ categorias[7].nombre }}</h3>
+            <h3 *ngIf="categorias.length <= 7">Cargando...</h3>
+            <p>11 proveedores</p>
+            <div class="category-overlay">
+              <button class="btn btn-sm btn-outline-light my-2">Explorar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

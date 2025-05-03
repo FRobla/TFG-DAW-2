@@ -37,10 +37,9 @@ public class SecurityConfig {
                     // Requerir autenticación para ciertos endpoints, tanto para USER como para ADMIN
                     .requestMatchers("/api/valoraciones", "/api/detalles-carrito").hasRole("USER")
  
-                    // Requerir ADMIN para endpoints específicos (excluir los relacionados con usuarios para hacerlos públicos)
+                    // Requerir ADMIN para endpoints específicos (excluir los relacionados con usuarios y anuncios para hacerlos públicos)
                     .requestMatchers("/api/impresora", "/api/carritos", "/api/carrito", "/api/pedidos", "/api/pedido",
-                                     "/api/favoritos", "/api/categoria", "/api/valoracion", 
-                                     "/api/anuncio", "/api/anuncios").hasRole("ADMIN")
+                                     "/api/favoritos", "/api/categoria", "/api/valoracion").hasRole("ADMIN")
                     
                     .anyRequest().authenticated()
             )
