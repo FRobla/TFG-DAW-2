@@ -299,14 +299,6 @@ export class CategoriasComponent implements OnInit {
   }
 
   /**
-   * Obtiene el número de categorías recientes (últimos 30 días)
-   * En este caso, no tenemos fecha de creación, así que retornamos 0
-   */
-  getCategoriasRecientes(): number {
-    return 0; // Se podría implementar si las categorías tuvieran fecha de creación
-  }
-
-  /**
    * Exporta las categorías a un archivo CSV
    */
   exportarCategorias(): void {

@@ -25,17 +25,8 @@
         <i class="fas fa-cogs"></i>
       </div>
       <div class="stat-info">
-        <h3 class="stat-number">{{categorias.length > 0 ? categorias.length * 2 : 0}}</h3>
+        <h3 class="stat-number">{{categorias.length > 0 ? categorias.length : 0}}</h3>
         <p class="stat-label">Servicios Asociados</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-calendar-alt"></i>
-      </div>
-      <div class="stat-info">
-        <h3 class="stat-number">{{getCategoriasRecientes()}}</h3>
-        <p class="stat-label">Añadidas Recientemente</p>
       </div>
     </div>
   </div>
@@ -61,13 +52,13 @@
                 <i class="fas fa-tag"></i>
               </div>
             </td>
-            <td class="cat-name" data-label="Nombre">
+            <td class="cat-name text-center" data-label="Nombre">
               <span class="nombre">{{categoria.nombre}}</span>
             </td>
-            <td class="cat-description" data-label="Descripción">
+            <td class="cat-description text-center" data-label="Descripción">
               <span class="descripcion">{{categoria.descripcion}}</span>
             </td>
-            <td class="cat-services" data-label="Servicios">
+            <td class="cat-services text-center" data-label="Servicios">
               <button class="services-btn" (click)="verServiciosCategoria(categoria)">
                 <i class="fas fa-search"></i> Ver servicios
               </button>

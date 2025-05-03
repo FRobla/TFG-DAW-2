@@ -222,6 +222,8 @@
   font-family: monospace;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.85rem;
+  text-align: center;
+  font-weight: bold;
 }
 
 .cat-icon {
@@ -251,7 +253,7 @@
 }
 
 .cat-services {
-  width: 140px;
+  width: auto;
 }
 
 .services-btn {
@@ -686,6 +688,13 @@
 
 .btn-confirmar:hover {
   background-color: #ff6b6b;
+}
+
+.underline {
+  text-decoration: underline;
+  text-decoration-color: #7a6dff;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 /* Responsividad */

@@ -19,19 +19,19 @@
 </div>
 <div class="entity-tabs">
   <div class="tabs-container">
-    <a routerLink="/admin/usuarios" class="tab-item active">
+    <a routerLink="/admin/usuarios" class="tab-item" [ngClass]="{ active: router.url === '/admin/usuarios' }">
       <i class="fas fa-users"></i> Usuarios
     </a>
-    <a routerLink="/admin/anuncios" class="tab-item">
+    <a routerLink="/admin/anuncios" class="tab-item" [ngClass]="{ active: router.url === '/admin/anuncios' }">
       <i class="fas fa-ad"></i> Anuncios
     </a>
-    <a routerLink="/admin/categorias" class="tab-item">
+    <a routerLink="/admin/categorias" class="tab-item" [ngClass]="{ active: router.url === '/admin/categorias' }">
       <i class="fas fa-tags"></i> Categorías
     </a>
-    <a routerLink="/admin/servicios" class="tab-item">
+    <a routerLink="/admin/servicios" class="tab-item" [ngClass]="{ active: router.url === '/admin/servicios' }">
       <i class="fas fa-cogs"></i> Servicios
     </a>
-    <a routerLink="/admin/pedidos" class="tab-item">
+    <a routerLink="/admin/pedidos" class="tab-item" [ngClass]="{ active: router.url === '/admin/pedidos' }">
       <i class="fas fa-shopping-cart"></i> Pedidos
     </a>
   </div>

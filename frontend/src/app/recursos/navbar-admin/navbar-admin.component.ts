@@ -1,4 +1,5 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar-admin',
@@ -12,9 +13,10 @@ export class NavbarAdminComponent implements OnInit {
   @Output() exportarUsuariosEvent = new EventEmitter<void>();
   termino: string = '';
 
-  constructor() { }
+  constructor(public router: Router) { }
 
   ngOnInit(): void {
+    this.router = this.router;
   }
 
   /**
