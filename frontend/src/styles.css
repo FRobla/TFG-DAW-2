@@ -122,3 +122,55 @@ input::placeholder, textarea::placeholder {
   border: none !important;
   border-radius: 6px !important;
 }
+
+/* Estilos globales para View Transitions API */
+
+:root {
+  view-transition-name: none;
+}
+
+/* Soporte para navegadores basados en Chrome */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(*) {
+    animation-duration: 0.3s;
+  }
+}
+
+/* Estilos específicos para diferentes tipos de transiciones */
+[data-view-transition="card"] {
+  view-transition-name: var(--view-transition-name, card);
+  position: relative;
+  z-index: 1;
+  contain: paint;
+}
+
+[data-view-transition="header"] {
+  view-transition-name: var(--view-transition-name, header);
+  position: relative;
+  z-index: 2;
+  contain: paint;
+}
+
+[data-view-transition="image"] {
+  view-transition-name: var(--view-transition-name, image);
+  position: relative;
+  z-index: 1;
+  contain: paint;
+}
+
+/* Asegurar que los ids específicos tengan prioridad */
+[data-view-id] {
+  --view-transition-name: attr(data-view-id);
+}
+
+/* Estilos para elementos durante la transición */
+.view-transition-active {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 768px) {
+  ::view-transition-group(*) {
+    animation-duration: 0.2s; /* Más rápido en móviles */
+  }
+}

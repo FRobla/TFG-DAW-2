@@ -34,10 +34,13 @@ export class NavbarBusquedaComponent implements AfterViewInit {
     const queryParams: any = {};
     queryParams.q = this.busquedaTexto.trim();
     
-    // Redirigir a la página de resultados de búsqueda con el parámetro
-    console.log("Redirigiendo a resultados de búsqueda con parámetros:", queryParams);
-    this.router.navigate(["resultados-busqueda"], {
-      queryParams: queryParams
+    // Aplicar transición visual si está disponible
+    this.aplicarTransicion(() => {
+      // Redirigir a la página de resultados de búsqueda con el parámetro
+      console.log("Redirigiendo a resultados de búsqueda con parámetros:", queryParams);
+      this.router.navigate(["resultados-busqueda"], {
+        queryParams: queryParams
+      });
     });
   }
 
@@ -45,11 +48,14 @@ export class NavbarBusquedaComponent implements AfterViewInit {
    * Redirige al usuario a la página de inicio de sesión
    */
   iniciarSesion(): void {
-    // Aquí se añadiría la navegación a la página de login
-    console.log("Redirigiendo a página de inicio de sesión");
-    this.router.navigate(["/login"]);
-    // Cerrar menú desplegable si está abierto
-    this.cerrarMenuSiAbierto();
+    // Aplicar transición visual si está disponible
+    this.aplicarTransicion(() => {
+      // Aquí se añadiría la navegación a la página de login
+      console.log("Redirigiendo a página de inicio de sesión");
+      this.router.navigate(["/login"]);
+      // Cerrar menú desplegable si está abierto
+      this.cerrarMenuSiAbierto();
+    });
   }
 
   /**
@@ -113,6 +119,25 @@ export class NavbarBusquedaComponent implements AfterViewInit {
   cerrarMenuSiAbierto(): void {
     if (this.isMenuOpen) {
       this.cerrarMenu();
+    }
+  }
+
+  /**
+   * Aplica una transición suave usando View Transitions API
+   * @param callback Función a ejecutar durante la transición
+   */
+  private aplicarTransicion(callback: () => void): void {
+    // Verificar si el navegador soporta View Transitions API
+    if (document.startViewTransition) {
+      // Iniciar transición visual
+      document.startViewTransition(() => {
+        // Ejecutar el callback (navegación)
+        callback();
+        return Promise.resolve();
+      });
+    } else {
+      // Si no hay soporte, ejecutar directamente el callback
+      callback();
     }
   }
 }

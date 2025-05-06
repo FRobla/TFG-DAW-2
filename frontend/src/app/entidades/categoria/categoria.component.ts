@@ -29,6 +29,9 @@ export class CategoriasComponent implements OnInit {
   
   // Estado para el modal de confirmación
   modalConfirmacionVisible: boolean = false;
+  
+  // Estado de carga
+  cargando: boolean = false;
   tituloConfirmacion: string = '';
   mensajeConfirmacion: string = '';
   accionConfirmacion: Function = () => {};
@@ -61,14 +64,19 @@ export class CategoriasComponent implements OnInit {
    * Carga todas las categorías desde el servicio
    */
   cargarCategorias(): void {
+    // No activamos el estado de carga para permitir view-transitions fluidas
     this.categoriaService.getCategorias().subscribe(
       categorias => {
         this.categorias = categorias;
         this.filtrarCategorias();
         this.calcularTotalPaginas();
         this.aplicarPaginacion();
+        
+        // Aseguramos que cargando esté desactivado para no interferir con las transiciones
+        this.cargando = false;
       },
       error => {
+        this.cargando = false;
         console.error('Error al cargar categorías', error);
         swal('Error', 'Hubo un problema al cargar las categorías', 'error');
       }
@@ -254,11 +262,18 @@ export class CategoriasComponent implements OnInit {
   }
 
   /**
-   * Cambia la página actual
+   * Cambia la página actual con transición suave
+   * @param pagina Número de página a cambiar
    */
   cambiarPagina(pagina: number): void {
-    this.paginaActual = pagina;
-    this.cargarCategorias();
+    // Activar estado de carga para evitar parpadeos
+    this.cargando = true;
+    
+    // Usar setTimeout para permitir actualizar la UI antes del cambio
+    setTimeout(() => {
+      this.paginaActual = pagina;
+      this.cargarCategorias();
+    }, 50);
   }
 
   /**

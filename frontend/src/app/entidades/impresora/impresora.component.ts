@@ -52,6 +52,9 @@ export class ImpresoraComponent implements OnInit {
   ordenarPor: string = 'modelo';
   ordenAscendente: boolean = true;
   
+  // Estado de carga
+  cargando: boolean = false;
+  
   @ViewChild('impresoraForm') impresoraForm!: NgForm;
 
   constructor(
@@ -69,6 +72,8 @@ export class ImpresoraComponent implements OnInit {
    * Carga todas las impresoras desde el servicio
    */
   cargarImpresoras(): void {
+    // No activamos el estado de carga para permitir view-transitions fluidas
+    // this.cargando = true;
     this.impresoraService.getImpresoras().subscribe(
       impresorasData => {
         // Transformamos los datos del backend a objetos Impresora
@@ -76,8 +81,12 @@ export class ImpresoraComponent implements OnInit {
         this.filtrarImpresoras();
         this.calcularTotalPaginas();
         this.aplicarPaginacion();
+        
+        // Aseguramos que cargando está desactivado para no interferir con las transiciones
+        this.cargando = false;
       },
       error => {
+        this.cargando = false;
         console.error('Error al cargar impresoras', error);
         swal('Error', 'Hubo un problema al cargar las impresoras', 'error');
       }

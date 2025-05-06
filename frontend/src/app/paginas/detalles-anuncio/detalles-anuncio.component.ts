@@ -279,4 +279,41 @@ export class DetallesAnuncioComponent implements OnInit {
     // Redirigir a la página de inicio de sesión
     this.router.navigate(['/login']);
   }
+  
+  /**
+   * Navega de vuelta a la página de resultados de búsqueda con transición visual
+   * @param event Evento del clic
+   */
+  volverAResultados(event: Event): void {
+    event.preventDefault();
+    
+    // Verificar si el navegador soporta View Transitions API
+    if (document.startViewTransition) {
+      // Aplicar transición visual
+      document.startViewTransition(() => {
+        // Preparar elementos para la transición
+        const titulo = document.querySelector(`[data-view-id="anuncio-title-${this.anuncioId}"]`);
+        const imagen = document.querySelector(`[data-view-id="anuncio-img-${this.anuncioId}"]`);
+        
+        // Asegurar que los elementos mantengan su estilo durante la transición
+        if (titulo) titulo.setAttribute('style', 'view-transition-name: header;');
+        if (imagen) imagen.setAttribute('style', 'view-transition-name: image;');
+        
+        // Redirigir a la página de resultados de búsqueda
+        this.router.navigate(["/resultados-busqueda"]);
+        
+        return new Promise<void>(resolve => {
+          setTimeout(() => {
+            // Limpiar los estilos después de la transición
+            if (titulo) titulo.removeAttribute('style');
+            if (imagen) imagen.removeAttribute('style');
+            resolve();
+          }, 300); // Duración aproximada de la transición
+        });
+      });
+    } else {
+      // Fallback para navegadores que no soportan View Transitions API
+      this.router.navigate(["/resultados-busqueda"]);
+    }
+  }
 }

@@ -271,7 +271,7 @@ export class AnuncioComponent implements OnInit {
   getCategoriaById(id: number): any {
     return this.categorias.find(c => c.id === id);
   }
-  
+
   // Métodos para paginación
   calcularTotalPaginas(): void {
     this.totalPaginas = Math.ceil(this.anunciosFiltrados.length / this.itemsPorPagina);
@@ -280,9 +280,24 @@ export class AnuncioComponent implements OnInit {
     }
   }
   
+  /**
+   * Cambia la página actual con transición suave
+   * @param pagina Número de página a cambiar
+   */
   cambiarPagina(pagina: number): void {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
-      this.paginaActual = pagina;
+      // Activar estado de carga para evitar parpadeos
+      this.cargando = true;
+      
+      // Usar setTimeout para permitir actualizar la UI antes del cambio
+      setTimeout(() => {
+        this.paginaActual = pagina;
+        
+        // Un breve retraso adicional para completar la transición
+        setTimeout(() => {
+          this.cargando = false;
+        }, 100);
+      }, 50);
     }
   }
   

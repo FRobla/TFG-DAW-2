@@ -521,12 +521,38 @@ export class ResultadoBusquedaComponent implements OnInit {
   }
 
   /**
-   * Navega a la página de detalles del anuncio
+   * Navega a la página de detalles del anuncio con transición visual
    * @param id Identificador del anuncio
    */
   verDetalles(id: number): void {
-    // Redirigir a la página de detalles del anuncio
-    this.router.navigate(["/detalles-anuncio", id])
+    // Verificar si el navegador soporta View Transitions API
+    if (document.startViewTransition) {
+      // Aplicar transición visual
+      document.startViewTransition(() => {
+        // Preparar elementos para la transición
+        const imagen = document.querySelector(`[data-view-id="anuncio-img-${id}"]`);
+        const titulo = document.querySelector(`[data-view-id="anuncio-title-${id}"]`);
+        
+        // Asegurar que los elementos mantengan su estilo durante la transición
+        if (imagen) imagen.setAttribute('style', 'view-transition-name: image;');
+        if (titulo) titulo.setAttribute('style', 'view-transition-name: header;');
+        
+        // Redirigir a la página de detalles del anuncio
+        this.router.navigate(["/detalles-anuncio", id]);
+        
+        return new Promise<void>(resolve => {
+          setTimeout(() => {
+            // Limpiar los estilos después de la transición
+            if (imagen) imagen.removeAttribute('style');
+            if (titulo) titulo.removeAttribute('style');
+            resolve();
+          }, 300); // Duración aproximada de la transición
+        });
+      });
+    } else {
+      // Fallback para navegadores que no soportan View Transitions API
+      this.router.navigate(["/detalles-anuncio", id]);
+    }
   }
 
   // Método para mostrar todas las categorías

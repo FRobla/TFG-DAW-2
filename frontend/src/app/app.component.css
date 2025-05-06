@@ -1,0 +1,92 @@
+/* Estilos para View Transitions API */
+
+/* Estilo base durante las transiciones */
+:root {
+  view-transition-name: none;
+}
+
+/* Estilos para la transición de página completa */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+}
+
+/* Transición de desvanecimiento para toda la página */
+::view-transition-old(root) {
+  animation-name: fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: fade-in;
+}
+
+/* Animaciones */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Clase añadida durante la transición */
+.view-transition-active {
+  overflow: hidden; /* Evitar desplazamiento durante transiciones */
+}
+
+/* Estilos específicos para ciertos elementos durante las transiciones */
+[data-view-transition="card"] {
+  view-transition-name: card;
+}
+
+[data-view-transition="header"] {
+  view-transition-name: header;
+}
+
+[data-view-transition="image"] {
+  view-transition-name: image;
+}
+
+/* Estilos específicos para elementos con IDs de transición */
+[data-view-id] {
+  contain: paint;
+}
+
+/* Específico para cada tipo de entidad - permite transiciones entre diferentes componentes */
+[data-view-id^="usuario-"] {
+  view-transition-name: var(--view-id, none);
+}
+
+[data-view-id^="categoria-"] {
+  view-transition-name: var(--view-id, none);
+}
+
+[data-view-id^="impresora-"] {
+  view-transition-name: var(--view-id, none);
+}
+
+[data-view-id^="anuncio-"] {
+  view-transition-name: var(--view-id, none);
+}
+
+/* Animaciones específicas para elementos con transiciones personalizadas */
+::view-transition-old(card),
+::view-transition-new(card) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(header),
+::view-transition-new(header) {
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-old(image),
+::view-transition-new(image) {
+  animation-duration: 0.6s;
+  animation-timing-function: ease-in-out;
+}

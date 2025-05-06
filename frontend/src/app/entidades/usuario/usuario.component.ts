@@ -28,6 +28,9 @@ export class UsuarioComponent implements OnInit {
   modoEdicion: boolean = false;
   editando: boolean = false;
   
+  // Estado de carga
+  cargando: boolean = false;
+  
   // Estado para el modal de confirmación
   modalConfirmacionVisible: boolean = false;
   tituloConfirmacion: string = '';
@@ -59,6 +62,8 @@ export class UsuarioComponent implements OnInit {
    * Carga todos los usuarios desde el servicio
    */
   cargarUsuarios(): void {
+    // No activamos el estado de carga para permitir las view-transitions fluidas
+    // this.cargando = true; 
     this.usuarioService.getUsuarios().subscribe(
       usuariosData => {
         // Transformamos los datos del backend a objetos Usuario
@@ -66,8 +71,12 @@ export class UsuarioComponent implements OnInit {
         this.filtrarUsuarios();
         this.calcularTotalPaginas();
         this.aplicarPaginacion();
+        
+        // Aseguramos que cargando esté desactivado para que no interfiera con las transiciones
+        this.cargando = false;
       },
       error => {
+        this.cargando = false;
         console.error('Error al cargar usuarios', error);
         swal('Error', 'Hubo un problema al cargar los usuarios', 'error');
       }
@@ -184,11 +193,18 @@ export class UsuarioComponent implements OnInit {
   }
 
   /**
-   * Cambia la página actual
+   * Cambia la página actual con transición suave
+   * @param pagina Número de página a cambiar
    */
   cambiarPagina(pagina: number): void {
-    this.paginaActual = pagina;
-    this.cargarUsuarios();
+    // Activar estado de carga para evitar parpadeos
+    this.cargando = true;
+    
+    // Usar setTimeout para permitir actualizar la UI antes del cambio
+    setTimeout(() => {
+      this.paginaActual = pagina;
+      this.cargarUsuarios();
+    }, 50);
   }
 
   /**

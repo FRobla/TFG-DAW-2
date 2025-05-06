@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+<div class="dashboard-container" @viewTransition>
   <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarUsuariosEvent)="exportarImpresoras()"></app-navbar-admin>
 
   <div class="dashboard-stats">
@@ -68,7 +68,7 @@
       </div>
     </div>
     
-    <div class="table-container">
+    <div class="table-container" [class.loading]="cargando" data-view-transition="card">
       <table class="impresoras-table">
         <thead>
           <tr>
@@ -87,19 +87,19 @@
           <tr *ngFor="let impresora of impresorasFiltradas">
             <td class="impresora-id" data-label="ID">{{impresora.id}}</td>
             <td class="impresora-imagen" data-label="Imagen">
-              <div class="imagen" [style.background-image]="impresora.urlImagen ? 'url(' + impresora.urlImagen + ')' : ''">
+              <div class="imagen" [style.background-image]="impresora.urlImagen ? 'url(' + impresora.urlImagen + ')' : ''" data-view-transition="image" [attr.data-view-id]="'impresora-img-' + impresora.id">
                 <span *ngIf="!impresora.urlImagen"><i class="fas fa-print"></i></span>
               </div>
             </td>
             <td class="impresora-modelo" data-label="Modelo">
-              <div class="impresora-info">
+              <div class="impresora-info" data-view-transition="header" [attr.data-view-id]="'impresora-model-' + impresora.id">
                 <span class="modelo">{{impresora.modelo}}</span></div>
             </td>
             <td class="impresora-marca text-center" data-label="Marca">{{impresora.marca}}</td>
             <td class="impresora-precio text-center" data-label="Precio">{{impresora.precio}} €</td>
             <td class="impresora-tecnologia text-center" data-label="Tecnología">{{impresora.tecnologiaImpresion || 'No especificada'}}</td>
             <td class="impresora-categoria text-center" data-label="Categoría">
-              <span class="categoria-badge">
+              <span class="categoria-badge" data-view-transition="card" [attr.data-view-id]="'impresora-category-' + impresora.id">
                 {{getNombreCategoria(impresora.categoriaId)}}
               </span>
             </td>
@@ -124,7 +124,13 @@
       </table>
     </div>
 
-    <div *ngIf="impresorasFiltradas.length === 0" class="no-results">
+    <!-- Indicador de carga con transición fluida -->
+    <div *ngIf="cargando" class="loading-container" data-view-transition="loading-indicator">
+      <div class="spinner"></div>
+    </div>
+    
+    <!-- Mensaje de sin resultados (solo mostrar cuando no está cargando) -->
+    <div *ngIf="!cargando && impresorasFiltradas.length === 0" class="no-results">
       <div class="no-results-content">
         <i class="fas fa-search no-results-icon"></i>
         <h3>No se encontraron impresoras</h3>
@@ -153,7 +159,7 @@
     </div>
   </div>
 
-  <div class="dashboard-actions">
+  <div class="dashboard-actions" data-view-transition="action-buttons" *ngIf="!cargando">
     <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
       <i class="fas fa-trash-alt"></i> Eliminar Todas
     </button>

@@ -34,13 +34,15 @@ export class Anuncio {
             id: data.id,
             titulo: data.titulo,
             descripcion: data.descripcion,
-            precio: data.precio,
+            precio: data.precio_base, // Mapear precio_base a precio
             estado: data.estado,
-            urlImagen: data.urlImagen
+            urlImagen: data.imagen || data.urlImagen // Considerar ambos posibles nombres
         });
         
         // Manejar la fecha específicamente
-        if (data.fechaPublicacion) {
+        if (data.fecha_publicacion) {
+            anuncio.fechaPublicacion = data.fecha_publicacion;
+        } else if (data.fechaPublicacion) {
             anuncio.fechaPublicacion = data.fechaPublicacion;
         }
         
@@ -50,6 +52,8 @@ export class Anuncio {
         }
         if (data.categoria) {
             anuncio.categoriaId = data.categoria.id;
+        } else if (data.categorias && data.categorias.length > 0) {
+            anuncio.categoriaId = data.categorias[0].id;
         }
         if (data.impresora) {
             anuncio.impresoraId = data.impresora.id;

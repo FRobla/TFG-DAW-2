@@ -69,7 +69,7 @@
       </div>
     </div>
 
-    <div class="table-container">
+    <div class="table-container" [class.loading]="cargando" data-view-transition="card">
       <table class="anuncios-table">
         <thead>
           <tr>
@@ -87,12 +87,12 @@
           <tr *ngFor="let anuncio of getAnunciosPaginados()">
             <td class="anuncio-id" data-label="ID">{{anuncio.id}}</td>
             <td class="anuncio-imagen" data-label="Imagen">
-              <div class="imagen" [style.background-image]="anuncio.urlImagen ? 'url(' + anuncio.urlImagen + ')' : ''">
+              <div class="imagen" [style.background-image]="anuncio.urlImagen ? 'url(' + anuncio.urlImagen + ')' : ''" data-view-transition="image" [attr.data-view-id]="'anuncio-img-' + anuncio.id">
                 <span *ngIf="!anuncio.urlImagen"><i class="fas fa-bullhorn"></i></span>
               </div>
             </td>
             <td class="anuncio-titulo" data-label="Título">
-              <div class="anuncio-info">
+              <div class="anuncio-info" data-view-transition="header" [attr.data-view-id]="'anuncio-title-' + anuncio.id">
                 <span class="titulo">{{anuncio.titulo}}</span>
               </div>
             </td>
@@ -101,7 +101,7 @@
             </td>
             <td class="anuncio-precio text-center" data-label="Precio">{{anuncio.precio | currency:'EUR'}}</td>
             <td class="anuncio-categoria text-center" data-label="Categoría">
-              <span class="categoria-badge">
+              <span class="categoria-badge" data-view-transition="card" [attr.data-view-id]="'anuncio-category-' + anuncio.id">
                 {{getCategoriaById(anuncio.categoriaId)?.nombre || 'Sin categoría'}}
               </span>
             </td>
@@ -122,7 +122,13 @@
       </table>
     </div>
 
-    <div *ngIf="anuncios.length === 0" class="no-results">
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" class="loading-container">
+      <div class="spinner"></div>
+    </div>
+    
+    <!-- Mensaje de sin resultados (solo mostrar cuando no está cargando) -->
+    <div *ngIf="!cargando && anuncios.length === 0" class="no-results">
       <div class="no-results-content">
         <i class="fas fa-search no-results-icon"></i>
         <h3>No se encontraron anuncios</h3>
