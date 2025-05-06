@@ -45,7 +45,6 @@
     <!-- Filtros y Ordenación -->
     <div class="filtros-container">
       <div class="filtro-grupo">
-        <label class="filtro-label">Filtrar por categoría</label>
         <select class="filtro-select" [(ngModel)]="filtroCategoria" (change)="filtrarPorCategoria()">
           <option value="0">Todas las categorías</option>
           <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
@@ -74,14 +73,14 @@
       <table class="anuncios-table">
         <thead>
           <tr>
-            <th class="text-center underline">ID</th>
-            <th class="text-center underline">Imagen</th>
-            <th class="text-center underline">Título</th>
-            <th class="text-center underline">Descripción</th>
-            <th class="text-center underline">Precio</th>
-            <th class="text-center underline">Categoría</th>
-            <th class="text-center underline">Fecha</th>
-            <th class="text-center underline">Acciones</th>
+            <th class="text-center">ID</th>
+            <th class="text-center">Imagen</th>
+            <th class="text-center">Título</th>
+            <th class="text-center">Descripción</th>
+            <th class="text-center">Precio</th>
+            <th class="text-center">Categoría</th>
+            <th class="text-center">Fecha</th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -97,16 +96,16 @@
                 <span class="titulo">{{anuncio.titulo}}</span>
               </div>
             </td>
-            <td class="anuncio-descripcion" data-label="Descripción">
+            <td class="anuncio-descripcion text-center" data-label="Descripción">
               <span class="descripcion">{{anuncio.descripcion | slice:0:100}}{{anuncio.descripcion.length > 100 ? '...' : ''}}</span>
             </td>
-            <td class="anuncio-precio" data-label="Precio">{{anuncio.precio | currency:'EUR'}}</td>
-            <td class="anuncio-categoria" data-label="Categoría">
+            <td class="anuncio-precio text-center" data-label="Precio">{{anuncio.precio | currency:'EUR'}}</td>
+            <td class="anuncio-categoria text-center" data-label="Categoría">
               <span class="categoria-badge">
                 {{getCategoriaById(anuncio.categoriaId)?.nombre || 'Sin categoría'}}
               </span>
             </td>
-            <td class="anuncio-fecha" data-label="Fecha">{{anuncio.fechaPublicacion | date:'dd/MM/yyyy'}}</td>
+            <td class="anuncio-fecha text-center" data-label="Fecha">{{anuncio.fechaPublicacion | date:'dd/MM/yyyy'}}</td>
             <td class="anuncio-actions" data-label="Acciones">
               <button class="action-btn edit-btn" (click)="editarAnuncio(anuncio)" title="Editar">
                 <i class="fas fa-edit"></i>

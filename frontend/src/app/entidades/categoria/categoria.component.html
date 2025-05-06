@@ -44,7 +44,6 @@
     <!-- Filtros y Ordenación -->
     <div class="filtros-container">
       <div class="filtro-grupo">
-        <label class="filtro-label">Buscar por nombre</label>
         <input type="text" class="filtro-input" [(ngModel)]="busquedaNombre" (input)="filtrarPorNombre()" 
                placeholder="Nombre de categoría...">
       </div>
@@ -61,18 +60,16 @@
         </button>
       </div>
     </div>
-
-    <div class="dashboard-content">
     <div class="table-container">
       <table class="categorias-table">
         <thead>
           <tr>
-            <th class="text-center underline">ID</th>
-            <th class="text-center underline">Icono</th>
-            <th class="text-center underline">Nombre</th>
-            <th class="text-center underline">Descripción</th>
-            <th class="text-center underline">Servicios</th>
-            <th class="text-center underline">Acciones</th>
+            <th class="text-center">ID</th>
+            <th class="text-center">Icono</th>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Descripción</th>
+            <th class="text-center">Servicios</th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>

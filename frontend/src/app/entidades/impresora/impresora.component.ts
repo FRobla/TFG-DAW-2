@@ -20,6 +20,9 @@ export class ImpresoraComponent implements OnInit {
   impresoras: Impresora[] = [];
   impresorasFiltradas: Impresora[] = [];
   
+  // Control de edición y vista
+  editando: boolean = false;
+  
   // Lista de categorías para el selector
   categorias: Categoria[] = [];
   
@@ -41,8 +44,13 @@ export class ImpresoraComponent implements OnInit {
   itemsPorPagina: number = 10;
   totalPaginas: number = 1;
   
-  // Búsqueda
+  // Búsqueda y filtros
   termino: string = '';
+  filtroCategoria: number = 0;
+  
+  // Ordenación
+  ordenarPor: string = 'modelo';
+  ordenAscendente: boolean = true;
   
   @ViewChild('impresoraForm') impresoraForm!: NgForm;
 
@@ -95,19 +103,28 @@ export class ImpresoraComponent implements OnInit {
    * Filtra las impresoras según el término de búsqueda
    */
   filtrarImpresoras(): void {
-    if (!this.termino || this.termino.trim() === '') {
-      this.impresorasFiltradas = [...this.impresoras];
-      return;
-    }
-
-    const terminoLower = this.termino.toLowerCase();
-    this.impresorasFiltradas = this.impresoras.filter(impresora => 
-      impresora.modelo.toLowerCase().includes(terminoLower) ||
-      impresora.marca.toLowerCase().includes(terminoLower) ||
-      impresora.tecnologiaImpresion?.toLowerCase().includes(terminoLower) ||
-      impresora.descripcion?.toLowerCase().includes(terminoLower)
-    );
+    // Primero aplicar filtro por texto de búsqueda
+    let resultado = [...this.impresoras];
     
+    if (this.termino && this.termino.trim() !== '') {
+      const terminoLower = this.termino.toLowerCase();
+      resultado = resultado.filter(impresora => 
+        impresora.modelo.toLowerCase().includes(terminoLower) ||
+        impresora.marca.toLowerCase().includes(terminoLower) ||
+        impresora.tecnologiaImpresion?.toLowerCase().includes(terminoLower) ||
+        impresora.descripcion?.toLowerCase().includes(terminoLower)
+      );
+    }
+    
+    // Luego aplicar filtro por categoría si está seleccionada
+    if (this.filtroCategoria > 0) {
+      resultado = resultado.filter(impresora => impresora.categoriaId === this.filtroCategoria);
+    }
+    
+    // Aplicar ordenación
+    resultado = this.ordenarImpresoras(resultado);
+    
+    this.impresorasFiltradas = resultado;
     this.calcularTotalPaginas();
     this.aplicarPaginacion();
   }
@@ -120,6 +137,58 @@ export class ImpresoraComponent implements OnInit {
     this.filtrarImpresoras();
   }
 
+  /**
+   * Filtra las impresoras por categoría
+   */
+  filtrarPorCategoria(): void {
+    this.paginaActual = 1;
+    this.filtrarImpresoras();
+  }
+  
+  /**
+   * Ordena las impresoras según el criterio seleccionado
+   */
+  ordenarImpresoras(impresoras: Impresora[]): Impresora[] {
+    return [...impresoras].sort((a, b) => {
+      let valorA, valorB;
+      
+      switch (this.ordenarPor) {
+        case 'modelo':
+          valorA = a.modelo.toLowerCase();
+          valorB = b.modelo.toLowerCase();
+          break;
+        case 'precio':
+          valorA = a.precio || 0;
+          valorB = b.precio || 0;
+          break;
+        case 'marca':
+          valorA = a.marca.toLowerCase();
+          valorB = b.marca.toLowerCase();
+          break;
+        default:
+          valorA = a.id;
+          valorB = b.id;
+      }
+      
+      if (valorA < valorB) return this.ordenAscendente ? -1 : 1;
+      if (valorA > valorB) return this.ordenAscendente ? 1 : -1;
+      return 0;
+    });
+  }
+  
+  /**
+   * Cambia el criterio de ordenación, si es el mismo invierte el orden
+   */
+  cambiarOrden(criterio: string): void {
+    if (this.ordenarPor === criterio) {
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      this.ordenarPor = criterio;
+      this.ordenAscendente = true;
+    }
+    this.filtrarImpresoras();
+  }
+  
   /**
    * Calcula el número total de páginas basado en el número de impresoras y el tamaño de página
    */

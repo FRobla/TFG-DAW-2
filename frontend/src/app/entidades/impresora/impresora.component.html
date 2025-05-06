@@ -40,20 +40,47 @@
     </div>
   </div>
 
-  <div class="dashboard-content">
+  <div class="dashboard-content" *ngIf="!editando">
+    <!-- Filtros y Ordenación -->
+    <div class="filtros-container">
+      <div class="filtro-grupo">
+        <select class="filtro-select" [(ngModel)]="filtroCategoria" (change)="filtrarPorCategoria()">
+          <option value="0">Todas las categorías</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
+        </select>
+      </div>
+      <div class="orden-grupo">
+        <button class="orden-btn" [class.activo]="ordenarPor === 'modelo'" (click)="cambiarOrden('modelo')">
+          Modelo
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'modelo' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'modelo' && !ordenAscendente"></i>
+        </button>
+        <button class="orden-btn" [class.activo]="ordenarPor === 'precio'" (click)="cambiarOrden('precio')">
+          Precio
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'precio' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'precio' && !ordenAscendente"></i>
+        </button>
+        <button class="orden-btn" [class.activo]="ordenarPor === 'marca'" (click)="cambiarOrden('marca')">
+          Marca
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'marca' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'marca' && !ordenAscendente"></i>
+        </button>
+      </div>
+    </div>
+    
     <div class="table-container">
       <table class="impresoras-table">
         <thead>
           <tr>
-            <th class="text-center underline">ID</th>
-            <th class="text-center underline">Imagen</th>
-            <th class="text-center underline">Modelo</th>
-            <th class="text-center underline">Marca</th>
-            <th class="text-center underline">Precio</th>
-            <th class="text-center underline">Tecnología</th>
-            <th class="text-center underline">Categoría</th>
-            <th class="text-center underline">Stock</th>
-            <th class="text-center underline">Acciones</th>
+            <th class="text-center">ID</th>
+            <th class="text-center">Imagen</th>
+            <th class="text-center">Modelo</th>
+            <th class="text-center">Marca</th>
+            <th class="text-center">Precio</th>
+            <th class="text-center">Tecnología</th>
+            <th class="text-center">Categoría</th>
+            <th class="text-center">Stock</th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -66,19 +93,17 @@
             </td>
             <td class="impresora-modelo" data-label="Modelo">
               <div class="impresora-info">
-                <span class="modelo">{{impresora.modelo}}</span>
-                <span class="descripcion">{{impresora.descripcion ? (impresora.descripcion.substring(0, 30) + (impresora.descripcion.length > 30 ? '...' : '')) : ''}}</span>
-              </div>
+                <span class="modelo">{{impresora.modelo}}</span></div>
             </td>
-            <td class="impresora-marca" data-label="Marca">{{impresora.marca}}</td>
-            <td class="impresora-precio" data-label="Precio">{{impresora.precio}} €</td>
-            <td class="impresora-tecnologia" data-label="Tecnología">{{impresora.tecnologiaImpresion || 'No especificada'}}</td>
-            <td class="impresora-categoria" data-label="Categoría">
+            <td class="impresora-marca text-center" data-label="Marca">{{impresora.marca}}</td>
+            <td class="impresora-precio text-center" data-label="Precio">{{impresora.precio}} €</td>
+            <td class="impresora-tecnologia text-center" data-label="Tecnología">{{impresora.tecnologiaImpresion || 'No especificada'}}</td>
+            <td class="impresora-categoria text-center" data-label="Categoría">
               <span class="categoria-badge">
                 {{getNombreCategoria(impresora.categoriaId)}}
               </span>
             </td>
-            <td class="impresora-stock" data-label="Stock">
+            <td class="impresora-stock text-center" data-label="Stock">
               <span class="stock-badge" [ngClass]="{'en-stock': impresora.enStock, 'sin-stock': !impresora.enStock}">
                 {{impresora.enStock ? 'En Stock' : 'Sin Stock'}}
               </span>

@@ -44,7 +44,6 @@
     <!-- Filtros y Ordenación -->
     <div class="filtros-container">
       <div class="filtro-grupo">
-        <label class="filtro-label">Filtrar por rol</label>
         <select class="filtro-select" [(ngModel)]="filtroRol" (change)="filtrarPorRol()">
           <option value="">Todos los roles</option>
           <option value="ADMIN">Administradores</option>
@@ -69,19 +68,17 @@
         </button>
       </div>
     </div>
-
-    <div class="dashboard-content">
     <div class="table-container">
       <table class="usuarios-table">
         <thead>
           <tr>
-            <th class="text-center underline">ID</th>
-            <th class="text-center underline">Perfil</th>
-            <th class="text-center underline">Nombre</th>
-            <th class="text-center underline">Email</th>
-            <th class="text-center underline">Rol</th>
-            <th class="text-center underline">Fecha Registro</th>
-            <th class="text-center underline">Acciones</th>
+            <th class="text-center">ID</th>
+            <th class="text-center">Perfil</th>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Email</th>
+            <th class="text-center">Rol</th>
+            <th class="text-center">Fecha Registro</th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -98,13 +95,13 @@
                 <span class="direccion">{{usuario.direccion || 'Sin dirección'}}</span>
               </div>
             </td>
-            <td class="user-email" data-label="Email">{{usuario.email}}</td>
-            <td class="user-role" data-label="Rol">
+            <td class="user-email text-center" data-label="Email">{{usuario.email}}</td>
+            <td class="user-role text-center" data-label="Rol">
               <span class="role-badge" [ngClass]="{'admin-role': usuario.rol === 'ADMIN', 'user-role': usuario.rol === 'USER'}">
                 {{usuario.rol}}
               </span>
             </td>
-            <td class="user-date" data-label="Fecha">{{usuario.fechaRegistro | date:'dd/MM/yyyy'}}</td>
+            <td class="user-date text-center" data-label="Fecha">{{usuario.fechaRegistro | date:'dd/MM/yyyy'}}</td>
             <td class="user-actions" data-label="Acciones">
               <button class="action-btn edit-btn" (click)="editarUsuario(usuario)" title="Editar">
                 <i class="fas fa-edit"></i>
