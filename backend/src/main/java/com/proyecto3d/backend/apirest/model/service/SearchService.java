@@ -8,23 +8,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.proyecto3d.backend.apirest.model.dao.AnuncioDao;
 import com.proyecto3d.backend.apirest.model.dao.CategoriaDao;
-import com.proyecto3d.backend.apirest.model.dao.ImpresoraDao;
 import com.proyecto3d.backend.apirest.model.entity.Anuncio;
 import com.proyecto3d.backend.apirest.model.entity.Categoria;
-import com.proyecto3d.backend.apirest.model.entity.Impresora;
 
 @Service
 public class SearchService{
+
 	@Autowired
     private AnuncioDao anuncioDao;
-    @Autowired
-    private ImpresoraDao autorDao;
+
     @Autowired
     private CategoriaDao categoriaDao;
     
@@ -65,6 +62,7 @@ public class SearchService{
         return new ArrayList<>(allResults);
     }
     
+    /*
     public List<Impresora> searchImpresoras(String query) {
     	
         List<String> terms = parseQuery(query);
@@ -75,10 +73,10 @@ public class SearchService{
         
         Set<Impresora> allResults = new HashSet<>();
         
-        // Buscar autores por cada término
+        // Buscar impresoraes por cada término
         for (String term : terms) {
-        	allResults.addAll(autorDao.findByNombreContainingIgnoreCase(term));
-            //allResults.addAll(autorDao.findByTerm(term));
+        	allResults.addAll(impresoraDao.findByModeloContainingIgnoreCase(term));
+            //allResults.addAll(impresoraDao.findByTerm(term));
         }
         
         return new ArrayList<>(allResults);
@@ -104,24 +102,24 @@ public class SearchService{
     }
     
     
-    //Todos los anuncios asociados  a un autor
+    //Todos los anuncios asociados  a un impresora
     @Transactional(readOnly = true)
-    public List<Anuncio> findAnunciosByImpresoraId(Long autorId) {
-        // autor existe
-        Impresora autor = autorDao.findById(autorId)
-            .orElseThrow(() -> new RuntimeException("Impresora no encontrada con ID: " + autorId));
-        // anuncios asociados a este autor (ManyToOne)
-        return anuncioDao.findByImpresoraId(autor.getId(), Pageable.unpaged()).getContent();
-    }
+    public List<Anuncio> findAnunciosByImpresoraId(Long impresoraId) {
+        // impresora existe
+        Impresora impresora = impresoraDao.findById(impresoraId)
+            .orElseThrow(() -> new RuntimeException("Impresora no encontrada con ID: " + impresoraId));
+        // anuncios asociados a este impresora (ManyToOne)
+        return anuncioDao.findByImpresoraId(impresora.getId(), Pageable.unpaged()).getContent();
+    } */
     
-    //Todos los anuncios asociados a un género 
+    //Todos los anuncios asociados a una categoria
     @Transactional(readOnly = true)
     public List<Anuncio> findAnunciosByCategoriaId(Long categoriaId) {
-        // género exista
+        // categoria exista
         Categoria categoria = categoriaDao.findById(categoriaId)
-            .orElseThrow(() -> new RuntimeException("Género no encontrado con ID: " + categoriaId));
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + categoriaId));
         
-        // anuncios asociados a este género
+        // anuncios asociados a esta categoria
         return anuncioDao.findByCategoriasContaining(categoria);
     }
     /* 

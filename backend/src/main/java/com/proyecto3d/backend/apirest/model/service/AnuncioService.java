@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.proyecto3d.backend.apirest.model.entity.Anuncio;
-import com.proyecto3d.backend.apirest.model.entity.Impresora;
 
 public interface AnuncioService {
 
@@ -15,21 +14,21 @@ public interface AnuncioService {
 	// Filtros
 	public Page<Anuncio> findAllPaginado(Pageable pageable); // Paginación
 
-	public Page<Anuncio> findByImpresoraIdPaginado(Long autorId, Pageable pageable); // Paginacion con autor
+	// public Page<Anuncio> findByImpresoraIdPaginado(Long autorId, Pageable pageable); // Paginacion con autor
 
 	public Page<Anuncio> findByCategoriaIdPaginado(Long categoriaId, Pageable pageable); // Paginacion con categoria
 
-	public List<Anuncio> getMejorValorados(); // Mejor valorados
+	// public List<Anuncio> getMejorValorados(); // Mejor valorados
 
-	public Anuncio obtenerAnuncioConValoracionMedia(Long id); // Calcula media
+	// public Anuncio obtenerAnuncioConValoracionMedia(Long id); // Calcula media
 
 	public Anuncio findById(Long id);
 
-	public List<Anuncio> findAnunciosByImpresoraId(Long id);
+	// public List<Anuncio> findAnunciosByImpresoraId(Long id);
 
-	public List<Anuncio> findAnunciosByFavoritoId(Long id);
+	// public List<Anuncio> findAnunciosByFavoritoId(Long id);
 
-	public List<Anuncio> findAnunciosByCarritoId(Long id);
+	// public List<Anuncio> findAnunciosByCarritoId(Long id);
 
 	public Anuncio save(Anuncio anuncio);
 
@@ -38,7 +37,5 @@ public interface AnuncioService {
 	public void deleteAll();
 
 	public Anuncio findByTitulo(String titulo);
-
-	public List<Impresora> findImpresorasByAnuncioId(Long anuncioId);
 
 }

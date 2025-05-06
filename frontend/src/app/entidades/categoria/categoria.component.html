@@ -1,5 +1,5 @@
 <div class="dashboard-container">
-  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarUsuariosEvent)="exportarCategorias()"></app-navbar-admin>
+  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarEvent)="exportarCategorias()"></app-navbar-admin>
 
   <div class="dashboard-stats">
     <div class="stat-card">
@@ -16,7 +16,7 @@
         <i class="fas fa-th-large"></i>
       </div>
       <div class="stat-info">
-        <h3 class="stat-number">{{categorias.length > 0 ? categorias.length : 0}}</h3>
+        <h3 class="stat-number">{{getCategoriasActivas()}}</h3>
         <p class="stat-label">Categorías Activas</p>
       </div>
     </div>
@@ -25,19 +25,50 @@
         <i class="fas fa-cogs"></i>
       </div>
       <div class="stat-info">
-        <h3 class="stat-number">{{categorias.length > 0 ? categorias.length : 0}}</h3>
+        <h3 class="stat-number">{{getServiciosAsociados()}}</h3>
         <p class="stat-label">Servicios Asociados</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getCategoriasRecientes()}}</h3>
+        <p class="stat-label">Últimos 30 días</p>
       </div>
     </div>
   </div>
 
-  <div class="dashboard-content">
+  <div class="dashboard-content" *ngIf="!editando">
+    <!-- Filtros y Ordenación -->
+    <div class="filtros-container">
+      <div class="filtro-grupo">
+        <label class="filtro-label">Buscar por nombre</label>
+        <input type="text" class="filtro-input" [(ngModel)]="busquedaNombre" (input)="filtrarPorNombre()" 
+               placeholder="Nombre de categoría...">
+      </div>
+      <div class="orden-grupo">
+        <button class="orden-btn" [class.activo]="ordenarPor === 'nombre'" (click)="cambiarOrden('nombre')">
+          Nombre
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'nombre' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'nombre' && !ordenAscendente"></i>
+        </button>
+        <button class="orden-btn" [class.activo]="ordenarPor === 'id'" (click)="cambiarOrden('id')">
+          ID
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'id' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'id' && !ordenAscendente"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
     <div class="table-container">
       <table class="categorias-table">
         <thead>
           <tr>
             <th class="text-center underline">ID</th>
-            <th class="text-center underline">Ícono</th>
+            <th class="text-center underline">Icono</th>
             <th class="text-center underline">Nombre</th>
             <th class="text-center underline">Descripción</th>
             <th class="text-center underline">Servicios</th>
@@ -45,23 +76,21 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let categoria of categoriasFiltradas">
+          <tr *ngFor="let categoria of getCategoriasPaginadas()">
             <td class="cat-id" data-label="ID">{{categoria.id}}</td>
             <td class="cat-icon" data-label="Ícono">
               <div class="cat-icon-container">
-                <i class="fas fa-tag"></i>
+                <i class="fas" [ngClass]="getIconoCategoria(categoria)"></i>
               </div>
             </td>
-            <td class="cat-name text-center" data-label="Nombre">
+            <td class="cat-name" data-label="Nombre">
               <span class="nombre">{{categoria.nombre}}</span>
             </td>
-            <td class="cat-description text-center" data-label="Descripción">
-              <span class="descripcion">{{categoria.descripcion}}</span>
+            <td class="cat-description" data-label="Descripción">
+              <span class="descripcion">{{categoria.descripcion | slice:0:100}}{{categoria.descripcion.length > 100 ? '...' : ''}}</span>
             </td>
-            <td class="cat-services text-center" data-label="Servicios">
-              <button class="services-btn" (click)="verServiciosCategoria(categoria)">
-                <i class="fas fa-search"></i> Ver servicios
-              </button>
+            <td class="cat-services" data-label="Servicios">
+              <span class="servicios-badge">{{getNumeroServicios(categoria)}} servicios</span>
             </td>
             <td class="cat-actions" data-label="Acciones">
               <button class="action-btn edit-btn" (click)="editarCategoria(categoria)" title="Editar">
@@ -69,6 +98,9 @@
               </button>
               <button class="action-btn delete-btn" (click)="confirmarEliminar(categoria)" title="Eliminar">
                 <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="action-btn details-btn" (click)="verDetallesCategoria(categoria)" title="Ver detalles">
+                <i class="fas fa-info-circle"></i>
               </button>
             </td>
           </tr>
@@ -127,18 +159,40 @@
     <div class="modal-body">
       <form #categoriaForm="ngForm">
         <div class="form-group">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" name="nombre" [(ngModel)]="categoriaActual.nombre" required>
+          <label for="nombre">Nombre *</label>
+          <input type="text" id="nombre" name="nombre" [(ngModel)]="categoriaActual.nombre" required
+                 [class.invalid]="nombreInput.invalid && nombreInput.touched" #nombreInput="ngModel" minlength="3">
+          <div class="error-message" *ngIf="nombreInput.invalid && nombreInput.touched">
+            <span *ngIf="nombreInput.errors?.['required']">El nombre es obligatorio</span>
+            <span *ngIf="nombreInput.errors?.['minlength']">El nombre debe tener al menos 3 caracteres</span>
+          </div>
         </div>
         <div class="form-group">
-          <label for="descripcion">Descripción</label>
-          <textarea id="descripcion" name="descripcion" [(ngModel)]="categoriaActual.descripcion" rows="4" required></textarea>
+          <label for="descripcion">Descripción *</label>
+          <textarea id="descripcion" name="descripcion" [(ngModel)]="categoriaActual.descripcion" rows="4" required
+                    [class.invalid]="descripcionInput.invalid && descripcionInput.touched" #descripcionInput="ngModel" minlength="10"></textarea>
+          <div class="error-message" *ngIf="descripcionInput.invalid && descripcionInput.touched">
+            <span *ngIf="descripcionInput.errors?.['required']">La descripción es obligatoria</span>
+            <span *ngIf="descripcionInput.errors?.['minlength']">La descripción debe tener al menos 10 caracteres</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="icono">Icono</label>
+          <select id="icono" name="icono" [(ngModel)]="categoriaActual.icono">
+            <option value="fa-tag">Etiqueta</option>
+            <option value="fa-cube">Cubo</option>
+            <option value="fa-box">Caja</option>
+            <option value="fa-cog">Engranaje</option>
+            <option value="fa-print">Impresora</option>
+            <option value="fa-tools">Herramientas</option>
+            <option value="fa-puzzle-piece">Puzzle</option>
+          </select>
         </div>
       </form>
     </div>
     <div class="modal-footer">
       <button class="btn btn-cancel" (click)="cerrarModal()">Cancelar</button>
-      <button class="btn btn-save btn-outline-light btn-lg" [disabled]="!categoriaForm.valid" (click)="guardarCategoria()">
+      <button class="btn btn-save" [disabled]="!categoriaForm.valid" (click)="guardarCategoria()">
         {{modoEdicion ? 'Actualizar' : 'Crear'}}
       </button>
     </div>

@@ -1,9 +1,9 @@
 <div class="dashboard-header">
   <div class="header-content">
-    <h1 class="dashboard-title">Administración de Usuarios</h1>
+    <h1 class="dashboard-title">{{getTituloPagina()}}</h1>
     <div class="header-actions">
       <div class="search-container">
-        <input type="text" class="search-input" placeholder="Buscar usuario..." [(ngModel)]="termino" (keyup)="filtrarUsuarios()">
+        <input type="text" class="search-input" [placeholder]="getPlaceholderBusqueda()" [(ngModel)]="termino" (keyup)="filtrarUsuarios()">
         <div class="search-icon">
           <i class="fas fa-search"></i>
         </div>
@@ -33,6 +33,9 @@
     </a>
     <a routerLink="/admin/pedidos" class="tab-item" [ngClass]="{ active: router.url === '/admin/pedidos' }">
       <i class="fas fa-shopping-cart"></i> Pedidos
+    </a>
+    <a routerLink="/admin/impresoras" class="tab-item" [ngClass]="{ active: router.url === '/admin/impresoras' }">
+      <i class="fas fa-print"></i> Impresoras
     </a>
   </div>
 </div>

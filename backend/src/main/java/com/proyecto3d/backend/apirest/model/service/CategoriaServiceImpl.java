@@ -33,18 +33,14 @@ public class CategoriaServiceImpl implements CategoriaService {
 		return categoriaDao.findById(id).orElse(null);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = true)
 	public List<Categoria> findCategoriasByAnuncioId(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<Categoria> findCategoriasByAutorId(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		// Obtener el anuncio
+		Anuncio anuncio = anuncioDao.findById(id).orElse(null);
+		// Obtener las categorias del anuncio
+		return (List<Categoria>) anuncio.getCategorias();
 	}
 
 	@Override
@@ -59,32 +55,32 @@ public class CategoriaServiceImpl implements CategoriaService {
 	public void delete(Categoria categoria) {
 		//Eliminar realciones en la tabla intermedia(anuncio_categoria)
 		for (Anuncio anuncio : categoria.getAnuncios()) {
-            anuncio.getCategorias().remove(categoria); // Eliminar el género de los anuncios
+            anuncio.getCategorias().remove(categoria); // Eliminar la categoria de los anuncios
             anuncioDao.save(anuncio); // Guardar el anuncio actualizado
         }
-		// Eliminar el género
+		// Eliminar la categoria
 		categoriaDao.delete(categoria);
 	}
 	
     @Override
     @Transactional
     public void deleteAll() {
-        // Obtener todos los géneros
+        // Obtener todos los categorias
         List<Categoria> categorias = findAll();
         
-        // Para cada género, desasociar todos sus anuncios
+        // Para cada categoria, desasociar todos sus anuncios
         for (Categoria categoria : categorias) {
             // Obtener una nueva colección para evitar ConcurrentModificationException
             Set<Anuncio> anunciosDelCategoria = new HashSet<>(categoria.getAnuncios());
             
-            // Eliminar la asociación entre el género y cada anuncio
+            // Eliminar la asociación entre el categoria y cada anuncio
             for (Anuncio anuncio : anunciosDelCategoria) {
                 anuncio.getCategorias().remove(categoria);
                 anuncioDao.save(anuncio); // Guardar el anuncio con la relación actualizada
             }
         }
         
-        // Una vez que todas las asociaciones han sido eliminadas, eliminar todos los géneros
+        // Una vez que todas las asociaciones han sido eliminadas, eliminar todos los categorias
         categoriaDao.deleteAll();
     }
 

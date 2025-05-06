@@ -20,18 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.persistence.EntityManager;
-
-import com.proyecto3d.backend.apirest.model.entity.Impresora;
-import com.proyecto3d.backend.apirest.model.entity.Categoria;
 import com.proyecto3d.backend.apirest.model.entity.Anuncio;
-import com.proyecto3d.backend.apirest.model.service.ImpresoraService;
-import com.proyecto3d.backend.apirest.model.service.CategoriaService;
+import com.proyecto3d.backend.apirest.model.entity.Categoria;
 import com.proyecto3d.backend.apirest.model.service.AnuncioService;
+import com.proyecto3d.backend.apirest.model.service.CategoriaService;
 
 @CrossOrigin(origins = { "http://localhost:4200" }, methods = { RequestMethod.GET, RequestMethod.POST,
 		RequestMethod.PUT, RequestMethod.DELETE }, allowedHeaders = "*")
@@ -43,13 +39,7 @@ public class AnuncioController {
 	private AnuncioService anuncioService;
 
 	@Autowired
-	private ImpresoraService impresoraService;
-
-	@Autowired
 	private CategoriaService categoriaService;
-
-	@Autowired
-	private EntityManager entityManager;
 
 	// Obtener anuncios
 	@GetMapping("/anuncios")
@@ -69,15 +59,6 @@ public class AnuncioController {
 		return anuncioService.findAllPaginado(PageRequest.of(page, size));
 	}
 
-	// Obtener anuncios de una impresora específica (paginada con tamaño personalizado)
-	@GetMapping("/anuncios/impresora/{impresoraId}/page/{page}/size/{size}")
-	public Page<Anuncio> getAnunciosPorImpresora(
-			@PathVariable(name = "impresoraId") Long impresoraId,
-			@PathVariable(name = "page") Integer page,
-			@PathVariable(name = "size") Integer size) {
-		return anuncioService.findByImpresoraIdPaginado(impresoraId, PageRequest.of(page, size));
-	}
-
 	// Obtener anuncios de un categoria específico (paginado con tamaño personalizado)
 	@GetMapping("/anuncios/categoria/{categoriaId}/page/{page}/size/{size}")
 	public Page<Anuncio> getAnunciosPorCategoria(
@@ -87,24 +68,12 @@ public class AnuncioController {
 		return anuncioService.findByCategoriaIdPaginado(categoriaId, PageRequest.of(page, size));
 	}
 
-	// Obtener anuncios de un categoria y impresora específica (paginado con tamaño
-	// personalizado)
-	@GetMapping("/anuncios/impresora/{impresoraId}/categoria/{categoriaId}/page/{page}/size/{size}")
-	public ResponseEntity<?> getAnunciosPorCategoriaYImpresora(
-			@PathVariable(name = "impresoraId") Long impresoraId,
-			@PathVariable(name = "categoriaId") Long categoriaId,
-			@PathVariable(name = "page") Integer page,
-			@PathVariable(name = "size") Integer size) {
-		// Removed call to findByCategoriaIdAndImpresoraIdPaginado, which does not exist in service anymore
-        // You can implement a filter logic here if needed, or return a bad request/empty result
-        return ResponseEntity.badRequest().body(java.util.Collections.emptyList());
-	}
-
+	/*
 	// Obtener mejor valorados
 	@GetMapping("/anuncios/mejor-valorados")
 	public List<Anuncio> getMejorValorados() {
 		return anuncioService.getMejorValorados();
-	}
+	} */
 
 	// Obtener anuncios por ID
 	@GetMapping("/anuncio/{id}")
@@ -114,8 +83,6 @@ public class AnuncioController {
 		Map<String, Object> response = new HashMap<>();
 
 		try {
-			// calcula la media cada vez que carga
-			anuncioService.obtenerAnuncioConValoracionMedia(id);
 			anuncio = anuncioService.findById(id);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al realizar la consulta en la base de datos");
@@ -148,15 +115,7 @@ public class AnuncioController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 
-		// Procesamos impresora (ahora es solo una, no lista)
-        if (anuncio.getImpresora() != null && anuncio.getImpresora().getId() != null) {
-            Impresora impresoraExistente = impresoraService.findById(anuncio.getImpresora().getId());
-            if (impresoraExistente != null) {
-                anuncio.setImpresora(impresoraExistente);
-            }
-        }
-
-		// Procesamos categorias (esto sí sigue siendo una colección)
+		// Procesamos categorias
 		if (anuncio.getCategorias() != null && !anuncio.getCategorias().isEmpty()) {
 			for (Categoria categoria : anuncio.getCategorias()) {
 				if (categoria.getId() != null) {
@@ -224,20 +183,12 @@ public class AnuncioController {
 				currentAnuncio.setImagen(anuncio.getImagen());
 			}
 
-			// Procesamos impresora (ahora es solo una, no lista)
-            if (anuncio.getImpresora() != null && anuncio.getImpresora().getId() != null) {
-                Impresora impresoraExistente = impresoraService.findById(anuncio.getImpresora().getId());
-                if (impresoraExistente != null) {
-                    currentAnuncio.setImpresora(impresoraExistente);
-                }
-            }
-
-			// Procesamos géneros
+			// Procesamos categorias
 			if (anuncio.getCategorias() != null && !anuncio.getCategorias().isEmpty()) {
-				// Limpiamos los géneros actuales
+				// Limpiamos los categorias actuales
 				currentAnuncio.getCategorias().clear();
 
-				// Añadimos los nuevos géneros
+				// Añadimos los nuevos categorias
 				for (Categoria categoria : anuncio.getCategorias()) {
 					if (categoria.getId() != null) {
 						Categoria categoriaExistente = categoriaService.findById(categoria.getId());
@@ -274,19 +225,15 @@ public class AnuncioController {
 		}
 
 		try {
-			// Verificar si el anuncio tiene pedidos asociados
-			Long count = (Long) entityManager.createQuery(
-					"SELECT COUNT(dp) FROM DetallePedido dp WHERE dp.anuncio.id = :anuncioId")
-					.setParameter("anuncioId", id)
-					.getSingleResult();
-
-			if (count > 0) {
-				response.put("mensaje", "No se puede eliminar el anuncio porque está asociado a uno o más pedidos");
+			// Verificar si el anuncio tiene categorias asociadas
+			if (!currentAnuncio.getCategorias().isEmpty()) {
+				response.put("mensaje", "No se puede eliminar el anuncio porque está asociado a una o más categorias");
 				response.put("error",
-						"El anuncio tiene pedidos asociados. Elimine primero los pedidos o implemente una eliminación lógica.");
+						"El anuncio tiene categorias asociadas. Elimine primero las categorias o implemente una eliminación lógica.");
 				return new ResponseEntity<>(response, HttpStatus.CONFLICT);
 			}
-
+			
+			// Eliminar el anuncio
 			anuncioService.delete(currentAnuncio);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al eliminar el anuncio en la base de datos");
@@ -305,6 +252,16 @@ public class AnuncioController {
 		Map<String, Object> response = new HashMap<>();
 
 		try {
+			// Verificar si hay anuncios
+			if (anuncioService.findAll().isEmpty()) {
+				response.put("mensaje", "No hay anuncios en la base de datos");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
+
+			// Eliminar categorias asociadas a los anuncios
+			anuncioService.findAll().forEach(anuncio -> anuncio.getCategorias().clear());
+
+			// Eliminar todos los anuncios
 			anuncioService.deleteAll();
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al eliminar los anuncios en la base de datos");

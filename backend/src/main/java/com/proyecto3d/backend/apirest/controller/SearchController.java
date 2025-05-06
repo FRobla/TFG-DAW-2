@@ -38,20 +38,8 @@ public class SearchController {
         if (searchAnuncios) {
             results.put("anuncios", searchService.searchAnuncios(query));
         }
-        if (searchImpresoras) {
-            results.put("autores", searchService.searchImpresoras(query));
-        }
-        if (searchCategorias) {
-            results.put("categorias", searchService.searchCategorias(query));
-        }
         
         return ResponseEntity.ok(results);
-	}
-	
-	@GetMapping("/search/anuncios/autor/{autorId}")
-	public ResponseEntity<List<Anuncio>> getAnunciosByImpresora(@PathVariable Long autorId) {
-		List<Anuncio> anuncios = searchService.findAnunciosByImpresoraId(autorId);
-		return ResponseEntity.ok(anuncios);
 	}
 	
 	@GetMapping("/search/anuncios/categoria/{categoriaId}")

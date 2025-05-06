@@ -16,13 +16,10 @@ import org.springframework.data.domain.Pageable;
 public interface AnuncioDao extends JpaRepository<Anuncio, Long> {
 	
 	Optional<Anuncio> findByTitulo(String titulo);
-
-	//Ranking
-	@Query("SELECT l FROM Anuncio l LEFT JOIN l.valoraciones v GROUP BY l.id ORDER BY AVG(v.puntuacion) DESC LIMIT 10")
-    List<Anuncio> findTop10MejorValorados();
 	
 	//Filtrar por categoria
-	Page<Anuncio> findByCategoriasId(Long categoriaId, Pageable pageable);
+	@Query("SELECT a FROM Anuncio a JOIN a.categorias c WHERE c.id = :categoriaId")
+	Page<Anuncio> findByCategoriaId(@Param("categoriaId") Long categoriaId, Pageable pageable);
 	
 	//Filtrar por impresora
 	Page<Anuncio> findByImpresoraId(Long impresoraId, Pageable pageable);

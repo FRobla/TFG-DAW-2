@@ -7,9 +7,10 @@ import { LoginComponent } from './paginas/login/login.component';
 import { ErrorComponent } from './recursos/error/error.component';
 import { UsuarioComponent } from './entidades/usuario/usuario.component';
 import { LandingComponent } from './paginas/landing/landing.component';
-import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { CategoriasComponent } from './entidades/categoria/categoria.component';
 import { AuthGuard } from './auth/auth.guard';
+import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
+import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 
 const routes: Routes = [
   { 
@@ -33,12 +34,14 @@ const routes: Routes = [
     component: LoginComponent 
   },
   // Rutas administrativas (acceso público temporal)
+  { path: 'admin', component: UsuarioComponent },
   { 
     path: 'admin', 
     children: [
       { path: 'usuarios', component: UsuarioComponent },
+      { path: 'categorias', component: CategoriasComponent },
       { path: 'anuncios', component: AnuncioComponent },
-      { path: 'categorias', component: CategoriasComponent }
+      { path: 'impresoras', component: ImpresoraComponent }
     ]
   },
   { 

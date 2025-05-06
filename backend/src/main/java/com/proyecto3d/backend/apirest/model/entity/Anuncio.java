@@ -1,13 +1,10 @@
 package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,7 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,8 +62,8 @@ public class Anuncio implements Serializable {
 	@Column(nullable = true)
 	private Integer vistas;
 
-	@Column(name = "valoracion_media", nullable = true)
-	private Double valoracionMedia;
+	// @Column(name = "valoracion_media", nullable = true)
+	// private Double valoracionMedia;
 
 	// Relaciones
 
@@ -80,9 +76,10 @@ public class Anuncio implements Serializable {
 	private Impresora impresora;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name = "anuncio_categoria", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+	@JoinTable(name = "anuncio_categoria", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "categorias"))
 	private Set<Categoria> categorias;
 
+	/*
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "anuncio_material", joinColumns = @JoinColumn(name = "anuncio_id"), inverseJoinColumns = @JoinColumn(name = "material_id"))
 	private Set<Material> materiales;
@@ -92,7 +89,7 @@ public class Anuncio implements Serializable {
 
 	@OneToMany(mappedBy = "anuncio", fetch = FetchType.EAGER)
 	@JsonIgnore
-	private final List<Favorito> favoritos = new ArrayList<>();
+	private final List<Favorito> favoritos = new ArrayList<>(); */
 
 	// Getter/Setter
 
@@ -108,9 +105,10 @@ public class Anuncio implements Serializable {
 		this.imagen = imagen;
 	}
 
+	/*
 	public List<Favorito> getFavoritos() {
 		return favoritos;
-	}
+	} */
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
@@ -148,6 +146,7 @@ public class Anuncio implements Serializable {
 		this.categorias = categorias;
 	}
 
+	/*
 	public Set<Material> getMateriales() {
 		return materiales;
 	}
@@ -158,7 +157,7 @@ public class Anuncio implements Serializable {
 
 	public List<Valoracion> getValoraciones() {
 		return valoraciones;
-	}
+	} */
 
 	public Long getId() {
 		return id;
@@ -214,9 +213,10 @@ public class Anuncio implements Serializable {
 
 	public void setImpresora(Impresora impresora) {
 		this.impresora = impresora;
-	}
+	} 
 
 	// Valoracion media
+	/*
 	public Double getValoracionMedia() {
 		if (valoraciones.isEmpty()) { // No hay valoraciones
 			this.valoracionMedia = 0.0;
@@ -229,6 +229,7 @@ public class Anuncio implements Serializable {
 		 * suma += v.getPuntuacion();
 		 * }
 		 */
+		/*
 		double suma = valoraciones.stream()
 				.mapToDouble(Valoracion::getPuntuacion)
 				.sum();
@@ -238,6 +239,6 @@ public class Anuncio implements Serializable {
 
 	public void setValoracionMedia(Double valoracionMedia) {
 		this.valoracionMedia = valoracionMedia;
-	}
+	} */
 
 }

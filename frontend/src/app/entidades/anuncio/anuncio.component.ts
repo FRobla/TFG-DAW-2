@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import swal from 'sweetalert2';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Anuncio } from './anuncio';
 import { AnuncioService } from './anuncio.service';
+import swal from 'sweetalert2';
+import { CategoriaService } from '../categoria/categoria.service';
+import { ImpresoraService } from '../impresora/impresora.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-anuncio',
@@ -10,104 +15,391 @@ import { AnuncioService } from './anuncio.service';
   styleUrl: './anuncio.component.css'
 })
 export class AnuncioComponent implements OnInit {
-
-  constructor(private anuncioService: AnuncioService) { }
-
-  ngOnInit(): void {
-    this.cargarAnuncios();
-  }
-
-  // Lista de anuncios
   anuncios: Anuncio[] = [];
+  anuncioForm: FormGroup;
+  editando = false;
+  cargando = true;
+  categorias: any[] = [];
+  impresoras: any[] = [];
+  filtroCategoria: number = 0;
+  ordenarPor: string = 'fecha';
+  ordenAscendente: boolean = false;
+  
+  // Propiedades para paginación
+  paginaActual: number = 1;
+  totalPaginas: number = 1;
+  itemsPorPagina: number = 10;
   anunciosFiltrados: Anuncio[] = [];
   
-  // Anuncio actual para crear/editar
-  anuncioActual: Anuncio = new Anuncio();
-  
-  // Estado del modal
+  // Propiedades para modal
   modalVisible: boolean = false;
   modoEdicion: boolean = false;
-  
-  // Estado para el modal de confirmación
   modalConfirmacionVisible: boolean = false;
-  tituloConfirmacion: string = '';
-  mensajeConfirmacion: string = '';
-  accionConfirmacion: Function = () => {};
+  tituloConfirmacion: string = 'Confirmar eliminación';
+  mensajeConfirmacion: string = '¿Estás seguro de que deseas eliminar todos los anuncios? Esta acción no se puede deshacer.';
+  accionConfirmacion: string = '';
   
-  // Paginación
-  paginaActual: number = 1;
-  itemsPorPagina: number = 10;
-  totalPaginas: number = 1;
+  // Filtro de búsqueda
+  terminoBusqueda: string = '';
+
+  constructor(
+    private anuncioService: AnuncioService,
+    private categoriaService: CategoriaService,
+    private impresoraService: ImpresoraService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.anuncioForm = this.formBuilder.group({
+      id: [0],
+      titulo: ['', [Validators.required, Validators.minLength(3)]],
+      descripcion: ['', [Validators.required, Validators.minLength(10)]],
+      precio: [0, [Validators.required, Validators.min(0)]],
+      estado: ['ACTIVO'],
+      urlImagen: [''],
+      categoriaId: [0, Validators.required],
+      impresoraId: [0, Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.cargarDatos();
+    
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.editando = true;
+        this.cargarAnuncio(params['id']);
+      }
+    });
+
+    this.anuncioService.anuncios$.subscribe({
+      next: (anuncios) => {
+        this.anuncios = this.ordenarAnuncios(anuncios);
+        this.anunciosFiltrados = this.anuncios.slice();
+        this.calcularTotalPaginas();
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar anuncios:', error);
+        this.cargando = false;
+      },
+      complete: () => {
+        this.cargando = false;
+      }
+    });
+  }
+
+  async cargarDatos() {
+    this.cargando = true;
+    
+    try {
+      // Cargar datos en paralelo
+      const [categorias, impresoras] = await Promise.all([
+        firstValueFrom(this.categoriaService.getCategorias()),
+        firstValueFrom(this.impresoraService.getImpresoras())
+      ]);
+      
+      this.categorias = categorias || [];
+      this.impresoras = impresoras || [];
+      
+      // Iniciar la carga de anuncios (la suscripción a anuncios$ establecerá cargando a false)
+      this.anuncioService.getAnuncios().subscribe({
+        error: (error) => {
+          console.error('Error al cargar anuncios:', error);
+          this.cargando = false;
+        }
+      });
+    } catch (error) {
+      console.error('Error al cargar datos:', error);
+      this.cargando = false;
+    }
+  }
+
+  cargarAnuncio(id: number) {
+    this.anuncioService.getAnuncio(id).subscribe(
+      anuncio => {
+        this.anuncioForm.patchValue(anuncio);
+      }
+    );
+  }
+
+  onSubmit() {
+    if (this.anuncioForm.valid) {
+      const anuncio = new Anuncio(this.anuncioForm.value);
+      this.cargando = true;
+      
+      if (this.editando) {
+        this.anuncioService.update(anuncio).subscribe({
+          next: () => {
+            this.cargando = false;
+            this.router.navigate(['/anuncios']);
+          },
+          error: error => {
+            console.error('Error al actualizar:', error);
+            this.cargando = false;
+          }
+        });
+      } else {
+        this.anuncioService.create(anuncio).subscribe({
+          next: () => {
+            this.cargando = false;
+            this.router.navigate(['/anuncios']);
+          },
+          error: error => {
+            console.error('Error al crear:', error);
+            this.cargando = false;
+          }
+        });
+      }
+    } else {
+      Object.keys(this.anuncioForm.controls).forEach(key => {
+        const control = this.anuncioForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+    }
+  }
   
-  // Búsqueda
-  termino: string = '';
-
-  // Formulario
-  anuncioForm: any;
-
-  cargarAnuncios(): void {
-    this.anuncioService.findAll().subscribe(
-      (anuncios) => {
-        this.anuncios = anuncios;
-      },
-      (error) => {
-        swal('Error al cargar los anuncios', error.error.mensaje, 'error');
-      }
-    );
+  // Método para guardar anuncio desde el modal
+  guardarAnuncio() {
+    this.onSubmit();
+    this.modalVisible = false;
+  }
+  
+  // Método para ejecutar acción de confirmación
+  ejecutarAccionConfirmacion() {
+    switch(this.accionConfirmacion) {
+      case 'eliminarTodos':
+        this.eliminarTodosAnuncios();
+        break;
+      default:
+        this.modalConfirmacionVisible = false;
+    }
   }
 
-  crearAnuncio(): void {
-    this.anuncioService.save(this.anuncioActual).subscribe(
-      (anuncio) => {
-        this.anuncios.push(this.anuncioActual);
-        this.anuncioActual = new Anuncio();
-        this.modalVisible = false;
-      },
-      (error) => {
-        swal('Error al crear el anuncio', error.error.mensaje, 'error');
+  eliminarAnuncio(anuncio: Anuncio) {
+    swal({
+      title: '¿Estás seguro?',
+      text: `¿Deseas eliminar el anuncio ${anuncio.titulo}?`,
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result: any) => {
+      if (result.value) {
+        this.anuncioService.delete(anuncio.id).subscribe();
       }
-    );
+    });
   }
 
-  editarAnuncio(): void {
-    this.anuncioService.update(this.anuncioActual).subscribe(
-      (anuncio) => {
-        const index = this.anuncios.findIndex((a) => a.id === this.anuncioActual.id);
-        this.anuncios[index] = this.anuncioActual;
-        this.anuncioActual = new Anuncio();
-        this.modalVisible = false;
-      },
-      (error) => {
-        swal('Error al editar el anuncio', error.error.mensaje, 'error');
-      }
-    );
+  filtrarPorCategoria() {
+    if (this.filtroCategoria === 0) {
+      this.anuncioService.getAnuncios().subscribe();
+    } else {
+      this.anuncioService.getAnunciosPorCategoria(this.filtroCategoria).subscribe(
+        anuncios => {
+          this.anuncios = this.ordenarAnuncios(anuncios);
+        }
+      );
+    }
   }
 
-  eliminarAnuncio(id: number): void {
-    this.anuncioService.delete(id).subscribe(
-      () => {
-        this.cargarAnuncios();
-      },
-      (error) => {
-        swal('Error al eliminar el anuncio', error.error.mensaje, 'error');
+  ordenarAnuncios(anuncios: Anuncio[]): Anuncio[] {
+    return anuncios.sort((a, b) => {
+      let valorA: any;
+      let valorB: any;
+
+      switch (this.ordenarPor) {
+        case 'fecha':
+          valorA = new Date(a.fechaPublicacion).getTime();
+          valorB = new Date(b.fechaPublicacion).getTime();
+          break;
+        case 'precio':
+          valorA = a.precio;
+          valorB = b.precio;
+          break;
+        case 'titulo':
+          valorA = a.titulo.toLowerCase();
+          valorB = b.titulo.toLowerCase();
+          break;
+        default:
+          return 0;
       }
-    );
+
+      if (this.ordenAscendente) {
+        return valorA > valorB ? 1 : -1;
+      } else {
+        return valorA < valorB ? 1 : -1;
+      }
+    });
   }
 
-  eliminarTodosAnuncios(): void {
-    this.anuncioService.deleteAll().subscribe(
-      () => {
-        this.cargarAnuncios();
-      },
-      (error) => {
-        swal('Error al eliminar todos los anuncios', error.error.mensaje, 'error');
-      }
-    );
+  cambiarOrden(criterio: string) {
+    if (this.ordenarPor === criterio) {
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      this.ordenarPor = criterio;
+      this.ordenAscendente = true;
+    }
+    this.anuncios = this.ordenarAnuncios([...this.anuncios]);
+    this.calcularTotalPaginas();
   }
-
+  
+  // Métodos para estadísticas del dashboard
+  getPrecioMedio(): number {
+    if (this.anuncios.length === 0) return 0;
+    const total = this.anuncios.reduce((sum, anuncio) => sum + anuncio.precio, 0);
+    return Math.round((total / this.anuncios.length) * 100) / 100;
+  }
+  
+  getCategorias(): any[] {
+    // Obtener categorías únicas usadas en anuncios
+    const categoriaIds = new Set(this.anuncios.map(a => a.categoriaId));
+    return this.categorias.filter(c => categoriaIds.has(c.id));
+  }
+  
+  getAnunciosRecientes(): number {
+    const fechaLimite = new Date();
+    fechaLimite.setDate(fechaLimite.getDate() - 30);
+    return this.anuncios.filter(a => new Date(a.fechaPublicacion) >= fechaLimite).length;
+  }
+  
+  // Método para obtener categoría por ID
+  getCategoriaById(id: number): any {
+    return this.categorias.find(c => c.id === id);
+  }
+  
+  // Métodos para paginación
+  calcularTotalPaginas(): void {
+    this.totalPaginas = Math.ceil(this.anunciosFiltrados.length / this.itemsPorPagina);
+    if (this.paginaActual > this.totalPaginas && this.totalPaginas > 0) {
+      this.paginaActual = this.totalPaginas;
+    }
+  }
+  
+  cambiarPagina(pagina: number): void {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+    }
+  }
+  
+  cambiarItemsPorPagina(): void {
+    this.paginaActual = 1;
+    this.calcularTotalPaginas();
+  }
+  
+  // Método para obtener anuncios de la página actual
+  getAnunciosPaginados(): Anuncio[] {
+    const indiceInicio = (this.paginaActual - 1) * this.itemsPorPagina;
+    const indiceFin = indiceInicio + this.itemsPorPagina;
+    return this.anunciosFiltrados.slice(indiceInicio, indiceFin);
+  }
+  
+  // Métodos para modales
+  abrirModalCrearAnuncio(): void {
+    this.modoEdicion = false;
+    this.anuncioForm.reset({
+      id: 0,
+      titulo: '',
+      descripcion: '',
+      precio: 0,
+      estado: 'ACTIVO',
+      urlImagen: '',
+      categoriaId: 0,
+      impresoraId: 0
+    });
+    this.modalVisible = true;
+  }
+  
+  editarAnuncio(anuncio: Anuncio): void {
+    this.modoEdicion = true;
+    this.anuncioForm.patchValue(anuncio);
+    this.modalVisible = true;
+  }
+  
   cerrarModal(): void {
     this.modalVisible = false;
-    this.anuncioActual = new Anuncio();
-    this.anuncioForm.reset();
+  }
+  
+  verDetallesAnuncio(anuncio: Anuncio): void {
+    this.router.navigate(['/anuncios', anuncio.id]);
+  }
+  
+  // Métodos para eliminación múltiple
+  confirmarEliminarTodos(): void {
+    this.tituloConfirmacion = 'Confirmar eliminación';
+    this.mensajeConfirmacion = '¿Estás seguro de que deseas eliminar todos los anuncios? Esta acción no se puede deshacer.';
+    this.accionConfirmacion = 'eliminarTodos';
+    this.modalConfirmacionVisible = true;
+  }
+  
+  cancelarEliminarTodos(): void {
+    this.modalConfirmacionVisible = false;
+    this.accionConfirmacion = '';
+  }
+  
+  eliminarTodosAnuncios(): void {
+    this.cargando = true;
+    this.anuncioService.deleteAll().subscribe({
+      next: () => {
+        this.modalConfirmacionVisible = false;
+        swal('Eliminados', 'Todos los anuncios han sido eliminados', 'success');
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al eliminar anuncios:', error);
+        swal('Error', 'No se pudieron eliminar los anuncios', 'error');
+        this.cargando = false;
+      }
+    });
+  }
+  
+  // Método para filtrar por término de búsqueda
+  aplicarFiltro(termino: string): void {
+    this.terminoBusqueda = termino.toLowerCase();
+    if (!this.terminoBusqueda) {
+      this.anunciosFiltrados = this.anuncios;
+    } else {
+      this.anunciosFiltrados = this.anuncios.filter(anuncio => 
+        anuncio.titulo.toLowerCase().includes(this.terminoBusqueda) ||
+        anuncio.descripcion.toLowerCase().includes(this.terminoBusqueda) ||
+        anuncio.precio.toString().includes(this.terminoBusqueda)
+      );
+    }
+    this.paginaActual = 1;
+    this.calcularTotalPaginas();
+  }
+  
+  // Método para exportar anuncios
+  exportarAnuncios(): void {
+    const anunciosExport = this.anuncios.map(anuncio => {
+      const categoria = this.getCategoriaById(anuncio.categoriaId);
+      return {
+        id: anuncio.id,
+        titulo: anuncio.titulo,
+        descripcion: anuncio.descripcion,
+        precio: anuncio.precio,
+        categoria: categoria ? categoria.nombre : 'Sin categoría',
+        fechaPublicacion: new Date(anuncio.fechaPublicacion).toLocaleDateString()
+      };
+    });
+    
+    const jsonString = JSON.stringify(anunciosExport, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    
+    // Crear un enlace temporal para descargar el archivo
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'anuncios_export.json';
+    document.body.appendChild(a);
+    a.click();
+    
+    // Limpiar recursos
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 }

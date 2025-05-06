@@ -4,6 +4,7 @@ import { CategoriaService } from './categoria.service';
 import swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-categoria',
@@ -16,6 +17,7 @@ export class CategoriasComponent implements OnInit {
   // Lista de categorías
   categorias: Categoria[] = [];
   categoriasFiltradas: Categoria[] = [];
+  categoriasPaginadas: Categoria[] = [];
   
   // Categoría actual para crear/editar
   categoriaActual: Categoria = new Categoria();
@@ -23,6 +25,7 @@ export class CategoriasComponent implements OnInit {
   // Estado del modal
   modalVisible: boolean = false;
   modoEdicion: boolean = false;
+  editando: boolean = false;
   
   // Estado para el modal de confirmación
   modalConfirmacionVisible: boolean = false;
@@ -35,8 +38,16 @@ export class CategoriasComponent implements OnInit {
   itemsPorPagina: number = 10;
   totalPaginas: number = 1;
   
-  // Búsqueda
+  // Búsqueda y filtrado
   termino: string = '';
+  busquedaNombre: string = '';
+  
+  // Ordenación
+  ordenarPor: string = 'nombre';
+  ordenAscendente: boolean = true;
+  
+  // Datos de servicios (simulados)
+  serviciosPorCategoria: Map<number, number> = new Map();
   
   @ViewChild('categoriaForm') categoriaForm!: NgForm;
 
@@ -68,17 +79,47 @@ export class CategoriasComponent implements OnInit {
    * Filtra las categorías según el término de búsqueda
    */
   filtrarCategorias(): void {
-    if (!this.termino || this.termino.trim() === '') {
-      this.categoriasFiltradas = [...this.categorias];
-      return;
-    }
-
-    const terminoLower = this.termino.toLowerCase();
-    this.categoriasFiltradas = this.categorias.filter(categoria => 
-      categoria.nombre.toLowerCase().includes(terminoLower) ||
-      categoria.descripcion.toLowerCase().includes(terminoLower)
-    );
+    let categoriasFiltradas = [...this.categorias];
     
+    // Aplicar filtro de búsqueda general
+    if (this.termino && this.termino.trim() !== '') {
+      const terminoLower = this.termino.toLowerCase();
+      categoriasFiltradas = categoriasFiltradas.filter(categoria => 
+        categoria.nombre.toLowerCase().includes(terminoLower) ||
+        categoria.descripcion.toLowerCase().includes(terminoLower)
+      );
+    }
+    
+    // Aplicar filtro por nombre específico
+    if (this.busquedaNombre && this.busquedaNombre.trim() !== '') {
+      const nombreLower = this.busquedaNombre.toLowerCase();
+      categoriasFiltradas = categoriasFiltradas.filter(categoria => 
+        categoria.nombre.toLowerCase().includes(nombreLower)
+      );
+    }
+    
+    // Aplicar ordenación
+    categoriasFiltradas.sort((a, b) => {
+      let valorA, valorB;
+      
+      switch (this.ordenarPor) {
+        case 'nombre':
+          valorA = a.nombre.toLowerCase();
+          valorB = b.nombre.toLowerCase();
+          break;
+        case 'id':
+        default:
+          valorA = a.id;
+          valorB = b.id;
+          break;
+      }
+      
+      if (valorA < valorB) return this.ordenAscendente ? -1 : 1;
+      if (valorA > valorB) return this.ordenAscendente ? 1 : -1;
+      return 0;
+    });
+    
+    this.categoriasFiltradas = categoriasFiltradas;
     this.calcularTotalPaginas();
     this.aplicarPaginacion();
   }
@@ -105,7 +146,111 @@ export class CategoriasComponent implements OnInit {
   aplicarPaginacion(): void {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
-    this.categoriasFiltradas = this.categorias.slice(inicio, fin);
+    this.categoriasPaginadas = this.categoriasFiltradas.slice(inicio, fin);
+  }
+  
+  /**
+   * Obtiene las categorías paginadas para la página actual
+   */
+  getCategoriasPaginadas(): Categoria[] {
+    return this.categoriasPaginadas;
+  }
+  
+  /**
+   * Cambia el criterio de ordenación de las categorías
+   */
+  cambiarOrden(campo: string): void {
+    if (this.ordenarPor === campo) {
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      this.ordenarPor = campo;
+      this.ordenAscendente = true;
+    }
+    this.filtrarCategorias();
+  }
+  
+  /**
+   * Filtra las categorías por nombre
+   */
+  filtrarPorNombre(): void {
+    this.filtrarCategorias();
+  }
+  
+  /**
+   * Obtiene el número de categorías activas
+   * (En este caso, todas las categorías se consideran activas)
+   */
+  getCategoriasActivas(): number {
+    return this.categorias.length;
+  }
+  
+  /**
+   * Obtiene el número total de servicios asociados a todas las categorías
+   */
+  getServiciosAsociados(): number {
+    let total = 0;
+    for (const cantidad of this.serviciosPorCategoria.values()) {
+      total += cantidad;
+    }
+    return total || this.categorias.length * 3; // Si no hay datos, simulamos datos
+  }
+  
+  /**
+   * Obtiene el número de categorías creadas en los últimos 30 días
+   * (Simulado ya que no tenemos fecha de creación en el modelo)
+   */
+  getCategoriasRecientes(): number {
+    // Simulamos que el 30% de las categorías son recientes
+    return Math.round(this.categorias.length * 0.3);
+  }
+  
+  /**
+   * Obtiene el icono de Font Awesome para la categoría
+   */
+  getIconoCategoria(categoria: Categoria): string {
+    // Si el modelo tiene icono, lo usamos; de lo contrario asignamos uno según el ID
+    if (categoria.icono) {
+      return categoria.icono;
+    }
+    
+    // Asignamos un icono según el ID para simular diferentes iconos
+    const iconos = ['fa-tag', 'fa-cube', 'fa-box', 'fa-cog', 'fa-print', 'fa-tools', 'fa-puzzle-piece'];
+    return iconos[categoria.id % iconos.length];
+  }
+  
+  /**
+   * Obtiene el número de servicios asociados a una categoría
+   */
+  getNumeroServicios(categoria: Categoria): number {
+    // Si tenemos datos reales, los usamos
+    if (this.serviciosPorCategoria.has(categoria.id)) {
+      return this.serviciosPorCategoria.get(categoria.id) || 0;
+    }
+    
+    // Simulamos datos
+    const servicio = Math.floor(Math.random() * 10) + 1;
+    this.serviciosPorCategoria.set(categoria.id, servicio);
+    return servicio;
+  }
+  
+  /**
+   * Muestra los detalles de una categoría
+   */
+  verDetallesCategoria(categoria: Categoria): void {
+    // Mostramos los detalles con SweetAlert
+    swal({
+      title: `Categoría: ${categoria.nombre}`,
+      html: `
+        <div class="detalles-categoria">
+          <p><strong>ID:</strong> ${categoria.id}</p>
+          <p><strong>Nombre:</strong> ${categoria.nombre}</p>
+          <p><strong>Descripción:</strong> ${categoria.descripcion}</p>
+          <p><strong>Servicios asociados:</strong> ${this.getNumeroServicios(categoria)}</p>
+        </div>
+      `,
+      type: 'info',
+      confirmButtonText: 'Cerrar'
+    });
   }
 
   /**
@@ -303,11 +448,11 @@ export class CategoriasComponent implements OnInit {
    */
   exportarCategorias(): void {
     // Cabeceras del CSV
-    const cabeceras = 'ID,Nombre,Descripción\n';
+    const cabeceras = 'ID,Nombre,Descripción,Servicios Asociados\n';
     
     // Datos de las categorías
     const datos = this.categorias.map(categoria => {
-      return `${categoria.id},"${categoria.nombre}","${categoria.descripcion}"`;
+      return `${categoria.id},"${categoria.nombre}","${categoria.descripcion}","${this.getNumeroServicios(categoria)}"`;
     }).join('\n');
     
     // Archivo completo

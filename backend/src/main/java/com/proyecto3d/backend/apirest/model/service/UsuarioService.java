@@ -10,8 +10,6 @@ public interface UsuarioService {
 	
 	public Usuario findById(Long id);
 	
-	public List<Usuario> findUsuarioByPedidoId(Long id);
-	
 	public Usuario save(Usuario usuario);
 	
 	public void delete(Usuario usuario);

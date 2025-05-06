@@ -7,80 +7,42 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  
-import jakarta.servlet.http.HttpServletResponse;
- 
+/**
+ * Configuración de seguridad para la aplicación
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
  
+    /**
+     * Configura los filtros de seguridad HTTP
+     * @param http Configuración de seguridad HTTP
+     * @return Cadena de filtros configurada
+     * @throws Exception Si ocurre algún error
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
-            		 // Permitir acceso público a endpoints específicos
-                    .requestMatchers("/api/login", "/api/registro", "/api/principal", "/api/categorias", 
-                        "/api/valoraciones", "/api/valoracion", "/api/favorito", "/api/anuncios", 
-                        "/api/anuncios/**", "/api/anuncios/mejor-valorados", "/api/anuncio/**", 
-                        "/api/impresoras", "/usuarios", "/api/usuario", "/api/usuario/**", "/api/usuarios", 
-                        "/api/usuarios/**", "/api/detalles-carrito", "/api/pedido", "/api/search/**", 
-                        "/api/admin/**").permitAll()
- 
-                    // Requerir autenticación para ciertos endpoints, tanto para USER como para ADMIN
-                    .requestMatchers("/api/valoraciones", "/api/detalles-carrito").hasRole("USER")
- 
-                    // Requerir ADMIN para endpoints específicos (excluir los relacionados con usuarios y anuncios para hacerlos públicos)
-                    .requestMatchers("/api/impresora", "/api/carritos", "/api/carrito", "/api/pedidos", "/api/pedido",
-                                     "/api/favoritos", "/api/categoria", "/api/valoracion").hasRole("ADMIN")
-                    
+                // Permitir acceso público a endpoints específicos para la integración con el frontend
+                    .requestMatchers("/api/**").permitAll()
                     .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2
-            	    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-            	    .authenticationEntryPoint((request, response, authException) -> {
-            	        // Solo redirigir a login si la ruta no es pública
-            	        String requestPath = request.getRequestURI();
-            	        if (!requestPath.startsWith("/api/login") &&
-            	            !requestPath.startsWith("/api/registro") &&
-            	            !requestPath.startsWith("/api/principal") &&
-            	            !requestPath.startsWith("/api/anuncios") &&
-            	            !requestPath.startsWith("/api/anuncio") &&
-            	            !requestPath.startsWith("/api/impresoras") &&
-            	            !requestPath.startsWith("/api/categorias") &&
-            	            !requestPath.startsWith("/api/search") &&
-                            !requestPath.startsWith("/api/pedido") &&
-                            !requestPath.startsWith("/api/usuario") &&
-                            !requestPath.startsWith("/api/usuarios") &&
-                            !requestPath.startsWith("/api/admin")) {
-            	            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            	        } else {
-            	            // Para rutas públicas, permitir acceso incluso sin token
-            	            response.setStatus(HttpServletResponse.SC_OK);
-            	        }
-            	    })
             );
+
         return http.build();
     }
  
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        authoritiesConverter.setAuthorityPrefix("ROLE_");
-        
-        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRealmRoleConverter());
-        
-        return jwtConverter;
-    }
- 
+    /**
+     * Configura las opciones CORS para permitir la comunicación con el frontend
+     * @return Configuración CORS
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -92,5 +54,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
+    } 
 }

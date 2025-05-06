@@ -7,29 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.proyecto3d.backend.apirest.model.dao.UsuarioDao;
-import com.proyecto3d.backend.apirest.model.dao.ValoracionDao;
-import com.proyecto3d.backend.apirest.model.entity.Carrito;
-import com.proyecto3d.backend.apirest.model.entity.Favorito;
-import com.proyecto3d.backend.apirest.model.entity.Pedido;
 import com.proyecto3d.backend.apirest.model.entity.Usuario;
-import com.proyecto3d.backend.apirest.model.entity.Valoracion;
-import com.proyecto3d.backend.apirest.model.dao.CarritoDao;
-import com.proyecto3d.backend.apirest.model.dao.FavoritoDao;
-import com.proyecto3d.backend.apirest.model.dao.PedidoDao;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
 	private UsuarioDao usuarioDao;
-	@Autowired
-	private CarritoDao carritoDao;
-	@Autowired
-	private FavoritoDao favoritoDao;
-	@Autowired
-	private ValoracionDao valoracionDao;
-	@Autowired
-	private PedidoDao pedidoDao;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -50,13 +34,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
 	@Override
-	@Transactional(readOnly = true)
-	public List<Usuario> findUsuarioByPedidoId(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	@Transactional
 	public Usuario save(Usuario usuario) {
 		return usuarioDao.save(usuario);
@@ -65,24 +42,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	@Transactional
 	public void delete(Usuario usuario) {
-		//Eliminar los libros del carrito del usuario
-		for(Carrito carrito : usuario.getCarritos()) {
-			carritoDao.delete(carrito);
-		}
-		// Eliminar los libros favoritos del usuario
-	    for (Favorito favorito : usuario.getFavoritos()) {
-	        favoritoDao.delete(favorito); 
-	    }
-
-	    // Eliminar las valoraciones del usuario
-	    for (Valoracion valoracion : usuario.getValoraciones()) {
-	        valoracionDao.delete(valoracion); // 
-	    }
-	    
-	    // Eliminar los pedidos del usuario
-	    for (Pedido pedido : usuario.getPedidos()) {
-	        pedidoDao.delete(pedido); // 
-	    }
+		//Eliminar los anuncios del usuario
+		usuario.getAnuncios().forEach(anuncio -> anuncio.setUsuario(null));
+		
+		// Eliminar el usuario
 	    usuarioDao.delete(usuario);
 	}
 

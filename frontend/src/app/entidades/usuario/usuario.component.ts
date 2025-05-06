@@ -5,6 +5,7 @@ import swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { formatDate } from '@angular/common';
+// No necesitamos importaciones adicionales para la exportación
 
 @Component({
   selector: 'app-usuario',
@@ -17,6 +18,7 @@ export class UsuarioComponent implements OnInit {
   // Lista de usuarios
   usuarios: Usuario[] = [];
   usuariosFiltrados: Usuario[] = [];
+  usuariosPaginados: Usuario[] = [];
   
   // Usuario actual para crear/editar
   usuarioActual: Usuario = new Usuario();
@@ -24,6 +26,7 @@ export class UsuarioComponent implements OnInit {
   // Estado del modal
   modalVisible: boolean = false;
   modoEdicion: boolean = false;
+  editando: boolean = false;
   
   // Estado para el modal de confirmación
   modalConfirmacionVisible: boolean = false;
@@ -36,8 +39,13 @@ export class UsuarioComponent implements OnInit {
   itemsPorPagina: number = 10;
   totalPaginas: number = 1;
   
-  // Búsqueda
+  // Búsqueda y filtrado
   termino: string = '';
+  filtroRol: string = '';
+  
+  // Ordenación
+  ordenarPor: string = 'nombre';
+  ordenAscendente: boolean = true;
   
   @ViewChild('usuarioForm') usuarioForm!: NgForm;
 
@@ -70,19 +78,55 @@ export class UsuarioComponent implements OnInit {
    * Filtra los usuarios según el término de búsqueda
    */
   filtrarUsuarios(): void {
-    if (!this.termino || this.termino.trim() === '') {
-      this.usuariosFiltrados = [...this.usuarios];
-      return;
-    }
-
-    const terminoLower = this.termino.toLowerCase();
-    this.usuariosFiltrados = this.usuarios.filter(usuario => 
-      usuario.nombre.toLowerCase().includes(terminoLower) ||
-      usuario.apellido.toLowerCase().includes(terminoLower) ||
-      usuario.email.toLowerCase().includes(terminoLower) ||
-      usuario.rol.toLowerCase().includes(terminoLower)
-    );
+    let usuariosFiltrados = [...this.usuarios];
     
+    // Aplicar filtro de búsqueda
+    if (this.termino && this.termino.trim() !== '') {
+      const terminoLower = this.termino.toLowerCase();
+      usuariosFiltrados = usuariosFiltrados.filter(usuario => 
+        usuario.nombre.toLowerCase().includes(terminoLower) ||
+        usuario.apellido.toLowerCase().includes(terminoLower) ||
+        usuario.email.toLowerCase().includes(terminoLower) ||
+        usuario.rol.toLowerCase().includes(terminoLower)
+      );
+    }
+    
+    // Aplicar filtro por rol
+    if (this.filtroRol && this.filtroRol.trim() !== '') {
+      usuariosFiltrados = usuariosFiltrados.filter(usuario => 
+        usuario.rol === this.filtroRol
+      );
+    }
+    
+    // Aplicar ordenación
+    usuariosFiltrados.sort((a, b) => {
+      let valorA, valorB;
+      
+      switch (this.ordenarPor) {
+        case 'nombre':
+          valorA = a.nombre.toLowerCase();
+          valorB = b.nombre.toLowerCase();
+          break;
+        case 'fecha':
+          valorA = new Date(a.fechaRegistro).getTime();
+          valorB = new Date(b.fechaRegistro).getTime();
+          break;
+        case 'rol':
+          valorA = a.rol;
+          valorB = b.rol;
+          break;
+        default:
+          valorA = a.id;
+          valorB = b.id;
+          break;
+      }
+      
+      if (valorA < valorB) return this.ordenAscendente ? -1 : 1;
+      if (valorA > valorB) return this.ordenAscendente ? 1 : -1;
+      return 0;
+    });
+    
+    this.usuariosFiltrados = usuariosFiltrados;
     this.calcularTotalPaginas();
     this.aplicarPaginacion();
   }
@@ -109,7 +153,34 @@ export class UsuarioComponent implements OnInit {
   aplicarPaginacion(): void {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
-    this.usuariosFiltrados = this.usuariosFiltrados.slice(inicio, fin);
+    this.usuariosPaginados = this.usuariosFiltrados.slice(inicio, fin);
+  }
+  
+  /**
+   * Obtiene los usuarios paginados para la página actual
+   */
+  getUsuariosPaginados(): Usuario[] {
+    return this.usuariosPaginados;
+  }
+  
+  /**
+   * Cambia el criterio de ordenación de los usuarios
+   */
+  cambiarOrden(campo: string): void {
+    if (this.ordenarPor === campo) {
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      this.ordenarPor = campo;
+      this.ordenAscendente = true;
+    }
+    this.filtrarUsuarios();
+  }
+  
+  /**
+   * Filtra los usuarios por rol
+   */
+  filtrarPorRol(): void {
+    this.filtrarUsuarios();
   }
 
   /**
@@ -329,7 +400,7 @@ export class UsuarioComponent implements OnInit {
     
     // Datos de los usuarios
     const datos = this.usuarios.map(usuario => {
-      return `${usuario.id},"${usuario.nombre}","${usuario.apellido}","${usuario.direccion}","${usuario.email}","${usuario.rol}","${usuario.fechaRegistro}"`;
+      return `${usuario.id},"${usuario.nombre}","${usuario.apellido}","${usuario.direccion || ''}","${usuario.email}","${usuario.rol}","${formatDate(new Date(usuario.fechaRegistro), 'dd/MM/yyyy', 'es-ES')}"`;
     }).join('\n');
     
     // Archivo completo

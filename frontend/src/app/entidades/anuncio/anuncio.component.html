@@ -1,1 +1,275 @@
-<p>anuncio works!</p>
+<div class="dashboard-container">
+  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarEvent)="exportarAnuncios()"></app-navbar-admin>
+
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-bullhorn"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{anuncios.length}}</h3>
+        <p class="stat-label">Total Anuncios</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-tag"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getPrecioMedio()}} €</h3>
+        <p class="stat-label">Precio Medio</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-cubes"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getCategorias().length}}</h3>
+        <p class="stat-label">Categorías</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getAnunciosRecientes()}}</h3>
+        <p class="stat-label">Últimos 30 días</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal con tabla de anuncios -->
+  <div class="dashboard-content" *ngIf="!editando">
+    <!-- Filtros y Ordenación -->
+    <div class="filtros-container">
+      <div class="filtro-grupo">
+        <label class="filtro-label">Filtrar por categoría</label>
+        <select class="filtro-select" [(ngModel)]="filtroCategoria" (change)="filtrarPorCategoria()">
+          <option value="0">Todas las categorías</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
+        </select>
+      </div>
+      <div class="orden-grupo">
+        <button class="orden-btn" [class.activo]="ordenarPor === 'fecha'" (click)="cambiarOrden('fecha')">
+          Fecha
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'fecha' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'fecha' && !ordenAscendente"></i>
+        </button>
+        <button class="orden-btn" [class.activo]="ordenarPor === 'precio'" (click)="cambiarOrden('precio')">
+          Precio
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'precio' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'precio' && !ordenAscendente"></i>
+        </button>
+        <button class="orden-btn" [class.activo]="ordenarPor === 'titulo'" (click)="cambiarOrden('titulo')">
+          Título
+          <i class="fas" [class.fa-arrow-up]="ordenarPor === 'titulo' && ordenAscendente" 
+             [class.fa-arrow-down]="ordenarPor === 'titulo' && !ordenAscendente"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="anuncios-table">
+        <thead>
+          <tr>
+            <th class="text-center underline">ID</th>
+            <th class="text-center underline">Imagen</th>
+            <th class="text-center underline">Título</th>
+            <th class="text-center underline">Descripción</th>
+            <th class="text-center underline">Precio</th>
+            <th class="text-center underline">Categoría</th>
+            <th class="text-center underline">Fecha</th>
+            <th class="text-center underline">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let anuncio of getAnunciosPaginados()">
+            <td class="anuncio-id" data-label="ID">{{anuncio.id}}</td>
+            <td class="anuncio-imagen" data-label="Imagen">
+              <div class="imagen" [style.background-image]="anuncio.urlImagen ? 'url(' + anuncio.urlImagen + ')' : ''">
+                <span *ngIf="!anuncio.urlImagen"><i class="fas fa-bullhorn"></i></span>
+              </div>
+            </td>
+            <td class="anuncio-titulo" data-label="Título">
+              <div class="anuncio-info">
+                <span class="titulo">{{anuncio.titulo}}</span>
+              </div>
+            </td>
+            <td class="anuncio-descripcion" data-label="Descripción">
+              <span class="descripcion">{{anuncio.descripcion | slice:0:100}}{{anuncio.descripcion.length > 100 ? '...' : ''}}</span>
+            </td>
+            <td class="anuncio-precio" data-label="Precio">{{anuncio.precio | currency:'EUR'}}</td>
+            <td class="anuncio-categoria" data-label="Categoría">
+              <span class="categoria-badge">
+                {{getCategoriaById(anuncio.categoriaId)?.nombre || 'Sin categoría'}}
+              </span>
+            </td>
+            <td class="anuncio-fecha" data-label="Fecha">{{anuncio.fechaPublicacion | date:'dd/MM/yyyy'}}</td>
+            <td class="anuncio-actions" data-label="Acciones">
+              <button class="action-btn edit-btn" (click)="editarAnuncio(anuncio)" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-btn delete-btn" (click)="eliminarAnuncio(anuncio)" title="Eliminar">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="action-btn details-btn" (click)="verDetallesAnuncio(anuncio)" title="Ver detalles">
+                <i class="fas fa-info-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="anuncios.length === 0" class="no-results">
+      <div class="no-results-content">
+        <i class="fas fa-search no-results-icon"></i>
+        <h3>No se encontraron anuncios</h3>
+        <p>Intenta con otra búsqueda o crea un nuevo anuncio</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-container" *ngIf="anuncios.length > itemsPorPagina">
+    <div class="pagination">
+      <button class="pagination-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="pagination-info">Página {{paginaActual}} de {{totalPaginas}}</span>
+      <button class="pagination-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="pagination-select">
+      <select [(ngModel)]="itemsPorPagina" (change)="cambiarItemsPorPagina()">
+        <option [value]="5">5 por página</option>
+        <option [value]="10">10 por página</option>
+        <option [value]="20">20 por página</option>
+        <option [value]="50">50 por página</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dashboard-actions">
+    <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
+      <i class="fas fa-trash-alt"></i> Eliminar Todos
+    </button>
+    <button class="btn btn-export" (click)="abrirModalCrearAnuncio()">
+      <i class="fas fa-plus"></i> Nuevo Anuncio
+    </button>
+  </div>
+
+  <!-- Modal para crear/editar anuncio -->
+  <div class="modal" [class.active]="modalVisible">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{modoEdicion ? 'Editar Anuncio' : 'Crear Nuevo Anuncio'}}</h2>
+        <button class="close-btn" (click)="cerrarModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="anuncioForm">
+          <div class="form-group">
+            <label for="titulo">Título *</label>
+            <input type="text" id="titulo" formControlName="titulo" 
+              [class.invalid]="anuncioForm.get('titulo')?.invalid && anuncioForm.get('titulo')?.touched">
+            <div class="error-message" *ngIf="anuncioForm.get('titulo')?.errors?.['required'] && anuncioForm.get('titulo')?.touched">
+              El título es obligatorio
+            </div>
+            <div class="error-message" *ngIf="anuncioForm.get('titulo')?.errors?.['minlength'] && anuncioForm.get('titulo')?.touched">
+              El título debe tener al menos 3 caracteres
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="descripcion">Descripción *</label>
+            <textarea id="descripcion" formControlName="descripcion" rows="4"
+              [class.invalid]="anuncioForm.get('descripcion')?.invalid && anuncioForm.get('descripcion')?.touched"></textarea>
+            <div class="error-message" *ngIf="anuncioForm.get('descripcion')?.errors?.['required'] && anuncioForm.get('descripcion')?.touched">
+              La descripción es obligatoria
+            </div>
+            <div class="error-message" *ngIf="anuncioForm.get('descripcion')?.errors?.['minlength'] && anuncioForm.get('descripcion')?.touched">
+              La descripción debe tener al menos 10 caracteres
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="precio">Precio (€) *</label>
+            <input type="number" id="precio" formControlName="precio" min="0" step="0.01"
+              [class.invalid]="anuncioForm.get('precio')?.invalid && anuncioForm.get('precio')?.touched">
+            <div class="error-message" *ngIf="anuncioForm.get('precio')?.errors?.['required'] && anuncioForm.get('precio')?.touched">
+              El precio es obligatorio
+            </div>
+            <div class="error-message" *ngIf="anuncioForm.get('precio')?.errors?.['min'] && anuncioForm.get('precio')?.touched">
+              El precio debe ser mayor o igual a 0
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="categoriaId">Categoría *</label>
+            <select id="categoriaId" formControlName="categoriaId"
+              [class.invalid]="anuncioForm.get('categoriaId')?.invalid && anuncioForm.get('categoriaId')?.touched">
+              <option [value]="0">Selecciona una categoría</option>
+              <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
+            </select>
+            <div class="error-message" *ngIf="anuncioForm.get('categoriaId')?.invalid && anuncioForm.get('categoriaId')?.touched">
+              Debes seleccionar una categoría
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="impresoraId">Impresora *</label>
+            <select id="impresoraId" formControlName="impresoraId"
+              [class.invalid]="anuncioForm.get('impresoraId')?.invalid && anuncioForm.get('impresoraId')?.touched">
+              <option [value]="0">Selecciona una impresora</option>
+              <option *ngFor="let impresora of impresoras" [value]="impresora.id">{{impresora.modelo}}</option>
+            </select>
+            <div class="error-message" *ngIf="anuncioForm.get('impresoraId')?.invalid && anuncioForm.get('impresoraId')?.touched">
+              Debes seleccionar una impresora
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="urlImagen">URL de la imagen</label>
+            <input type="text" id="urlImagen" formControlName="urlImagen">
+            <div class="imagen-preview" *ngIf="anuncioForm.get('urlImagen')?.value">
+              <img [src]="anuncioForm.get('urlImagen')?.value" alt="Vista previa de la imagen" class="preview-img">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-save" [disabled]="anuncioForm.invalid" (click)="guardarAnuncio()">
+          {{modoEdicion ? 'Actualizar' : 'Crear'}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div class="confirmacion-modal" [class.active]="modalConfirmacionVisible">
+    <div class="confirmacion-content">
+      <div class="confirmacion-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h2 class="confirmacion-titulo">{{tituloConfirmacion}}</h2>
+      <p class="confirmacion-mensaje">{{mensajeConfirmacion}}</p>
+      <div class="confirmacion-acciones">
+        <button class="btn btn-cancel" (click)="cancelarEliminarTodos()">Cancelar</button>
+        <button class="btn btn-confirmar" (click)="ejecutarAccionConfirmacion()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="loader-overlay" *ngIf="cargando">
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Cargando...</p>
+    </div>
+  </div>
+</div>

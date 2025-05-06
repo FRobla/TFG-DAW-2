@@ -18,9 +18,10 @@ import { FooterComponent } from './recursos/footer/footer.component';
 import { ErrorComponent } from './recursos/error/error.component';
 import { ErrorInterceptor } from './recursos/error/error.interceptor';
 import { UsuarioComponent } from './entidades/usuario/usuario.component';
-import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { NavbarAdminComponent } from './recursos/navbar-admin/navbar-admin.component';
 import { SelectorCategoriaComponent } from './recursos/selector-categoria/selector-categoria.component';
+import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
+import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 
 @NgModule({
   declarations: [
@@ -36,9 +37,10 @@ import { SelectorCategoriaComponent } from './recursos/selector-categoria/select
     FooterComponent,
     ErrorComponent,
     UsuarioComponent,
-    AnuncioComponent,
     NavbarAdminComponent,
     SelectorCategoriaComponent,
+    AnuncioComponent,
+    ImpresoraComponent,
   ],
   imports: [
     BrowserModule,

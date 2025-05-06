@@ -1,7 +1,6 @@
 package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +63,7 @@ public class Usuario implements Serializable{
 	@Column(nullable = false)
 	private Date fecha_registro;
 	    
+	/*
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	public final List<Pedido> pedidos = new ArrayList<>();
@@ -79,7 +79,8 @@ public class Usuario implements Serializable{
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
 	public final List<Favorito> favoritos = new ArrayList<>();
-	
+	*/
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	private List<Anuncio> anuncios;
@@ -159,6 +160,7 @@ public class Usuario implements Serializable{
 		this.foto = foto;
 	}
 
+	/*
 	public List<Pedido> getPedidos() {
 		return pedidos;
 	}
@@ -174,7 +176,7 @@ public class Usuario implements Serializable{
 
 	public List<Favorito> getFavoritos() {
 		return favoritos;
-	}
+	} */
 
 	public List<Anuncio> getAnuncios() {
 		return anuncios;
@@ -183,6 +185,5 @@ public class Usuario implements Serializable{
 	public void setAnuncios(List<Anuncio> anuncios) {
 		this.anuncios = anuncios;
 	}
-	
 	
 }

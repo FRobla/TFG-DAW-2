@@ -1,0 +1,232 @@
+<div class="dashboard-container">
+  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarUsuariosEvent)="exportarImpresoras()"></app-navbar-admin>
+
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-print"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{impresoras.length}}</h3>
+        <p class="stat-label">Total Impresoras</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-tag"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getPrecioMedio()}} €</h3>
+        <p class="stat-label">Precio Medio</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-cubes"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{categorias.length}}</h3>
+        <p class="stat-label">Categorías</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-box-open"></i>
+      </div>
+      <div class="stat-info">
+        <h3 class="stat-number">{{getImpresorasEnStock()}}</h3>
+        <p class="stat-label">En Stock</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="table-container">
+      <table class="impresoras-table">
+        <thead>
+          <tr>
+            <th class="text-center underline">ID</th>
+            <th class="text-center underline">Imagen</th>
+            <th class="text-center underline">Modelo</th>
+            <th class="text-center underline">Marca</th>
+            <th class="text-center underline">Precio</th>
+            <th class="text-center underline">Tecnología</th>
+            <th class="text-center underline">Categoría</th>
+            <th class="text-center underline">Stock</th>
+            <th class="text-center underline">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let impresora of impresorasFiltradas">
+            <td class="impresora-id" data-label="ID">{{impresora.id}}</td>
+            <td class="impresora-imagen" data-label="Imagen">
+              <div class="imagen" [style.background-image]="impresora.urlImagen ? 'url(' + impresora.urlImagen + ')' : ''">
+                <span *ngIf="!impresora.urlImagen"><i class="fas fa-print"></i></span>
+              </div>
+            </td>
+            <td class="impresora-modelo" data-label="Modelo">
+              <div class="impresora-info">
+                <span class="modelo">{{impresora.modelo}}</span>
+                <span class="descripcion">{{impresora.descripcion ? (impresora.descripcion.substring(0, 30) + (impresora.descripcion.length > 30 ? '...' : '')) : ''}}</span>
+              </div>
+            </td>
+            <td class="impresora-marca" data-label="Marca">{{impresora.marca}}</td>
+            <td class="impresora-precio" data-label="Precio">{{impresora.precio}} €</td>
+            <td class="impresora-tecnologia" data-label="Tecnología">{{impresora.tecnologiaImpresion || 'No especificada'}}</td>
+            <td class="impresora-categoria" data-label="Categoría">
+              <span class="categoria-badge">
+                {{getNombreCategoria(impresora.categoriaId)}}
+              </span>
+            </td>
+            <td class="impresora-stock" data-label="Stock">
+              <span class="stock-badge" [ngClass]="{'en-stock': impresora.enStock, 'sin-stock': !impresora.enStock}">
+                {{impresora.enStock ? 'En Stock' : 'Sin Stock'}}
+              </span>
+            </td>
+            <td class="impresora-actions" data-label="Acciones">
+              <button class="action-btn edit-btn" (click)="editarImpresora(impresora)" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-btn delete-btn" (click)="confirmarEliminar(impresora)" title="Eliminar">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="action-btn details-btn" (click)="verDetallesImpresora(impresora)" title="Ver detalles">
+                <i class="fas fa-info-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="impresorasFiltradas.length === 0" class="no-results">
+      <div class="no-results-content">
+        <i class="fas fa-search no-results-icon"></i>
+        <h3>No se encontraron impresoras</h3>
+        <p>Intenta con otra búsqueda o crea una nueva impresora</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-container" *ngIf="impresoras.length > itemsPorPagina">
+    <div class="pagination">
+      <button class="pagination-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="pagination-info">Página {{paginaActual}} de {{totalPaginas}}</span>
+      <button class="pagination-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="pagination-select">
+      <select [(ngModel)]="itemsPorPagina" (change)="cambiarItemsPorPagina()">
+        <option [value]="5">5 por página</option>
+        <option [value]="10">10 por página</option>
+        <option [value]="20">20 por página</option>
+        <option [value]="50">50 por página</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dashboard-actions">
+    <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
+      <i class="fas fa-trash-alt"></i> Eliminar Todas
+    </button>
+    <button class="btn btn-export" (click)="abrirModalCrearImpresora()">
+      <i class="fas fa-plus"></i> Nueva Impresora
+    </button>
+  </div>
+</div>
+
+<!-- Modal para crear/editar impresora -->
+<div class="modal" [class.active]="modalVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>{{modoEdicion ? 'Editar Impresora' : 'Crear Nueva Impresora'}}</h2>
+      <button class="close-btn" (click)="cerrarModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form #impresoraForm="ngForm">
+        <div class="form-group">
+          <label for="modelo">Modelo *</label>
+          <input type="text" id="modelo" name="modelo" [(ngModel)]="impresoraActual.modelo" required>
+        </div>
+        <div class="form-group">
+          <label for="marca">Marca *</label>
+          <input type="text" id="marca" name="marca" [(ngModel)]="impresoraActual.marca" required>
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio (€) *</label>
+          <input type="number" id="precio" name="precio" [(ngModel)]="impresoraActual.precio" required min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="fechaFabricacion">Fecha de Fabricación</label>
+          <input type="date" id="fechaFabricacion" name="fechaFabricacion" 
+            [ngModel]="impresoraActual.fechaFormateada | date:'yyyy-MM-dd'" 
+            (ngModelChange)="impresoraActual.fechaFormateada = $event">
+        </div>
+        <div class="form-group">
+          <label for="volumenImpresion">Volumen de Impresión</label>
+          <input type="text" id="volumenImpresion" name="volumenImpresion" [(ngModel)]="impresoraActual.volumenImpresion" 
+            placeholder="Ej: 220x220x250mm">
+        </div>
+        <div class="form-group">
+          <label for="tecnologiaImpresion">Tecnología de Impresión</label>
+          <select id="tecnologiaImpresion" name="tecnologiaImpresion" [(ngModel)]="impresoraActual.tecnologiaImpresion">
+            <option value="">Selecciona una tecnología</option>
+            <option value="FDM">FDM (Modelado por Deposición Fundida)</option>
+            <option value="SLA">SLA (Estereolitografía)</option>
+            <option value="DLP">DLP (Procesamiento Digital de Luz)</option>
+            <option value="SLS">SLS (Sinterizado Selectivo por Láser)</option>
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" name="descripcion" [(ngModel)]="impresoraActual.descripcion" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="urlImagen">URL de Imagen</label>
+          <input type="text" id="urlImagen" name="urlImagen" [(ngModel)]="impresoraActual.urlImagen">
+          <div class="imagen-preview" *ngIf="impresoraActual.urlImagen">
+            <img [src]="impresoraActual.urlImagen" alt="Vista previa de la imagen" class="preview-img">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="categoriaId">Categoría</label>
+          <select id="categoriaId" name="categoriaId" [(ngModel)]="impresoraActual.categoriaId">
+            <option [value]="0">Selecciona una categoría</option>
+            <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="enStock" name="enStock" [(ngModel)]="impresoraActual.enStock">
+          <label for="enStock">En Stock</label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-save btn-outline-light btn-lg" [disabled]="!impresoraForm.valid" (click)="guardarImpresora()">
+        {{modoEdicion ? 'Actualizar' : 'Crear'}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="confirmacion-modal" [class.active]="modalConfirmacionVisible">
+  <div class="confirmacion-content">
+    <div class="confirmacion-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h2 class="confirmacion-titulo">{{tituloConfirmacion}}</h2>
+    <p class="confirmacion-mensaje">{{mensajeConfirmacion}}</p>
+    <div class="confirmacion-acciones">
+      <button class="btn btn-cancel" (click)="cancelarConfirmacion()">Cancelar</button>
+      <button class="btn btn-confirmar" (click)="ejecutarAccionConfirmacion()">Confirmar</button>
+    </div>
+  </div>
+</div>

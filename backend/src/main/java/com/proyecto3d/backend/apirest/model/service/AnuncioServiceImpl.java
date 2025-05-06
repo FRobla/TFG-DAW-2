@@ -9,11 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.proyecto3d.backend.apirest.model.dao.AnuncioDao;
-import com.proyecto3d.backend.apirest.model.dao.ImpresoraDao;
+import com.proyecto3d.backend.apirest.model.dao.CategoriaDao;
 import com.proyecto3d.backend.apirest.model.entity.Anuncio;
 import com.proyecto3d.backend.apirest.model.entity.Categoria;
-import com.proyecto3d.backend.apirest.model.entity.DetallePedido;
-import com.proyecto3d.backend.apirest.model.entity.Impresora;
 
 @Service
 public class AnuncioServiceImpl implements AnuncioService {
@@ -22,10 +20,7 @@ public class AnuncioServiceImpl implements AnuncioService {
     private AnuncioDao anuncioDao;
 
     @Autowired
-    private ImpresoraDao impresoraDao;
-
-    @Autowired
-    private DetallePedidoService detallePedidoService;
+    private CategoriaDao categoriaDao;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,16 +36,11 @@ public class AnuncioServiceImpl implements AnuncioService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Anuncio> findByImpresoraIdPaginado(Long impresoraId, Pageable pageable) {
-        return anuncioDao.findByImpresoraId(impresoraId, pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Page<Anuncio> findByCategoriaIdPaginado(Long categoriaId, Pageable pageable) {
-        return anuncioDao.findByCategoriasId(categoriaId, pageable);
+        return anuncioDao.findByCategoriaId(categoriaId, pageable);
     }
 
+    /*
     @Override
     @Transactional(readOnly = true)
     public List<Anuncio> getMejorValorados() {
@@ -67,6 +57,7 @@ public class AnuncioServiceImpl implements AnuncioService {
         }
         return anuncioDao.findTop10MejorValorados();
     }
+    
 
     // Método para obtener el anuncio y su valoración media
     @Override
@@ -86,7 +77,7 @@ public class AnuncioServiceImpl implements AnuncioService {
         }
 
         return anuncioDao.save(anuncio);
-    }
+    } */
 
     @Override
     @Transactional(readOnly = true)
@@ -100,6 +91,7 @@ public class AnuncioServiceImpl implements AnuncioService {
         return anuncioDao.findByTitulo(titulo).orElse(null);
     }
 
+    /*
     @Override
     @Transactional(readOnly = true)
     public List<Impresora> findImpresorasByAnuncioId(Long anuncioId) {
@@ -118,21 +110,7 @@ public class AnuncioServiceImpl implements AnuncioService {
             return impresora.getAnuncios();
         }
         return List.of();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Anuncio> findAnunciosByFavoritoId(Long id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Anuncio> findAnunciosByCarritoId(Long id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    } */
 
     @Override
     @Transactional
@@ -143,31 +121,11 @@ public class AnuncioServiceImpl implements AnuncioService {
     @Override
     @Transactional
     public void delete(Anuncio anuncio) {
-        // Obtener los detalles de pedido relacionados con este anuncio
-        List<DetallePedido> detallesPedido = detallePedidoService.findByPedidoId(anuncio.getId());
-
-        // Desasociar el anuncio de todas sus impresoras (ahora ManyToOne)
-        List<Impresora> impresoras = impresoraDao.findAll();
-        for (Impresora impresora : impresoras) {
-            if (impresora.getAnuncios() != null && impresora.getAnuncios().stream().anyMatch(a -> a.getId().equals(anuncio.getId()))) {
-                impresora.setAnuncios(null);
-                impresoraDao.save(impresora);
-            }
-        }
-        
-        // Desasociar el anuncio de todas sus categorias
+        // Eliminar anuncio de la categoria
         for (Categoria categoria : anuncio.getCategorias()) {
             categoria.getAnuncios().remove(anuncio);
         }
         anuncio.getCategorias().clear();
-
-        // Desasociar de pedidos
-        for (DetallePedido detalle : detallesPedido) {
-            detallePedidoService.delete(detalle);
-        }
-
-        // Actualizar el anuncio con las asociaciones eliminadas
-        anuncioDao.save(anuncio);
 
         // Eliminar el anuncio
         anuncioDao.delete(anuncio);
@@ -175,35 +133,13 @@ public class AnuncioServiceImpl implements AnuncioService {
 
     @Override
     @Transactional
-    public void deleteAll() {
-        // Obtener todos los anuncios
-        List<Anuncio> anuncios = findAll();
-        // Obtener todos los impresoras
-        List<Impresora> impresoras = impresoraDao.findAll();
-        // Obtener los detalles de los pedidos
-        List<DetallePedido> detallesPedido = detallePedidoService.findAll();
-
-        // Desasociar impresoras de anuncios
-        for (Impresora impresora : impresoras) {
-            impresora.setAnuncios(null);
-            impresoraDao.save(impresora);
-        }
-
-        // Para cada anuncio, desasociar todas sus categorias
-        for (Anuncio anuncio : anuncios) {
-            for (Categoria categoria : anuncio.getCategorias()) {
-                categoria.getAnuncios().remove(anuncio);
-            }
-            anuncio.getCategorias().clear();
-        }
-
-        // Desasociar de pedidos
-        for (DetallePedido detalle : detallesPedido) {
-            detallePedidoService.delete(detalle);
-        }
-
+    public void deleteAll() {   
+        // Eliminar todas las categorias
+        categoriaDao.deleteAll();
         // Eliminar todos los anuncios
         anuncioDao.deleteAll();
     } 
+
+
 
 }
