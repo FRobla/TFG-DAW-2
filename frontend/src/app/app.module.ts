@@ -11,6 +11,7 @@ import { ResultadoBusquedaComponent } from './paginas/resultado-busqueda/resulta
 import { RouterModule, Routes } from '@angular/router';
 import { DetallesAnuncioComponent } from './paginas/detalles-anuncio/detalles-anuncio.component';
 import { LoginComponent } from './paginas/login/login.component';
+import { RegistroComponent } from './paginas/registro/registro.component';
 import { CategoriasComponent } from './entidades/categoria/categoria.component';
 import { HeroBuscadorComponent } from './recursos/hero-buscador/hero-buscador.component';
 import { NavbarBusquedaComponent } from './recursos/navbar-busqueda/navbar-busqueda.component';
@@ -31,6 +32,7 @@ import { ImpresoraComponent } from './entidades/impresora/impresora.component';
     ResultadoBusquedaComponent,
     DetallesAnuncioComponent,
     LoginComponent,
+    RegistroComponent,
     CategoriasComponent,
     HeroBuscadorComponent,
     NavbarBusquedaComponent,

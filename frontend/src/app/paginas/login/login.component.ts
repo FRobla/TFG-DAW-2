@@ -26,7 +26,8 @@ export class LoginComponent {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
     });
   }
   
@@ -69,11 +70,11 @@ export class LoginComponent {
             this.router.navigate(['/admin']);
             break;
           case 'USER':
-            this.router.navigate(['/principal']);
+            this.router.navigate(['/servicios']);
             break;
           default:
             console.error('Rol no reconocido');
-            this.router.navigate(['/principal']);
+            this.router.navigate(['']);
         }
       },
       error: (error) => {

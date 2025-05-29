@@ -33,55 +33,40 @@ export class AuthService {
   }
 
   login(credenciales: { email: string, password: string }): Observable<any> {
-    const body = new URLSearchParams();
-    body.set('client_id', 'eviden-library-rest-api'); 
-    body.set('username', credenciales.email);
-    body.set('password', credenciales.password);
-    body.set('grant_type', 'password');
-  
+    const loginLocalEndPoint = 'http://localhost:8080/api/login';
+    
     const headers = new HttpHeaders({
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/json'
     });
-  
-    return this.http.post<any>(this.urlEndPoint, body.toString(), { headers }).pipe(
-      tap(usuario => {
-        if (usuario && usuario.access_token) {
-          const tokenPayload = this.decodeToken(usuario.access_token);
+
+    const body = {
+      email: credenciales.email,
+      password: credenciales.password
+    };
+
+    return this.http.post<any>(loginLocalEndPoint, body, { headers }).pipe(
+      tap((response: any) => {
+        if (response && response.access_token) {
+          // Crear objeto usuario compatible con el formato anterior
+          const usuario = {
+            access_token: response.access_token,
+            id: response.id,
+            username: response.username,
+            email: response.email,
+            rol: response.rol
+          };
           
-          // Extraer roles
-          const roles = this.extractRolesFromPayload(tokenPayload);
-          
-          // Asignar rol (priorizar ADMIN)
-          usuario.rol = roles.includes('ADMIN') ? 'ADMIN' : 'USER';
-  
-          // Añadir información adicional del usuario
-          usuario.username = tokenPayload.preferred_username;
-          usuario.email = tokenPayload.email;
-          
-          // Guardar el token y la información básica del usuario
+          // Guardar el token y la información del usuario
           localStorage.setItem('access_token', usuario.access_token);
           localStorage.setItem('usuario', JSON.stringify(usuario));
           
-          // Actualizar subject con la información básica
+          // Actualizar subject con la información del usuario
           this.usuarioActualSubject.next(usuario);
-          
-          // Después de autenticar, obtener los datos completos del usuario por email
-          this.obtenerUsuarioPorEmail(usuario.email).subscribe(
-            usuarioCompleto => {
-              if (usuarioCompleto) {
-                // Actualizar el ID del usuario con el de la base de datos
-                usuario.id = usuarioCompleto.id;
-                
-                // Actualizar el localStorage y el subject con el ID correcto
-                localStorage.setItem('usuario', JSON.stringify(usuario));
-                this.usuarioActualSubject.next(usuario);
-              }
-            },
-            error => {
-              console.error('Error al obtener datos completos del usuario:', error);
-            }
-          );
         }
+      }),
+      catchError(error => {
+        console.error('Error en el login:', error);
+        throw error;
       })
     );
   }
@@ -202,9 +187,13 @@ export class AuthService {
     };
 
     return this.http.post(registroPublicoEndPoint, body, { headers }).pipe(
-      tap(() => {
-        // Después del registro exitoso, intentamos hacer login automáticamente
-        console.log('Registro exitoso, intentando iniciar sesión automáticamente');
+      tap((response: any) => {
+        // Registro exitoso
+        console.log('Registro exitoso:', response);
+      }),
+      catchError(error => {
+        console.error('Error en el registro:', error);
+        throw error;
       })
     );
   }

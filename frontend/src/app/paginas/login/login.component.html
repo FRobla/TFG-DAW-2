@@ -1,39 +1,5 @@
-<!-- Navbar similar al de principal para consistencia -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-  <div class="container">
-    <!-- Logo -->
-    <a class="navbar-brand" href="#" routerLink="/">
-      <svg class="navbar-logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 5L5 12.5L20 20L35 12.5L20 5Z" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-        <path d="M5 27.5L20 35L35 27.5" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-        <path d="M20 20V35" stroke="#FFFFFF" stroke-width="1.5" fill="none"/>
-        <path d="M12.5 16.25L12.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
-        <path d="M27.5 16.25L27.5 27.5" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
-      </svg>
-      <span class="ms-2">PrintLab3D</span>
-    </a>
-    
-    <!-- Botón de hamburguesa para móviles -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <!-- Menú de navegación -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/servicios">Explorar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Cómo funciona</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contacto</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<!-- Navbar de búsqueda -->
+<app-navbar-busqueda></app-navbar-busqueda>
 
 <!-- Sección principal con formulario de login -->
 <section class="login-section">
@@ -57,21 +23,22 @@
             
             <!-- Campo username -->
             <div class="form-group mb-4">
-              <label for="username">Nombre de usuario</label>
+              <label for="email">Correo electrónico</label>
               <div class="input-with-icon">
-                <i class="bi bi-person-fill"></i>
+                <i class="bi bi-envelope-fill"></i>
                 <input 
-                  type="text" 
-                  id="username" 
-                  formControlName="username" 
+                  type="email" 
+                  id="email" 
+                  formControlName="email" 
                   class="form-control" 
-                  [ngClass]="{'is-invalid': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}"
-                  placeholder="Tu nombre de usuario"
+                  [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
+                  placeholder="tu@email.com"
+                  (focus)="onInputFocus()"
                 >
               </div>
-              <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="invalid-feedback d-block">
-                <span *ngIf="loginForm.get('username')?.errors?.['required']">El nombre de usuario es obligatorio</span>
-                <span *ngIf="loginForm.get('username')?.errors?.['minlength']">El nombre de usuario debe tener al menos 3 caracteres</span>
+              <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="invalid-feedback d-block">
+                <span *ngIf="loginForm.get('email')?.errors?.['required']">El email es obligatorio</span>
+                <span *ngIf="loginForm.get('email')?.errors?.['email']">Debe ser un email válido</span>
               </div>
             </div>
             
@@ -87,9 +54,10 @@
                   class="form-control" 
                   [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
                   placeholder="Tu contraseña"
+                  (focus)="onInputFocus()"
                 >
                 <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
-                  <i class="bi bi-ojo" [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
                 </button>
               </div>
               <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="invalid-feedback d-block">
@@ -130,7 +98,7 @@
           
           <!-- Link para registro -->
           <div class="signup-link text-center mt-4">
-            ¿No tienes cuenta? <a href="#">Regístrate ahora</a>
+            ¿No tienes cuenta? <a [routerLink]="['/registro']">Regístrate ahora</a>
           </div>
         </div>
       </div>
