@@ -1,6 +1,7 @@
 package com.proyecto3d.backend.apirest.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.proyecto3d.backend.apirest.model.entity.Categoria;
 
@@ -17,4 +18,6 @@ public interface CategoriaService {
 	public void delete(Categoria categoria);
 	
     public void deleteAll();
+    
+    public List<Map<String, Object>> getCategoriasConConteoAnuncios();
 }

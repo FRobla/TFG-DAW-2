@@ -25,7 +25,9 @@ export class AuthGuard implements CanActivate {
       '/search-results',
       '/generos',
       '/autores',
-      '/valoraciones',  // Solo la lista de valoraciones es pública
+      '/valoraciones',
+      '/valoracion',
+      '/categorias',
       '/admin', // Añadir rutas de admin como públicas temporalmente
     ];
 

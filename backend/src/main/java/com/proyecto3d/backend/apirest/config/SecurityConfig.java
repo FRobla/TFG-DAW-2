@@ -32,8 +32,10 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
                 // Permitir acceso público a endpoints específicos para la integración con el frontend
-                    .requestMatchers("/api/**").permitAll()
-                    .anyRequest().authenticated()
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/categorias/**").permitAll()
+                .requestMatchers("/api/search/**").permitAll()
+                .anyRequest().permitAll()
             );
 
         return http.build();
@@ -46,7 +48,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:4200",
+            "file://",
+            "null" // Para archivos abiertos directamente desde el navegador
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

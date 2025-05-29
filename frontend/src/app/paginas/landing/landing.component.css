@@ -368,7 +368,6 @@ a:hover {
   font-weight: 400;
 }
 
-/* Hero section buttons - Updated to keep inline on all screen sizes */
 .hero-buttons {
   display: flex;
   flex-direction: row;
@@ -381,7 +380,7 @@ a:hover {
   margin-left: 0;
 }
 
-/* Media query adjustments to ensure buttons stay inline */
+
 @media (max-width: 576px) {
   .hero-buttons {
     justify-content: center;

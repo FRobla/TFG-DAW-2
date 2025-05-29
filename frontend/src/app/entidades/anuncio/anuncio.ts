@@ -1,3 +1,7 @@
+import { Categoria } from "../categoria/categoria";
+import { Usuario } from "../usuario/usuario";
+import { Impresora } from "../impresora/impresora";
+
 export class Anuncio {
     id: number = 0;
     titulo: string = "";
@@ -9,6 +13,13 @@ export class Anuncio {
     usuarioId: number = 0;
     categoriaId: number = 0;
     impresoraId: number = 0;
+    tiempoEstimado: string = "";
+    vistas: number = 0;
+    
+    // Propiedades de relaciones
+    usuario?: Usuario;
+    categorias?: Categoria[];
+    impresora?: Impresora;
 
     // Propiedad para acceder a la fecha como objeto Date
     get fechaFormateada(): Date {
@@ -36,7 +47,9 @@ export class Anuncio {
             descripcion: data.descripcion,
             precio: data.precio_base, // Mapear precio_base a precio
             estado: data.estado,
-            urlImagen: data.imagen || data.urlImagen // Considerar ambos posibles nombres
+            urlImagen: data.imagen || data.urlImagen, // Considerar ambos posibles nombres
+            tiempoEstimado: data.tiempo_estimado || "",
+            vistas: data.vistas || 0
         });
         
         // Manejar la fecha específicamente
@@ -49,14 +62,17 @@ export class Anuncio {
         // Manejar las relaciones
         if (data.usuario) {
             anuncio.usuarioId = data.usuario.id;
+            anuncio.usuario = data.usuario;
         }
         if (data.categoria) {
             anuncio.categoriaId = data.categoria.id;
         } else if (data.categorias && data.categorias.length > 0) {
             anuncio.categoriaId = data.categorias[0].id;
+            anuncio.categorias = data.categorias;
         }
         if (data.impresora) {
             anuncio.impresoraId = data.impresora.id;
+            anuncio.impresora = data.impresora;
         }
         
         return anuncio;
@@ -68,10 +84,12 @@ export class Anuncio {
             id: this.id,
             titulo: this.titulo,
             descripcion: this.descripcion,
-            precio: this.precio,
+            precio_base: this.precio, // Mapear precio a precio_base
             fechaPublicacion: this.fechaPublicacion,
             estado: this.estado,
-            urlImagen: this.urlImagen,
+            imagen: this.urlImagen,
+            tiempo_estimado: this.tiempoEstimado,
+            vistas: this.vistas,
             usuario: {
                 id: this.usuarioId
             },
@@ -82,5 +100,30 @@ export class Anuncio {
                 id: this.impresoraId
             }
         };
+    }
+
+    // Métodos de utilidad para obtener información formateada
+    getPrecioFormateado(): string {
+        return new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(this.precio);
+    }
+
+    getFechaFormateada(): string {
+        if (!this.fechaPublicacion) return '';
+        const fecha = new Date(this.fechaPublicacion);
+        return fecha.toLocaleDateString('es-ES');
+    }
+
+    getNombreUsuario(): string {
+        return this.usuario?.nombre || 'Usuario';
+    }
+
+    getCategoriasNombres(): string {
+        if (this.categorias && this.categorias.length > 0) {
+            return this.categorias.map(c => c.nombre).join(', ');
+        }
+        return '';
     }
 }

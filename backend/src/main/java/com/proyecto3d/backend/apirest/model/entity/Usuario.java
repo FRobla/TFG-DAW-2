@@ -1,6 +1,7 @@
 package com.proyecto3d.backend.apirest.model.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,9 +12,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -62,28 +66,23 @@ public class Usuario implements Serializable{
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	@Column(nullable = false)
 	private Date fecha_registro;
-	    
-	/*
-	@JsonIgnore
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	public final List<Pedido> pedidos = new ArrayList<>();
-	
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	@JsonIgnore
-	public final List<Carrito> carritos = new ArrayList<>();
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	public final List<Valoracion> valoraciones = new ArrayList<>();
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
-	public final List<Favorito> favoritos = new ArrayList<>();
-	*/
+
+	// Relaciones
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ubicacion_id")
+	private Ubicacion ubicacion;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	private List<Anuncio> anuncios;
+	private List<Anuncio> anuncios = new ArrayList<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	private List<Valoracion> valoraciones = new ArrayList<>();
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
+	private List<Favorito> favoritos = new ArrayList<>();
 
 	
 	//Getters y setters
@@ -160,23 +159,13 @@ public class Usuario implements Serializable{
 		this.foto = foto;
 	}
 
-	/*
-	public List<Pedido> getPedidos() {
-		return pedidos;
+	public Ubicacion getUbicacion() {
+		return ubicacion;
 	}
 
-	public List<Carrito> getCarritos() {
-		return carritos;
+	public void setUbicacion(Ubicacion ubicacion) {
+		this.ubicacion = ubicacion;
 	}
-
-
-	public List<Valoracion> getValoraciones() {
-		return valoraciones;
-	}
-
-	public List<Favorito> getFavoritos() {
-		return favoritos;
-	} */
 
 	public List<Anuncio> getAnuncios() {
 		return anuncios;
@@ -185,5 +174,34 @@ public class Usuario implements Serializable{
 	public void setAnuncios(List<Anuncio> anuncios) {
 		this.anuncios = anuncios;
 	}
-	
+
+	public List<Valoracion> getValoraciones() {
+		return valoraciones;
+	}
+
+	public void setValoraciones(List<Valoracion> valoraciones) {
+		this.valoraciones = valoraciones;
+	}
+
+	public List<Favorito> getFavoritos() {
+		return favoritos;
+	}
+
+	public void setFavoritos(List<Favorito> favoritos) {
+		this.favoritos = favoritos;
+	}
+
+	/**
+	 * Método de utilidad para obtener el nombre completo
+	 */
+	public String getNombreCompleto() {
+		return nombre + " " + apellido;
+	}
+
+	/**
+	 * Método de utilidad para obtener el nombre de la ubicación
+	 */
+	public String getNombreUbicacion() {
+		return ubicacion != null ? ubicacion.getNombre() : "";
+	}
 }

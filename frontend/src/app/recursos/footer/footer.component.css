@@ -47,6 +47,10 @@
   padding-top: 1.5rem;
 }
 
+a {
+  text-decoration: none;
+}
+
 /* Estilo para el logo en el footer */
 .navbar-logo {
   height: 40px;

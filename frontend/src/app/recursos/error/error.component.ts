@@ -10,7 +10,7 @@ import { ErrorService } from './error.service';
 })
 export class ErrorComponent implements OnInit {
   errorCode: string = '404';
-  errorMessage: string = 'Lo sentimos, la página que buscas no existe o ha sido movida.';
+  errorMessage: string = 'Lo sentimos, la página que buscas no existe';
   errorTitle: string = 'Página no encontrada';
   errorIcon: string = 'info'; // Valor predeterminado: info, warning, error, lock, search, connection
 

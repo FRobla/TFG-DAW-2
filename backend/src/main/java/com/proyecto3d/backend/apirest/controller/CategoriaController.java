@@ -161,4 +161,17 @@ public class CategoriaController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	/**
+	 * Obtener todas las categorías con conteo de anuncios
+	 */
+	@GetMapping("/categorias/con-conteo")
+	public ResponseEntity<List<Map<String, Object>>> getCategoriasConConteo() {
+		try {
+			List<Map<String, Object>> categoriasConConteo = categoriaService.getCategoriasConConteoAnuncios();
+			return ResponseEntity.ok(categoriasConConteo);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 }

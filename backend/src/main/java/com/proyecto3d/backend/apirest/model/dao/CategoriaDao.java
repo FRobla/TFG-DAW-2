@@ -19,4 +19,12 @@ public interface CategoriaDao extends JpaRepository<Categoria, Long> {
             "(:term IS NULL OR :term = '') OR " +
             "LOWER(g.nombre) LIKE LOWER(CONCAT('%', :term, '%'))")
      List<Categoria> findByTerm(@Param("term") String term);
+     
+     // Contar anuncios por categoría
+     @Query("SELECT c.id, c.nombre, COUNT(a) as cantidad " +
+            "FROM Categoria c LEFT JOIN c.anuncios a " +
+            "WHERE a.estado = 'activo' OR a.estado IS NULL " +
+            "GROUP BY c.id, c.nombre " +
+            "ORDER BY cantidad DESC")
+     List<Object[]> findCategoriasConConteoAnuncios();
 }

@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +62,116 @@ public class SearchService{
         }
         
         return new ArrayList<>(allResults);
+    }
+
+    /**
+     * Búsqueda avanzada de anuncios con múltiples filtros
+     */
+    @Transactional(readOnly = true)
+    public Page<Anuncio> searchAnunciosAvanzada(
+            String query,
+            String categoria,
+            String ubicacion,
+            String valoracion,
+            Double precioMin,
+            Double precioMax,
+            String material,
+            String tiempoEntrega,
+            Pageable pageable) {
+
+        // Procesar parámetros de categorías
+        List<Long> categoriaIds = null;
+        if (categoria != null && !categoria.trim().isEmpty()) {
+            categoriaIds = Arrays.stream(categoria.split(","))
+                    .filter(s -> !s.trim().isEmpty())
+                    .map(s -> Long.parseLong(s.trim()))
+                    .collect(Collectors.toList());
+            
+            // Convertir lista vacía en null
+            if (categoriaIds.isEmpty()) {
+                categoriaIds = null;
+            }
+        }
+
+        // Procesar parámetros de ubicación
+        List<Long> ubicacionIds = null;
+        if (ubicacion != null && !ubicacion.trim().isEmpty()) {
+            ubicacionIds = Arrays.stream(ubicacion.split(","))
+                    .filter(s -> !s.trim().isEmpty())
+                    .map(s -> Long.parseLong(s.trim()))
+                    .collect(Collectors.toList());
+            
+            if (ubicacionIds.isEmpty()) {
+                ubicacionIds = null;
+            }
+        }
+
+        // Procesar parámetros de material
+        List<Long> materialIds = null;
+        if (material != null && !material.trim().isEmpty()) {
+            materialIds = Arrays.stream(material.split(","))
+                    .filter(s -> !s.trim().isEmpty())
+                    .map(s -> Long.parseLong(s.trim()))
+                    .collect(Collectors.toList());
+            
+            if (materialIds.isEmpty()) {
+                materialIds = null;
+            }
+        }
+
+        // Procesar valoración mínima
+        Double valoracionMin = null;
+        if (valoracion != null && !valoracion.trim().isEmpty()) {
+            try {
+                valoracionMin = Double.parseDouble(valoracion.trim());
+            } catch (NumberFormatException e) {
+                // Si no se puede parsear, ignorar el filtro
+                valoracionMin = null;
+            }
+        }
+
+        // Procesar tiempo de entrega - mapear IDs a valores reales
+        List<String> tiempoEntregaValores = null;
+        if (tiempoEntrega != null && !tiempoEntrega.trim().isEmpty()) {
+            List<String> tiempoIds = Arrays.asList(tiempoEntrega.split(","));
+            tiempoEntregaValores = new ArrayList<>();
+            
+            for (String tiempoId : tiempoIds) {
+                switch (tiempoId.trim()) {
+                    case "1":
+                        tiempoEntregaValores.add("24 horas");
+                        break;
+                    case "2":
+                        tiempoEntregaValores.add("2-3 días");
+                        break;
+                    case "3":
+                        tiempoEntregaValores.add("3-4 días");
+                        tiempoEntregaValores.add("4-5 días");
+                        tiempoEntregaValores.add("4-6 días");
+                        tiempoEntregaValores.add("5-7 días");
+                        break;
+                    case "4":
+                        tiempoEntregaValores.add("7-10 días");
+                        break;
+                }
+            }
+            
+            // Convertir lista vacía en null
+            if (tiempoEntregaValores.isEmpty()) {
+                tiempoEntregaValores = null;
+            }
+        }
+
+        return anuncioDao.searchAnunciosAvanzada(
+                query,
+                categoriaIds,
+                ubicacionIds,
+                materialIds,
+                valoracionMin,
+                precioMin,
+                precioMax,
+                tiempoEntregaValores,
+                pageable);
     }
     
     /*

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Búsqueda Avanzada</title>
+</head>
+<body>
+    <h1>Test Búsqueda Avanzada</h1>
+    <button onclick="testSearch()">Probar Búsqueda</button>
+    <div id="result"></div>
+
+    <script>
+        async function testSearch() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Cargando...';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/search/anuncios/avanzada?categoria=1&page=0&size=9&orden=relevancia');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h2>Resultado exitoso:</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h2>Error:</h2>
+                    <p style="color: red;">${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

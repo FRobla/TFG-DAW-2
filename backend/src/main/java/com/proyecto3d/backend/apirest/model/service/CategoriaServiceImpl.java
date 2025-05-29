@@ -1,7 +1,10 @@
 package com.proyecto3d.backend.apirest.model.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +85,33 @@ public class CategoriaServiceImpl implements CategoriaService {
         
         // Una vez que todas las asociaciones han sido eliminadas, eliminar todos los categorias
         categoriaDao.deleteAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getCategoriasConConteoAnuncios() {
+        // Obtener todas las categorías
+        List<Categoria> categorias = findAll();
+        
+        // Crear una lista para almacenar las categorías con su conteo de anuncios
+        List<Map<String, Object>> categoriasConConteo = new ArrayList<>();
+        
+        // Para cada categoría, contar los anuncios activos asociados usando una consulta directa
+        for (Categoria categoria : categorias) {
+            // Contar anuncios activos de esta categoría usando el DAO
+            long conteoAnuncios = anuncioDao.countByCategoriasContainingAndEstado(categoria, "activo");
+            
+            // Crear el mapa con la información de la categoría
+            Map<String, Object> categoriaInfo = new HashMap<>();
+            categoriaInfo.put("id", categoria.getId());
+            categoriaInfo.put("nombre", categoria.getNombre());
+            categoriaInfo.put("descripcion", categoria.getDescripcion());
+            categoriaInfo.put("cantidad", conteoAnuncios);
+            
+            categoriasConConteo.add(categoriaInfo);
+        }
+        
+        return categoriasConConteo;
     }
 
 }

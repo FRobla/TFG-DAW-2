@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { ResultadoBusquedaService } from "./resultado-busqueda.service"
 import { Categoria } from "../../entidades/categoria/categoria"
+import { Anuncio } from "../../entidades/anuncio/anuncio"
+import { ParametrosBusqueda, ResultadoBusquedaPaginada } from "./resultado-busqueda"
 
 @Component({
   selector: "app-resultado-busqueda",
@@ -20,8 +22,12 @@ export class ResultadoBusquedaComponent implements OnInit {
   filtroMaterial: string[] = []
   filtroTiempoEntrega: string[] = []
   categorias: Categoria[] = []
+  categoriasConConteo: any[] = [] // Para almacenar categorías con conteo real
   categoriaSeleccionadas: number[] = [] // Array para almacenar IDs de categorías seleccionadas
   mostrarTodasCategorias = false // Flag para controlar si se muestran todas las categorías
+  
+  // Hacer Math disponible en el template
+  Math = Math
   
   // Nuevos arrays para gestionar los filtros
   ubicaciones: {id: number, nombre: string, cantidad: number}[] = [
@@ -67,12 +73,16 @@ export class ResultadoBusquedaComponent implements OnInit {
   tiemposEntregaSeleccionados: number[] = []
   mostrarTodosTiempos = false
 
-  // Variables para los resultados
-  resultados: any[] = []
-  totalResultados = 48
+  // Variables para los resultados - ahora usando datos reales del backend
+  resultados: Anuncio[] = []
+  totalResultados = 0
+  totalPaginas = 0
   paginaActual = 1
   resultadosPorPagina = 9
   terminoBusqueda = ""
+  cargando = false
+  primeraPagina = true
+  ultimaPagina = false
 
   // Variables para la ordenación
   ordenActual = "relevancia"
@@ -87,7 +97,18 @@ export class ResultadoBusquedaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Cargar categorías
+    // Cargar categorías con conteo
+    this.resultadoBusquedaService.cargarCategoriasConConteo().subscribe(
+      categoriasConConteo => {
+        this.categoriasConConteo = categoriasConConteo;
+        console.log('Categorías con conteo cargadas:', this.categoriasConConteo);
+      },
+      error => {
+        console.error('Error al cargar categorías con conteo:', error);
+      }
+    );
+
+    // También cargar categorías normales para compatibilidad
     this.resultadoBusquedaService.cargarCategorias().subscribe(
       categorias => {
         this.categorias = categorias;
@@ -163,17 +184,49 @@ export class ResultadoBusquedaComponent implements OnInit {
   }
 
   cargarResultados(): void {
-    // Aquí iría la lógica para cargar los resultados desde el backend
-    // Por ahora, simulamos que ya tenemos los resultados cargados
-    console.log("Cargando resultados con los siguientes filtros:")
-    console.log("Búsqueda:", this.busquedaTexto)
-    console.log("Categoría:", this.filtroCategoria)
-    console.log("Ubicación:", this.filtroUbicacion)
-    console.log("Valoración:", this.filtroValoracion)
-    console.log("Precio Min:", this.filtroPrecioMin)
-    console.log("Precio Max:", this.filtroPrecioMax)
-    console.log("Material:", this.filtroMaterial)
-    console.log("Tiempo de entrega:", this.filtroTiempoEntrega)
+    this.cargando = true;
+    
+    // Preparar parámetros de búsqueda
+    const parametros: ParametrosBusqueda = {
+      q: this.busquedaTexto || undefined,
+      categoria: this.categoriaSeleccionadas.length > 0 ? this.categoriaSeleccionadas.join(',') : undefined,
+      ubicacion: this.ubicacionesSeleccionadas.length > 0 ? this.ubicacionesSeleccionadas.join(',') : undefined,
+      valoracion: this.valoracionesSeleccionadas.length > 0 ? this.valoracionesSeleccionadas.join(',') : undefined,
+      precioMin: this.filtroPrecioMin !== 10 ? this.filtroPrecioMin : undefined,
+      precioMax: this.filtroPrecioMax !== 500 ? this.filtroPrecioMax : undefined,
+      material: this.materialesSeleccionados.length > 0 ? this.materialesSeleccionados.join(',') : undefined,
+      tiempoEntrega: this.tiemposEntregaSeleccionados.length > 0 ? this.tiemposEntregaSeleccionados.join(',') : undefined,
+      page: this.paginaActual - 1, // El backend usa páginas basadas en 0
+      size: this.resultadosPorPagina,
+      orden: this.ordenActual
+    };
+
+    console.log("Cargando resultados con parámetros:", parametros);
+
+    this.resultadoBusquedaService.buscarAnunciosAvanzada(parametros).subscribe({
+      next: (respuesta: ResultadoBusquedaPaginada) => {
+        this.resultados = respuesta.content;
+        this.totalResultados = respuesta.totalElements;
+        this.totalPaginas = respuesta.totalPages;
+        this.paginaActual = respuesta.currentPage + 1; // Convertir a base 1 para la UI
+        this.primeraPagina = respuesta.first;
+        this.ultimaPagina = respuesta.last;
+        this.cargando = false;
+        
+        console.log("Resultados cargados:", this.resultados);
+        console.log("Total de resultados:", this.totalResultados);
+      },
+      error: (error) => {
+        console.error("Error al cargar resultados:", error);
+        this.resultados = [];
+        this.totalResultados = 0;
+        this.totalPaginas = 0;
+        this.cargando = false;
+        
+        // Mostrar mensaje de error al usuario (opcional)
+        // Aquí podrías añadir un servicio de notificaciones
+      }
+    });
   }
 
   buscar(): void {
@@ -243,7 +296,26 @@ export class ResultadoBusquedaComponent implements OnInit {
 
   cambiarOrden(orden: string): void {
     this.ordenActual = orden
+    this.paginaActual = 1 // Resetear a la primera página al cambiar el orden
     this.cargarResultados()
+  }
+
+  // Método para obtener el texto legible del orden actual
+  getTextoOrden(): string {
+    switch (this.ordenActual) {
+      case 'precio_asc':
+        return 'Precio: menor a mayor';
+      case 'precio_desc':
+        return 'Precio: mayor a menor';
+      case 'fecha_desc':
+        return 'Más recientes';
+      case 'fecha_asc':
+        return 'Más antiguos';
+      case 'titulo':
+        return 'Título A-Z';
+      default:
+        return 'Relevancia';
+    }
   }
 
   cambiarVista(vista: string): void {
@@ -251,8 +323,35 @@ export class ResultadoBusquedaComponent implements OnInit {
   }
 
   cambiarPagina(pagina: number): void {
-    this.paginaActual = pagina
-    this.cargarResultados()
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina
+      this.cargarResultados()
+    }
+  }
+
+  // Métodos de utilidad para la paginación
+  getPaginasArray(): number[] {
+    const paginas: number[] = [];
+    const inicio = Math.max(1, this.paginaActual - 2);
+    const fin = Math.min(this.totalPaginas, this.paginaActual + 2);
+    
+    for (let i = inicio; i <= fin; i++) {
+      paginas.push(i);
+    }
+    
+    return paginas;
+  }
+
+  paginaAnterior(): void {
+    if (this.paginaActual > 1) {
+      this.cambiarPagina(this.paginaActual - 1);
+    }
+  }
+
+  paginaSiguiente(): void {
+    if (this.paginaActual < this.totalPaginas) {
+      this.cambiarPagina(this.paginaActual + 1);
+    }
   }
 
   // Métodos para el filtro de material
@@ -424,8 +523,21 @@ export class ResultadoBusquedaComponent implements OnInit {
 
   // Método para obtener el nombre de una categoría por su ID
   getNombreCategoria(categoriaId: number): string {
+    // Buscar primero en categorías con conteo
+    const categoriaConConteo = this.categoriasConConteo.find(cat => cat.id === categoriaId);
+    if (categoriaConConteo) {
+      return categoriaConConteo.nombre;
+    }
+    
+    // Fallback a categorías normales
     const categoria = this.categorias.find(cat => cat.id === categoriaId);
     return categoria ? categoria.nombre : '';
+  }
+
+  // Método para obtener el conteo de anuncios de una categoría
+  getConteoCategoria(categoriaId: number): number {
+    const categoriaConConteo = this.categoriasConConteo.find(cat => cat.id === categoriaId);
+    return categoriaConConteo ? categoriaConConteo.cantidad : 0;
   }
 
   // Método para verificar si una categoría está seleccionada

@@ -99,13 +99,21 @@
             <td class="anuncio-descripcion text-center" data-label="Descripción">
               <span class="descripcion">{{anuncio.descripcion | slice:0:100}}{{anuncio.descripcion.length > 100 ? '...' : ''}}</span>
             </td>
-            <td class="anuncio-precio text-center" data-label="Precio">{{anuncio.precio | currency:'EUR'}}</td>
+            <td class="anuncio-precio text-center" data-label="Precio">
+              <span class="anuncio-badge" data-view-transition="card" [attr.data-view-id]="'anuncio-precio-' + anuncio.id">
+                {{anuncio.precio | currency:'EUR'}}
+              </span>
+            </td>
             <td class="anuncio-categoria text-center" data-label="Categoría">
               <span class="categoria-badge" data-view-transition="card" [attr.data-view-id]="'anuncio-category-' + anuncio.id">
                 {{getCategoriaById(anuncio.categoriaId)?.nombre || 'Sin categoría'}}
               </span>
             </td>
-            <td class="anuncio-fecha text-center" data-label="Fecha">{{anuncio.fechaPublicacion | date:'dd/MM/yyyy'}}</td>
+            <td class="anuncio-fecha text-center" data-label="Fecha">
+              <span class="anuncio-badge" data-view-transition="card" [attr.data-view-id]="'anuncio-fecha-' + anuncio.id">
+                {{anuncio.fechaPublicacion | date:'dd/MM/yyyy'}}
+              </span>
+            </td>
             <td class="anuncio-actions" data-label="Acciones">
               <button class="action-btn edit-btn" (click)="editarAnuncio(anuncio)" title="Editar">
                 <i class="fas fa-edit"></i>

@@ -353,22 +353,26 @@
   font-weight: 700;
   color: #26c6da;
   font-size: 16px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  background-color: rgba(38, 198, 218, 0.1);
+  justify-content: center;
   padding: 4px 10px;
   border-radius: 6px;
+  margin: 0 auto;
+  width: fit-content;
 }
 
 .anuncio-fecha {
   font-size: 14px;
   color: #9e9e9e;
   font-weight: 500;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   background-color: rgba(255, 255, 255, 0.05);
   padding: 4px 10px;
-  border-radius: 6px;
+  margin: 0 auto;
+  width: fit-content;
 }
 
 /* Badges para categoría */
