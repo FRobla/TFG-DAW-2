@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FavoritoService } from '../favorito/favorito.service';
 
 @Component({
   selector: 'app-detalles-anuncio',
@@ -20,6 +21,10 @@ export class DetallesAnuncioComponent implements OnInit {
   // Estado de carga
   cargando: boolean = true;
   
+  // Estado de favoritos
+  esFavorito: boolean = false;
+  cargandoFavorito: boolean = false;
+  
   // Material seleccionado y cantidad
   materialSeleccionado: string = '';
   cantidad: number = 1;
@@ -37,7 +42,8 @@ export class DetallesAnuncioComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private favoritoService: FavoritoService
   ) { }
 
   ngOnInit(): void {
@@ -62,6 +68,9 @@ export class DetallesAnuncioComponent implements OnInit {
       
       // Calcular precio inicial
       this.calcularPrecio();
+      
+      // Verificar estado de favorito
+      this.verificarEstadoFavorito();
       
       // Marcar como cargado
       this.cargando = false;
@@ -315,5 +324,52 @@ export class DetallesAnuncioComponent implements OnInit {
       // Fallback para navegadores que no soportan View Transitions API
       this.router.navigate(["/resultados-busqueda"]);
     }
+  }
+
+  /**
+   * Verifica si el anuncio está marcado como favorito por el usuario actual
+   */
+  verificarEstadoFavorito(): void {
+    // Simulamos que tenemos un usuario logueado con ID 1
+    const usuarioId = 1;
+    
+    this.favoritoService.checkFavorito(this.anuncioId, usuarioId).subscribe({
+      next: (esFavorito) => {
+        this.esFavorito = esFavorito;
+      },
+      error: (error) => {
+        console.error('Error verificando estado de favorito:', error);
+        // En caso de error, asumimos que no es favorito
+        this.esFavorito = false;
+      }
+    });
+  }
+
+  /**
+   * Alterna el estado de favorito del anuncio
+   */
+  toggleFavorito(): void {
+    // Simulamos que tenemos un usuario logueado con ID 1
+    const usuarioId = 1;
+    
+    this.cargandoFavorito = true;
+    
+    this.favoritoService.toggleFavorito(this.anuncioId, usuarioId).subscribe({
+      next: (response) => {
+        this.esFavorito = !this.esFavorito;
+        this.cargandoFavorito = false;
+        
+        // Mostrar mensaje de confirmación
+        if (this.esFavorito) {
+          console.log('Anuncio añadido a favoritos');
+        } else {
+          console.log('Anuncio eliminado de favoritos');
+        }
+      },
+      error: (error) => {
+        console.error('Error al cambiar estado de favorito:', error);
+        this.cargandoFavorito = false;
+      }
+    });
   }
 }

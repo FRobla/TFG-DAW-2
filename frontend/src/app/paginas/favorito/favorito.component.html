@@ -1,0 +1,264 @@
+<!-- Usando el componente navbar-busqueda -->
+<app-navbar-busqueda></app-navbar-busqueda>
+
+<div class="favoritos-container">
+  <!-- Cabecera de favoritos -->
+  <section class="favorites-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1><i class="bi bi-heart-fill me-3"></i>Mis Favoritos</h1>
+          <p class="favorites-count" *ngIf="!cargando">
+            <span *ngIf="totalItems === 0">No tienes anuncios marcados como favoritos aún</span>
+            <span *ngIf="totalItems === 1">Tienes <strong>1</strong> anuncio marcado como favorito</span>
+            <span *ngIf="totalItems > 1">Tienes <strong>{{totalItems}}</strong> anuncios marcados como favoritos</span>
+          </p>
+          <p class="favorites-count" *ngIf="cargando">
+            Cargando tus favoritos...
+          </p>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex justify-content-md-end mt-3 mt-md-0">
+            <!-- Botones de vista -->
+            <div class="btn-group me-2" role="group" aria-label="Vista">
+              <button type="button" class="btn btn-outline-light" 
+                      [class.active]="vistaActual === 'grid'" 
+                      (click)="cambiarVista('grid')"
+                      title="Vista en cuadrícula">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+              </button>
+              <button type="button" class="btn btn-outline-light" 
+                      [class.active]="vistaActual === 'list'" 
+                      (click)="cambiarVista('list')"
+                      title="Vista en lista">
+                <i class="bi bi-list"></i>
+              </button>
+            </div>
+            <!-- Botón de recargar -->
+            <button class="btn btn-outline-light" (click)="recargar()" title="Recargar favoritos">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contenido principal -->
+  <section class="favorites-content">
+    <div class="container">
+      
+      <!-- Mensaje de error -->
+      <div class="alert alert-danger" *ngIf="error && !cargando">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ error }}
+        <button class="btn btn-sm btn-outline-danger ms-3" (click)="recargar()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Reintentar
+        </button>
+      </div>
+
+      <!-- Indicador de carga -->
+      <div class="loading-container text-center" *ngIf="cargando">
+        <div class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-3 text-muted">Cargando tus favoritos...</p>
+      </div>
+
+      <!-- Estado vacío -->
+      <div class="empty-state text-center" *ngIf="!cargando && totalItems === 0 && !error">
+        <div class="empty-icon">
+          <i class="bi bi-heart"></i>
+        </div>
+        <h3>No tienes favoritos aún</h3>
+        <p class="text-muted">Explora nuestros anuncios y marca los que más te gusten como favoritos.</p>
+        <button class="btn btn-cta mt-3" (click)="navegarABusqueda()">
+          <i class="bi bi-search me-2"></i>
+          Explorar Anuncios
+        </button>
+      </div>
+
+      <!-- Lista de favoritos -->
+      <div *ngIf="!cargando && totalItems > 0 && !error">
+        
+        <!-- Vista en cuadrícula -->
+        <div class="row" *ngIf="vistaActual === 'grid'">
+          <div class="col-xl-4 col-lg-6 col-md-6 mb-4" *ngFor="let anuncio of favoritosAnuncios">
+            <div class="service-card h-100">
+              <!-- Imagen del anuncio -->
+              <div class="service-image-container">
+                <img [src]="anuncio.urlImagen || '/assets/img/default-service.jpg'" 
+                     [alt]="anuncio.titulo" 
+                     class="service-image"
+                     (error)="onImageError($event)">
+                
+                <!-- Botón de eliminar favorito -->
+                <button class="btn-remove-favorite" 
+                        (click)="eliminarFavorito(anuncio)"
+                        title="Eliminar de favoritos">
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+                
+                <!-- Badge de estado -->
+                <span class="service-badge" [class]="'badge-' + anuncio.estado.toLowerCase()">
+                  {{ anuncio.estado }}
+                </span>
+              </div>
+              
+              <!-- Contenido de la tarjeta -->
+              <div class="service-card-body">
+                <h3 (click)="verDetalles(anuncio)" class="service-title">{{ anuncio.titulo }}</h3>
+                
+                <!-- Información del proveedor -->
+                <div class="service-provider mb-2">
+                  <i class="bi bi-person me-1"></i>
+                  <span class="provider-name">{{ getNombreUsuario(anuncio) }}</span>
+                </div>
+                
+                <!-- Descripción -->
+                <p class="service-description" *ngIf="anuncio.descripcion">
+                  {{ anuncio.descripcion | slice:0:120 }}{{ anuncio.descripcion.length > 120 ? '...' : '' }}
+                </p>
+                
+                <!-- Categorías -->
+                <div class="service-categories mb-2" *ngIf="getCategoriasString(anuncio)">
+                  <i class="bi bi-tags me-1"></i>
+                  <span class="categories-text">{{ getCategoriasString(anuncio) }}</span>
+                </div>
+                
+                <!-- Metadatos -->
+                <div class="service-meta">
+                  <div class="service-date">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    {{ formatearFecha(anuncio.fechaPublicacion) }}
+                  </div>
+                  <div class="service-views" *ngIf="anuncio.vistas">
+                    <i class="bi bi-eye me-1"></i>
+                    {{ anuncio.vistas }} vistas
+                  </div>
+                </div>
+                
+                <!-- Precio y acciones -->
+                <div class="service-footer">
+                  <div class="service-price">
+                    {{ formatearPrecio(anuncio.precio) }}
+                  </div>
+                  <button class="btn btn-cta btn-sm" (click)="verDetalles(anuncio)">
+                    Ver Detalles
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Vista en lista -->
+        <div class="favorites-list" *ngIf="vistaActual === 'list'">
+          <div class="favorite-item" *ngFor="let anuncio of favoritosAnuncios">
+            <div class="row align-items-center">
+              <!-- Imagen -->
+              <div class="col-md-3 col-lg-2">
+                <div class="favorite-image-container">
+                  <img [src]="anuncio.urlImagen || '/assets/img/default-service.jpg'" 
+                       [alt]="anuncio.titulo" 
+                       class="favorite-image"
+                       (error)="onImageError($event)">
+                  <span class="service-badge" [class]="'badge-' + anuncio.estado.toLowerCase()">
+                    {{ anuncio.estado }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Contenido -->
+              <div class="col-md-6 col-lg-7">
+                <h4 (click)="verDetalles(anuncio)" class="favorite-title">{{ anuncio.titulo }}</h4>
+                
+                <div class="favorite-provider mb-1">
+                  <i class="bi bi-person me-1"></i>
+                  <span>{{ getNombreUsuario(anuncio) }}</span>
+                </div>
+                
+                <p class="favorite-description" *ngIf="anuncio.descripcion">
+                  {{ anuncio.descripcion | slice:0:200 }}{{ anuncio.descripcion.length > 200 ? '...' : '' }}
+                </p>
+                
+                <div class="favorite-meta">
+                  <span class="me-3" *ngIf="getCategoriasString(anuncio)">
+                    <i class="bi bi-tags me-1"></i>{{ getCategoriasString(anuncio) }}
+                  </span>
+                  <span class="me-3">
+                    <i class="bi bi-calendar3 me-1"></i>{{ formatearFecha(anuncio.fechaPublicacion) }}
+                  </span>
+                  <span *ngIf="anuncio.vistas">
+                    <i class="bi bi-eye me-1"></i>{{ anuncio.vistas }} vistas
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Precio y acciones -->
+              <div class="col-md-3 col-lg-3">
+                <div class="favorite-actions text-md-end">
+                  <div class="favorite-price mb-2">
+                    {{ formatearPrecio(anuncio.precio) }}
+                  </div>
+                  <div class="d-flex justify-content-md-end gap-2">
+                    <button class="btn btn-outline-danger btn-sm" 
+                            (click)="eliminarFavorito(anuncio)"
+                            title="Eliminar de favoritos">
+                      <i class="bi bi-heart-fill"></i>
+                    </button>
+                    <button class="btn btn-cta btn-sm" (click)="verDetalles(anuncio)">
+                      Ver Detalles
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Paginación -->
+        <div class="pagination-container" *ngIf="totalPaginas > 1">
+          <nav aria-label="Paginación de favoritos">
+            <ul class="pagination justify-content-center">
+              <!-- Botón anterior -->
+              <li class="page-item" [class.disabled]="primeraPagina">
+                <button class="page-link" 
+                        [disabled]="primeraPagina"
+                        (click)="paginaAnterior()">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+              
+              <!-- Números de página -->
+              <li class="page-item" 
+                  *ngFor="let pagina of getPaginasArray()" 
+                  [class.active]="pagina === paginaActual">
+                <button class="page-link" (click)="cambiarPagina(pagina)">
+                  {{ pagina + 1 }}
+                </button>
+              </li>
+              
+              <!-- Botón siguiente -->
+              <li class="page-item" [class.disabled]="ultimaPagina">
+                <button class="page-link" 
+                        [disabled]="ultimaPagina"
+                        (click)="paginaSiguiente()">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+          
+          <!-- Información de paginación -->
+          <div class="pagination-info text-center mt-3">
+            <small class="text-muted">
+              Página {{ paginaActual + 1 }} de {{ totalPaginas }} 
+              ({{ totalItems }} favorito{{ totalItems !== 1 ? 's' : '' }} en total)
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

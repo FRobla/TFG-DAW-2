@@ -14,6 +14,7 @@ import { AdminGuard } from './auth/admin.guard';
 import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 import { PerfilComponent } from './paginas/perfil/perfil.component';
+import { FavoritoComponent } from './paginas/favorito/favorito.component';
 
 const routes: Routes = [
   { 
@@ -44,6 +45,11 @@ const routes: Routes = [
     path: 'perfil',
     component: PerfilComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'favoritos',
+    component: FavoritoComponent
+    // canActivate: [AuthGuard] // Temporalmente comentado para pruebas
   },
   // Rutas administrativas protegidas por AdminGuard
   { 

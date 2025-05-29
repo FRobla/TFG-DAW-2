@@ -36,7 +36,20 @@
           <div class="service-badge" *ngIf="anuncioId === 7">Oferta</div>
           <div class="service-badge" *ngIf="anuncioId === 9">Nuevo</div>
           
-          <h1 data-view-transition="header" [attr.data-view-id]="'anuncio-title-' + anuncioId">{{anuncio.titulo}}</h1>
+          <div class="title-container">
+            <h1 data-view-transition="header" [attr.data-view-id]="'anuncio-title-' + anuncioId">{{anuncio.titulo}}</h1>
+            
+            <!-- Botón de favoritos -->
+            <button class="btn-favorite" 
+                    [class.active]="esFavorito" 
+                    [disabled]="cargandoFavorito"
+                    (click)="toggleFavorito()"
+                    [title]="esFavorito ? 'Eliminar de favoritos' : 'Añadir a favoritos'">
+              <i *ngIf="!cargandoFavorito && !esFavorito" class="bi bi-heart"></i>
+              <i *ngIf="!cargandoFavorito && esFavorito" class="bi bi-heart-fill"></i>
+              <i *ngIf="cargandoFavorito" class="bi bi-arrow-repeat spinning"></i>
+            </button>
+          </div>
           
           <!-- Información del proveedor y valoración -->
           <div class="service-provider">

@@ -24,6 +24,7 @@ import { SelectorCategoriaComponent } from './recursos/selector-categoria/select
 import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 import { PerfilComponent } from './paginas/perfil/perfil.component';
+import { FavoritoComponent } from './paginas/favorito/favorito.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { PerfilComponent } from './paginas/perfil/perfil.component';
     AnuncioComponent,
     ImpresoraComponent,
     PerfilComponent,
+    FavoritoComponent,
   ],
   imports: [
     BrowserModule,
