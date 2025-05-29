@@ -100,6 +100,24 @@ public class ValoracionServiceImpl implements ValoracionService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Map<String, Object>> getValoracionesConConteoAnuncios() {
+        List<Object[]> resultados = valoracionDao.findValoracionesConConteoAnuncios();
+        List<Map<String, Object>> valoracionesConConteo = new ArrayList<>();
+        
+        for (Object[] resultado : resultados) {
+            Map<String, Object> valoracionInfo = new HashMap<>();
+            valoracionInfo.put("id", resultado[0]); // puntuacion será el ID
+            valoracionInfo.put("estrellas", resultado[0]);
+            valoracionInfo.put("cantidad", resultado[1]);
+            
+            valoracionesConConteo.add(valoracionInfo);
+        }
+        
+        return valoracionesConConteo;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public boolean existeValoracionUsuarioAnuncio(Long anuncioId, Long usuarioId) {
         return valoracionDao.existsByAnuncioIdAndUsuarioId(anuncioId, usuarioId);
     }

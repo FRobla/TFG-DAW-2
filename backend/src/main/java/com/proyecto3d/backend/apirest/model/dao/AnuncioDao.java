@@ -65,4 +65,12 @@ public interface AnuncioDao extends JpaRepository<Anuncio, Long> {
         @Param("tiempoEntregaValores") List<String> tiempoEntregaValores,
         Pageable pageable);
 
+    // Obtener tiempos de entrega únicos con conteo de anuncios
+    @Query("SELECT a.tiempo_estimado, COUNT(a) as cantidad " +
+           "FROM Anuncio a " +
+           "WHERE a.estado = 'activo' AND a.tiempo_estimado IS NOT NULL " +
+           "GROUP BY a.tiempo_estimado " +
+           "ORDER BY cantidad DESC")
+    List<Object[]> findTiemposEntregaConConteoAnuncios();
+
 }

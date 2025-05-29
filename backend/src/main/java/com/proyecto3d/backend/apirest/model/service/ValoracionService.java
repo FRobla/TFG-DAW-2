@@ -32,5 +32,7 @@ public interface ValoracionService {
     
     public List<Map<String, Object>> getDistribucionValoraciones();
     
+    public List<Map<String, Object>> getValoracionesConConteoAnuncios();
+    
     public boolean existeValoracionUsuarioAnuncio(Long anuncioId, Long usuarioId);
 } 

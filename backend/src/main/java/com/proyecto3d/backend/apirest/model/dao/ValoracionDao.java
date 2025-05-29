@@ -42,6 +42,15 @@ public interface ValoracionDao extends JpaRepository<Valoracion, Long> {
            "ORDER BY v.puntuacion DESC")
     List<Object[]> findDistribucionValoraciones();
     
+    // Obtener valoraciones con conteo para filtros
+    @Query("SELECT v.puntuacion, COUNT(DISTINCT a) as cantidad " +
+           "FROM Valoracion v " +
+           "JOIN v.anuncio a " +
+           "WHERE a.estado = 'activo' " +
+           "GROUP BY v.puntuacion " +
+           "ORDER BY v.puntuacion DESC")
+    List<Object[]> findValoracionesConConteoAnuncios();
+    
     // Verificar si un usuario ya valoró un anuncio
     boolean existsByAnuncioIdAndUsuarioId(Long anuncioId, Long usuarioId);
     

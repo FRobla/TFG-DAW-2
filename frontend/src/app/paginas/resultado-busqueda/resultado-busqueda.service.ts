@@ -32,6 +32,34 @@ export class ResultadoBusquedaService implements OnInit{
   }
 
   /**
+   * Cargar ubicaciones con conteo de anuncios
+   */
+  cargarUbicacionesConConteo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.urlEndPoint}/search/ubicaciones/con-conteo`);
+  }
+
+  /**
+   * Cargar materiales con conteo de anuncios
+   */
+  cargarMaterialesConConteo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.urlEndPoint}/search/materiales/con-conteo`);
+  }
+
+  /**
+   * Cargar valoraciones con conteo de anuncios
+   */
+  cargarValoracionesConConteo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.urlEndPoint}/search/valoraciones/con-conteo`);
+  }
+
+  /**
+   * Cargar tiempos de entrega con conteo de anuncios
+   */
+  cargarTiemposEntregaConConteo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.urlEndPoint}/search/tiempos-entrega/con-conteo`);
+  }
+
+  /**
    * Realizar búsqueda avanzada de anuncios
    */
   buscarAnunciosAvanzada(parametros: ParametrosBusqueda): Observable<ResultadoBusquedaPaginada> {

@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto3d.backend.apirest.model.entity.Anuncio;
 import com.proyecto3d.backend.apirest.model.service.SearchService;
+import com.proyecto3d.backend.apirest.model.service.UbicacionService;
+import com.proyecto3d.backend.apirest.model.service.MaterialService;
+import com.proyecto3d.backend.apirest.model.service.ValoracionService;
+import org.springframework.http.HttpStatus;
 
 
 @CrossOrigin(origins = { "http://localhost:4200" })
@@ -28,6 +32,15 @@ public class SearchController {
 	
 	@Autowired
     private SearchService searchService;
+    
+    @Autowired
+    private UbicacionService ubicacionService;
+    
+    @Autowired
+    private MaterialService materialService;
+    
+    @Autowired
+    private ValoracionService valoracionService;
 
 	
 	@GetMapping("/search")
@@ -120,6 +133,58 @@ public class SearchController {
 	public ResponseEntity<List<Anuncio>> getAnunciosByCategoria(@PathVariable Long categoriaId) {
 		List<Anuncio> anuncios = searchService.findAnunciosByCategoriaId(categoriaId);
 		return ResponseEntity.ok(anuncios);
+	}
+	
+	/**
+	 * Obtener ubicaciones con conteo de anuncios
+	 */
+	@GetMapping("/search/ubicaciones/con-conteo")
+	public ResponseEntity<List<Map<String, Object>>> getUbicacionesConConteo() {
+		try {
+			List<Map<String, Object>> ubicacionesConConteo = ubicacionService.getUbicacionesConConteoAnuncios();
+			return ResponseEntity.ok(ubicacionesConConteo);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Obtener materiales con conteo de anuncios
+	 */
+	@GetMapping("/search/materiales/con-conteo")
+	public ResponseEntity<List<Map<String, Object>>> getMaterialesConConteo() {
+		try {
+			List<Map<String, Object>> materialesConConteo = materialService.getMaterialesConConteoAnuncios();
+			return ResponseEntity.ok(materialesConConteo);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Obtener valoraciones con conteo de anuncios
+	 */
+	@GetMapping("/search/valoraciones/con-conteo")
+	public ResponseEntity<List<Map<String, Object>>> getValoracionesConConteo() {
+		try {
+			List<Map<String, Object>> valoracionesConConteo = valoracionService.getValoracionesConConteoAnuncios();
+			return ResponseEntity.ok(valoracionesConConteo);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Obtener tiempos de entrega con conteo de anuncios
+	 */
+	@GetMapping("/search/tiempos-entrega/con-conteo")
+	public ResponseEntity<List<Map<String, Object>>> getTiemposEntregaConConteo() {
+		try {
+			List<Map<String, Object>> tiemposConConteo = searchService.getTiemposEntregaConConteoAnuncios();
+			return ResponseEntity.ok(tiemposConConteo);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	
 	/*

@@ -385,4 +385,17 @@ public class ValoracionController {
 		response.put("mensaje", "Todas las valoraciones han sido eliminadas con éxito");
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+	/**
+	 * Obtener todas las valoraciones con conteo de anuncios
+	 */
+	@GetMapping("/valoraciones/con-conteo")
+	public ResponseEntity<List<Map<String, Object>>> getValoracionesConConteo() {
+		try {
+			List<Map<String, Object>> valoracionesConConteo = valoracionService.getValoracionesConConteoAnuncios();
+			return ResponseEntity.ok(valoracionesConConteo);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 } 

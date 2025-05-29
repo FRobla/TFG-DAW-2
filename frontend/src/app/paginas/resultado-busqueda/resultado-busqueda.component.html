@@ -123,11 +123,17 @@
               <div class="price-inputs d-flex mt-2">
                 <div class="input-group input-group-sm me-2">
                   <span class="input-group-text">Min</span>
-                  <input type="number" class="form-control" placeholder="€" value="10">
+                  <input type="number" class="form-control" placeholder="€" 
+                         [(ngModel)]="filtroPrecioMin" 
+                         (blur)="aplicarFiltroPrecio()"
+                         (keyup.enter)="aplicarFiltroPrecio()">
                 </div>
                 <div class="input-group input-group-sm">
                   <span class="input-group-text">Max</span>
-                  <input type="number" class="form-control" placeholder="€" value="500">
+                  <input type="number" class="form-control" placeholder="€" 
+                         [(ngModel)]="filtroPrecioMax"
+                         (blur)="aplicarFiltroPrecio()"
+                         (keyup.enter)="aplicarFiltroPrecio()">
                 </div>
               </div>
             </div>

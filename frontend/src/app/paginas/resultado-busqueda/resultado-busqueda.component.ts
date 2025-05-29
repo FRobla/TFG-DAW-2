@@ -29,47 +29,19 @@ export class ResultadoBusquedaComponent implements OnInit {
   // Hacer Math disponible en el template
   Math = Math
   
-  // Nuevos arrays para gestionar los filtros
-  ubicaciones: {id: number, nombre: string, cantidad: number}[] = [
-    {id: 1, nombre: 'Madrid', cantidad: 18},
-    {id: 2, nombre: 'Barcelona', cantidad: 14},
-    {id: 3, nombre: 'Valencia', cantidad: 9},
-    {id: 4, nombre: 'Sevilla', cantidad: 7},
-    {id: 5, nombre: 'Valladolid', cantidad: 8},
-    {id: 6, nombre: 'Bilbao', cantidad: 6},
-    {id: 7, nombre: 'Zaragoza', cantidad: 5},
-    {id: 8, nombre: 'Málaga', cantidad: 4}
-  ]
+  // Arrays dinámicos para gestionar los filtros - serán cargados desde el backend
+  ubicaciones: {id: number, nombre: string, cantidad: number}[] = []
   ubicacionesSeleccionadas: number[] = [] // IDs de ubicaciones seleccionadas
   mostrarTodasUbicaciones = false
 
-  valoraciones: {id: number, estrellas: number, cantidad: number}[] = [
-    {id: 1, estrellas: 5, cantidad: 15},
-    {id: 2, estrellas: 4, cantidad: 22},
-    {id: 3, estrellas: 3, cantidad: 11},
-    {id: 4, estrellas: 2, cantidad: 7},
-    {id: 5, estrellas: 1, cantidad: 3}
-  ]
+  valoraciones: {id: number, estrellas: number, cantidad: number}[] = []
   valoracionesSeleccionadas: number[] = [] // IDs de valoraciones seleccionadas
 
-  materiales: {id: number, nombre: string, cantidad: number}[] = [
-    {id: 1, nombre: 'PLA', cantidad: 20},
-    {id: 2, nombre: 'ABS', cantidad: 14},
-    {id: 3, nombre: 'PETG', cantidad: 12},
-    {id: 4, nombre: 'Resina', cantidad: 16},
-    {id: 5, nombre: 'Nylon', cantidad: 8},
-    {id: 6, nombre: 'TPU', cantidad: 6},
-    {id: 7, nombre: 'Fibra de carbono', cantidad: 4}
-  ]
+  materiales: {id: number, nombre: string, cantidad: number}[] = []
   materialesSeleccionados: number[] = []
   mostrarTodosMateriales = false
 
-  tiemposEntrega: {id: number, nombre: string, cantidad: number}[] = [
-    {id: 1, nombre: '24 horas', cantidad: 6},
-    {id: 2, nombre: '2-3 días', cantidad: 18},
-    {id: 3, nombre: '4-7 días', cantidad: 24},
-    {id: 4, nombre: 'Más de 7 días', cantidad: 10}
-  ]
+  tiemposEntrega: {id: number, nombre: string, cantidad: number}[] = []
   tiemposEntregaSeleccionados: number[] = []
   mostrarTodosTiempos = false
 
@@ -116,6 +88,50 @@ export class ResultadoBusquedaComponent implements OnInit {
       },
       error => {
         console.error('Error al cargar categorías:', error);
+      }
+    );
+
+    // Cargar ubicaciones con conteo
+    this.resultadoBusquedaService.cargarUbicacionesConConteo().subscribe(
+      ubicacionesConConteo => {
+        this.ubicaciones = ubicacionesConConteo;
+        console.log('Ubicaciones con conteo cargadas:', this.ubicaciones);
+      },
+      error => {
+        console.error('Error al cargar ubicaciones con conteo:', error);
+      }
+    );
+
+    // Cargar materiales con conteo
+    this.resultadoBusquedaService.cargarMaterialesConConteo().subscribe(
+      materialesConConteo => {
+        this.materiales = materialesConConteo;
+        console.log('Materiales con conteo cargados:', this.materiales);
+      },
+      error => {
+        console.error('Error al cargar materiales con conteo:', error);
+      }
+    );
+
+    // Cargar valoraciones con conteo
+    this.resultadoBusquedaService.cargarValoracionesConConteo().subscribe(
+      valoracionesConConteo => {
+        this.valoraciones = valoracionesConConteo;
+        console.log('Valoraciones con conteo cargadas:', this.valoraciones);
+      },
+      error => {
+        console.error('Error al cargar valoraciones con conteo:', error);
+      }
+    );
+
+    // Cargar tiempos de entrega con conteo
+    this.resultadoBusquedaService.cargarTiemposEntregaConConteo().subscribe(
+      tiemposConConteo => {
+        this.tiemposEntrega = tiemposConConteo;
+        console.log('Tiempos de entrega con conteo cargados:', this.tiemposEntrega);
+      },
+      error => {
+        console.error('Error al cargar tiempos de entrega con conteo:', error);
       }
     );
     
@@ -369,6 +385,9 @@ export class ResultadoBusquedaComponent implements OnInit {
     this.filtroMaterial = this.materialesSeleccionados.map(id => 
       this.materiales.find(m => m.id === id)?.nombre || ''
     ).filter(nombre => nombre !== '');
+    
+    // Actualizar los resultados inmediatamente
+    this.buscar();
   }
 
   isMaterialSeleccionado(materialId: number): boolean {
@@ -408,6 +427,9 @@ export class ResultadoBusquedaComponent implements OnInit {
       this.ubicacionesSeleccionadas.splice(index, 1);
     }
     this.filtroUbicacion = this.ubicacionesSeleccionadas.join(',');
+    
+    // Actualizar los resultados inmediatamente
+    this.buscar();
   }
 
   isUbicacionSeleccionada(ubicacionId: number): boolean {
@@ -445,6 +467,9 @@ export class ResultadoBusquedaComponent implements OnInit {
       this.valoracionesSeleccionadas.splice(index, 1);
     }
     this.filtroValoracion = this.valoracionesSeleccionadas.join(',');
+    
+    // Actualizar los resultados inmediatamente
+    this.buscar();
   }
 
   isValoracionSeleccionada(valoracionId: number): boolean {
@@ -477,6 +502,9 @@ export class ResultadoBusquedaComponent implements OnInit {
     this.filtroTiempoEntrega = this.tiemposEntregaSeleccionados.map(id => 
       this.tiemposEntrega.find(t => t.id === id)?.nombre || ''
     ).filter(nombre => nombre !== '');
+    
+    // Actualizar los resultados inmediatamente
+    this.buscar();
   }
 
   isTiempoEntregaSeleccionado(tiempoId: number): boolean {
@@ -519,6 +547,9 @@ export class ResultadoBusquedaComponent implements OnInit {
     }
     // Actualizar el filtro de categoría para la URL
     this.filtroCategoria = this.categoriaSeleccionadas.join(',');
+    
+    // Actualizar los resultados inmediatamente
+    this.buscar();
   }
 
   // Método para obtener el nombre de una categoría por su ID
@@ -675,5 +706,25 @@ export class ResultadoBusquedaComponent implements OnInit {
   // Método para ocultar categorías adicionales
   verMenosCategorias(): void {
     this.mostrarTodasCategorias = false;
+  }
+
+  // Método para aplicar filtros de precio
+  aplicarFiltroPrecio(): void {
+    // Validar que los valores de precio sean válidos
+    if (this.filtroPrecioMin < 0) {
+      this.filtroPrecioMin = 0;
+    }
+    if (this.filtroPrecioMax < 0) {
+      this.filtroPrecioMax = 500;
+    }
+    if (this.filtroPrecioMin > this.filtroPrecioMax) {
+      // Si el mínimo es mayor que el máximo, intercambiar los valores
+      const temp = this.filtroPrecioMin;
+      this.filtroPrecioMin = this.filtroPrecioMax;
+      this.filtroPrecioMax = temp;
+    }
+    
+    // Actualizar los resultados inmediatamente
+    this.buscar();
   }
 }

@@ -2,8 +2,10 @@ package com.proyecto3d.backend.apirest.model.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -119,11 +121,38 @@ public class SearchService{
             }
         }
 
-        // Procesar valoración mínima
+        // Procesar valoración mínima basada en IDs
         Double valoracionMin = null;
         if (valoracion != null && !valoracion.trim().isEmpty()) {
             try {
-                valoracionMin = Double.parseDouble(valoracion.trim());
+                // Intentar procesar como lista de IDs separados por comas
+                List<String> valoracionIds = Arrays.asList(valoracion.split(","));
+                
+                // Mapear IDs a valores de estrellas mínimas
+                for (String valoracionId : valoracionIds) {
+                    switch (valoracionId.trim()) {
+                        case "1": // 5 estrellas
+                            valoracionMin = valoracionMin == null ? 5.0 : Math.min(valoracionMin, 5.0);
+                            break;
+                        case "2": // 4 estrellas
+                            valoracionMin = valoracionMin == null ? 4.0 : Math.min(valoracionMin, 4.0);
+                            break;
+                        case "3": // 3 estrellas
+                            valoracionMin = valoracionMin == null ? 3.0 : Math.min(valoracionMin, 3.0);
+                            break;
+                        case "4": // 2 estrellas
+                            valoracionMin = valoracionMin == null ? 2.0 : Math.min(valoracionMin, 2.0);
+                            break;
+                        case "5": // 1 estrella
+                            valoracionMin = valoracionMin == null ? 1.0 : Math.min(valoracionMin, 1.0);
+                            break;
+                    }
+                }
+                
+                // Si no se procesó ningún ID válido, intentar como número directo
+                if (valoracionMin == null) {
+                    valoracionMin = Double.parseDouble(valoracion.trim());
+                }
             } catch (NumberFormatException e) {
                 // Si no se puede parsear, ignorar el filtro
                 valoracionMin = null;
@@ -145,13 +174,10 @@ public class SearchService{
                         tiempoEntregaValores.add("2-3 días");
                         break;
                     case "3":
-                        tiempoEntregaValores.add("3-4 días");
-                        tiempoEntregaValores.add("4-5 días");
-                        tiempoEntregaValores.add("4-6 días");
-                        tiempoEntregaValores.add("5-7 días");
+                        tiempoEntregaValores.add("4-7 días");
                         break;
                     case "4":
-                        tiempoEntregaValores.add("7-10 días");
+                        tiempoEntregaValores.add("Más de 7 días");
                         break;
                 }
             }
@@ -234,6 +260,37 @@ public class SearchService{
         // anuncios asociados a esta categoria
         return anuncioDao.findByCategoriasContaining(categoria);
     }
+    
+    /**
+     * Obtener tiempos de entrega únicos con conteo de anuncios activos
+     */
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getTiemposEntregaConConteoAnuncios() {
+        List<Object[]> resultados = anuncioDao.findTiemposEntregaConConteoAnuncios();
+        List<Map<String, Object>> tiemposConConteo = new ArrayList<>();
+        
+        // Mapeo de valores de tiempo a IDs para compatibilidad con el frontend
+        Map<String, Integer> tiempoToId = new HashMap<>();
+        tiempoToId.put("24 horas", 1);
+        tiempoToId.put("2-3 días", 2);
+        tiempoToId.put("4-7 días", 3);
+        tiempoToId.put("Más de 7 días", 4);
+        
+        for (Object[] resultado : resultados) {
+            String tiempoNombre = (String) resultado[0];
+            Long cantidad = (Long) resultado[1];
+            
+            Map<String, Object> tiempoInfo = new HashMap<>();
+            tiempoInfo.put("id", tiempoToId.getOrDefault(tiempoNombre, 0));
+            tiempoInfo.put("nombre", tiempoNombre);
+            tiempoInfo.put("cantidad", cantidad);
+            
+            tiemposConConteo.add(tiempoInfo);
+        }
+        
+        return tiemposConConteo;
+    }
+    
     /* 
     //Busqueda por año de publicacion
     @Transactional(readOnly = true)

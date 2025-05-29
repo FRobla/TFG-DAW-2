@@ -60,7 +60,7 @@ INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, ro
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
 (6, 'ProMakers', 'Bilbao', 'promakers@bilbao.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Calle Industrial 45, Bilbao', NULL, 'USER', '2025-05-06', 5);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
-(7, 'TechSolutions', 'Zaragoza', 'techsolutions@zaragoza.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Avenida Soluciones 67, Zaragoza', NULL, 'USER', '2025-05-07', 6);
+(7, 'TechSolutions', 'Valladolid', 'techsolutions@zaragoza.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Avenida Soluciones 67, Valladolid', NULL, 'USER', '2025-05-07', 10);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
 (8, 'PrintStarters', 'Málaga', 'printstarters@malaga.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Calle Inicio 12, Málaga', NULL, 'USER', '2025-05-08', 7);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
