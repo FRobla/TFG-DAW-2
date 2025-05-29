@@ -88,4 +88,34 @@ export class UsuarioService implements OnInit{
   deleteAllUsuarios(): Observable<any> {
     return this.http.delete<any>(this.urlEndPoint);
   }
+
+  // Validar contraseña actual del usuario
+  validarPasswordActual(id: number, password: string): Observable<any> {
+    return this.http.post<any>(`${this.urlEndPoint1}/${id}/validar-password`, { password }).pipe(
+      catchError(e => {
+        console.log(e.error.mensaje);
+        return throwError(e);
+      })
+    );
+  }
+
+  // Cambiar contraseña del usuario
+  cambiarPassword(id: number, nuevaPassword: string): Observable<any> {
+    return this.http.put<any>(`${this.urlEndPoint1}/${id}/cambiar-password`, { password: nuevaPassword }).pipe(
+      catchError(e => {
+        console.log(e.error.mensaje);
+        return throwError(e);
+      })
+    );
+  }
+
+  // Actualizar foto de perfil del usuario
+  actualizarFotoPerfil(id: number, fotoBase64: string): Observable<any> {
+    return this.http.put<any>(`${this.urlEndPoint1}/${id}/foto`, { foto: fotoBase64 }).pipe(
+      catchError(e => {
+        console.log('Error al actualizar foto:', e.error?.mensaje || e.message);
+        return throwError(e);
+      })
+    );
+  }
 }

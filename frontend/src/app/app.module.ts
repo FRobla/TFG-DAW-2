@@ -23,6 +23,7 @@ import { NavbarAdminComponent } from './recursos/navbar-admin/navbar-admin.compo
 import { SelectorCategoriaComponent } from './recursos/selector-categoria/selector-categoria.component';
 import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { ImpresoraComponent } from './entidades/impresora/impresora.component';
+import { PerfilComponent } from './paginas/perfil/perfil.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ImpresoraComponent } from './entidades/impresora/impresora.component';
     SelectorCategoriaComponent,
     AnuncioComponent,
     ImpresoraComponent,
+    PerfilComponent,
   ],
   imports: [
     BrowserModule,

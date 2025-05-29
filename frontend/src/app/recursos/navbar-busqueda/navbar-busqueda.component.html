@@ -28,9 +28,38 @@
         </div>
       </div>
       
-      <!-- Columna derecha - Botón de inicio de sesión -->
+      <!-- Columna derecha - Botones según estado de autenticación -->
       <div class="navbar-column navbar-right d-none d-lg-flex">
-        <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
+        <!-- Si no está autenticado: mostrar botón de login -->
+        <button *ngIf="!estaLogueado()" class="btn btn-login" (click)="iniciarSesion()">
+          Iniciar Sesión
+        </button>
+        
+        <!-- Si está autenticado como ADMIN: mostrar botones de admin -->
+        <div *ngIf="estaLogueado() && esAdmin()" class="navbar-user-actions">
+          <button class="btn btn-icon" (click)="irAlDashboard()" title="Dashboard">
+            <i class="bi bi-speedometer2"></i>
+          </button>
+          <button class="btn btn-icon btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </div>
+        
+        <!-- Si está autenticado como USER: mostrar iconos de usuario -->
+        <div *ngIf="estaLogueado() && esUsuario()" class="navbar-user-actions">
+          <button class="btn btn-icon" (click)="irAlPerfil()" title="Perfil">
+            <i class="bi bi-person-circle"></i>
+          </button>
+          <button class="btn btn-icon" (click)="irAlCarrito()" title="Carrito">
+            <i class="bi bi-cart3"></i>
+          </button>
+          <button class="btn btn-icon" (click)="irAFavoritos()" title="Favoritos">
+            <i class="bi bi-heart"></i>
+          </button>
+          <button class="btn btn-icon btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </div>
       </div>
       
       <!-- Botón de hamburguesa para pantallas pequeñas -->
@@ -46,8 +75,40 @@
           <input type="text" class="form-control" [(ngModel)]="busquedaTexto" placeholder="Buscar servicios" aria-label="Buscar servicios">
           <button class="btn btn-outline-light" type="button" (click)="buscar()">Buscar</button>
         </div>
-        <div class="d-grid">
+        
+        <!-- Menú móvil para usuarios no autenticados -->
+        <div *ngIf="!estaLogueado()" class="d-grid">
           <button class="btn btn-login" (click)="iniciarSesion()">Iniciar Sesión</button>
+        </div>
+        
+        <!-- Menú móvil para admins -->
+        <div *ngIf="estaLogueado() && esAdmin()" class="mobile-user-menu">
+          <div class="d-grid gap-2">
+            <button class="btn btn-secondary" (click)="irAlDashboard()">
+              <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </button>
+            <button class="btn btn-danger" (click)="cerrarSesion()">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+            </button>
+          </div>
+        </div>
+        
+        <!-- Menú móvil para usuarios -->
+        <div *ngIf="estaLogueado() && esUsuario()" class="mobile-user-menu">
+          <div class="d-grid gap-2">
+            <button class="btn btn-secondary" (click)="irAlPerfil()">
+              <i class="bi bi-person-circle me-2"></i>Mi Perfil
+            </button>
+            <button class="btn btn-secondary" (click)="irAlCarrito()">
+              <i class="bi bi-cart3 me-2"></i>Carrito
+            </button>
+            <button class="btn btn-secondary" (click)="irAFavoritos()">
+              <i class="bi bi-heart me-2"></i>Favoritos
+            </button>
+            <button class="btn btn-danger" (click)="cerrarSesion()">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -19,25 +19,16 @@ export class AuthGuard implements CanActivate {
     // Rutas públicas sin autenticación
     const publicRoutes = [
       '/principal',
-      '/libros',
-      '/libros/page',
+      '/servicios',
+      '/resultados-busqueda',
+      '/detalles-anuncio',
       '/login',
-      '/search-results',
-      '/generos',
-      '/autores',
-      '/valoraciones',
-      '/valoracion',
-      '/categorias',
-      '/admin', // Añadir rutas de admin como públicas temporalmente
+      '/registro',
+      '/'
     ];
 
     // Verificar si la ruta actual es pública
     const currentPath = state.url;
-   
-    // Permitir explícitamente cualquier ruta que comience con /admin/
-    if (currentPath.startsWith('/admin/')) {
-      return true;
-    }
    
     const isPublicRoute = publicRoutes.some(route =>
       currentPath === route ||
@@ -49,7 +40,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
    
-    // Verificar si está logueado
+    // Verificar si está logueado para rutas protegidas
     if (!this.authService.estaLogueado()) {
       console.log('No autenticado, redirigiendo a login');
       swal(  
@@ -61,17 +52,17 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    // Verificar roles para rutas protegidas
+    // Verificar roles para rutas protegidas específicas
     const usuarioRol = this.authService.usuarioLogueado?.rol;
 
     // Mapa de rutas protegidas con sus roles permitidos
     const protectedRoutes: { [key: string]: string[] } = {
       '/valoracion/form': ['USER', 'ADMIN'],
       '/valoraciones/editar': ['USER', 'ADMIN'],
-      '/valoracion': ['USER', 'ADMIN']  // Para cubrir cualquier subruta de valoración
+      '/valoracion': ['USER', 'ADMIN']
     };
 
-    // Buscar si la ruta actual coincide con alguna ruta protegida
+    // Buscar si la ruta actual coincide con alguna ruta protegida específica
     const matchingProtectedRoute = Object.entries(protectedRoutes).find(([route]) =>
       currentPath.startsWith(route)
     );

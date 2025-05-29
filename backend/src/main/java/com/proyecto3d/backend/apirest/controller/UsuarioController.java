@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +32,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     // Obtener todos los usuarios
     @GetMapping("/usuarios")
@@ -59,6 +63,120 @@ public class UsuarioController {
         }
 
         return new ResponseEntity<>(usuario, HttpStatus.OK);
+    }
+
+    // Validar contraseña actual del usuario
+    @PostMapping("/usuario/{id}/validar-password")
+    public ResponseEntity<?> validarPassword(@PathVariable(name = "id") Long id, @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        String passwordActual = request.get("password");
+        
+        if (passwordActual == null || passwordActual.isEmpty()) {
+            response.put("mensaje", "La contraseña es requerida");
+            response.put("valida", false);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            Usuario usuario = usuarioService.findById(id);
+            
+            if (usuario == null) {
+                response.put("mensaje", "Usuario no encontrado");
+                response.put("valida", false);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Verificar si la contraseña coincide usando BCryptPasswordEncoder
+            boolean passwordValida = passwordEncoder.matches(passwordActual, usuario.getPassword());
+            
+            response.put("valida", passwordValida);
+            response.put("mensaje", passwordValida ? "Contraseña válida" : "Contraseña incorrecta");
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+            
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al validar la contraseña");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("valida", false);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Cambiar contraseña del usuario
+    @PutMapping("/usuario/{id}/cambiar-password")
+    public ResponseEntity<?> cambiarPassword(@PathVariable(name = "id") Long id, @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        String nuevaPassword = request.get("password");
+        
+        if (nuevaPassword == null || nuevaPassword.isEmpty()) {
+            response.put("mensaje", "La nueva contraseña es requerida");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        if (nuevaPassword.length() < 6) {
+            response.put("mensaje", "La contraseña debe tener al menos 6 caracteres");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            Usuario usuario = usuarioService.findById(id);
+            
+            if (usuario == null) {
+                response.put("mensaje", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Encriptar y actualizar la nueva contraseña
+            usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+            usuarioService.save(usuario);
+            
+            response.put("mensaje", "Contraseña actualizada correctamente");
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+            
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al cambiar la contraseña");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Actualizar foto de perfil del usuario
+    @PutMapping("/usuario/{id}/foto")
+    public ResponseEntity<?> actualizarFotoPerfil(@PathVariable(name = "id") Long id, @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        String fotoBase64 = request.get("foto");
+        
+        if (fotoBase64 == null || fotoBase64.isEmpty()) {
+            response.put("mensaje", "La foto es requerida");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            Usuario usuario = usuarioService.findById(id);
+            
+            if (usuario == null) {
+                response.put("mensaje", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Actualizar la foto de perfil
+            usuario.setFoto(fotoBase64);
+            usuarioService.save(usuario);
+            
+            response.put("mensaje", "Foto de perfil actualizada correctamente");
+            response.put("usuario", usuario);
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+            
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al actualizar la foto de perfil");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Crear un nuevo usuario
@@ -123,9 +241,9 @@ public class UsuarioController {
             currentUsuario.setDireccion(usuario.getDireccion());
             currentUsuario.setNombre(usuario.getNombre());
             currentUsuario.setEmail(usuario.getEmail());
-            // Solo actualizar la contraseña si se proporciona una nueva
+            // Solo actualizar la contraseña si se proporciona una nueva y encriptarla
             if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
-                currentUsuario.setPassword(usuario.getPassword());
+                currentUsuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             }
             // Actualizar la foto de perfil si se proporciona una nueva
             if (usuario.getFoto() != null) {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-navbar-busqueda',
@@ -18,7 +19,10 @@ export class NavbarBusquedaComponent implements AfterViewInit {
   // Propiedad para rastrear el estado del menú
   private isMenuOpen = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   /**
    * Realiza la búsqueda y navega a la página de resultados
@@ -139,6 +143,88 @@ export class NavbarBusquedaComponent implements AfterViewInit {
       // Si no hay soporte, ejecutar directamente el callback
       callback();
     }
+  }
+
+  /**
+   * Verifica si el usuario está autenticado
+   */
+  estaLogueado(): boolean {
+    return this.authService.estaLogueado();
+  }
+
+  /**
+   * Verifica si el usuario es administrador
+   */
+  esAdmin(): boolean {
+    return this.authService.esAdmin;
+  }
+
+  /**
+   * Verifica si el usuario es usuario normal
+   */
+  esUsuario(): boolean {
+    return this.authService.esUsuario;
+  }
+
+  /**
+   * Obtiene el usuario actual
+   */
+  get usuarioActual(): any {
+    return this.authService.usuarioLogueado;
+  }
+
+  /**
+   * Cierra la sesión del usuario
+   */
+  cerrarSesion(): void {
+    this.aplicarTransicion(() => {
+      this.authService.logout();
+      this.cerrarMenuSiAbierto();
+    });
+  }
+
+  /**
+   * Navega al dashboard de administración
+   */
+  irAlDashboard(): void {
+    this.aplicarTransicion(() => {
+      // Aquí deberás ajustar la ruta según tu configuración
+      this.router.navigate(['/admin']);
+      this.cerrarMenuSiAbierto();
+    });
+  }
+
+  /**
+   * Navega al perfil del usuario
+   */
+  irAlPerfil(): void {
+    this.aplicarTransicion(() => {
+      // Redirigimos al perfil del usuario
+      this.router.navigate(['/perfil']);
+      this.cerrarMenuSiAbierto();
+    });
+  }
+
+  /**
+   * Navega al carrito de compras
+   */
+  irAlCarrito(): void {
+    this.aplicarTransicion(() => {
+      // Redirigimos al carrito de compras
+      this.router.navigate(['/carrito']);
+      this.cerrarMenuSiAbierto();
+    });
+  }
+
+  /**
+   * Navega a los favoritos
+   */
+  irAFavoritos(): void {
+    this.aplicarTransicion(() => {
+      // Redirigimos a la página de favoritos
+      this.router.navigate(['/favoritos']);
+      this.cerrarMenuSiAbierto();
+    });
   }
 }
 

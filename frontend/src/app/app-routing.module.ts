@@ -10,8 +10,10 @@ import { UsuarioComponent } from './entidades/usuario/usuario.component';
 import { LandingComponent } from './paginas/landing/landing.component';
 import { CategoriasComponent } from './entidades/categoria/categoria.component';
 import { AuthGuard } from './auth/auth.guard';
+import { AdminGuard } from './auth/admin.guard';
 import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { ImpresoraComponent } from './entidades/impresora/impresora.component';
+import { PerfilComponent } from './paginas/perfil/perfil.component';
 
 const routes: Routes = [
   { 
@@ -38,11 +40,17 @@ const routes: Routes = [
     path: 'registro', 
     component: RegistroComponent 
   },
-  // Rutas administrativas (acceso público temporal)
-  { path: 'admin', component: UsuarioComponent },
+  {
+    path: 'perfil',
+    component: PerfilComponent,
+    canActivate: [AuthGuard]
+  },
+  // Rutas administrativas protegidas por AdminGuard
   { 
     path: 'admin', 
+    canActivate: [AdminGuard],
     children: [
+      { path: '', component: UsuarioComponent }, // Ruta por defecto para /admin
       { path: 'usuarios', component: UsuarioComponent },
       { path: 'categorias', component: CategoriasComponent },
       { path: 'anuncios', component: AnuncioComponent },

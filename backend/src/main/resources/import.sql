@@ -48,11 +48,11 @@ INSERT INTO materiales (id, nombre, descripcion, propiedades, color_disponibles,
 
 -- Insertar Usuarios (ADMIN y USER) con ubicaciones
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
-(1, 'Admin', 'Principal', 'admin@proyecto3d.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Calle Admin 123', NULL, 'ADMIN', '2025-05-01', 1);
+(1, 'Admin', 'Principal', 'admin@admin.com', '$2a$10$sYgf2E/5PdNVlySBkSqDj.DgPCFeSbfVaECrTJY7eglsFQgZGzWcG', 'Calle Admin 123', NULL, 'ADMIN', '2025-05-01', 1);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
-(2, 'TechPrint', 'Madrid', 'techprint@madrid.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Calle Tecnología 15, Madrid', NULL, 'USER', '2025-05-02', 1);
+(2, 'TechPrint', 'Madrid', 'techprint@madrid.com', '$2a$10$sYgf2E/5PdNVlySBkSqDj.DgPCFeSbfVaECrTJY7eglsFQgZGzWcG', 'Calle Tecnología 15, Madrid', NULL, 'USER', '2025-05-02', 1);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
-(3, '3DExpress', 'Barcelona', '3dexpress@barcelona.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Avenida Rápida 24, Barcelona', NULL, 'USER', '2025-05-03', 2);
+(3, '3DExpress', 'Barcelona', '3dexpress@barcelona.com', '$2a$10$sYgf2E/5PdNVlySBkSqDj.DgPCFeSbfVaECrTJY7eglsFQgZGzWcG', 'Avenida Rápida 24, Barcelona', NULL, 'USER', '2025-05-03', 2);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 
 (4, 'EcoMakers', 'Valencia', 'ecomakers@valencia.com', '$2a$10$rJSdH5Qg/4S6L/J4uP/qUO.eKGtLBnROGMXNCCxnKLcX1vBcGEIxC', 'Calle Verde 18, Valencia', NULL, 'USER', '2025-05-04', 3);
 INSERT INTO usuarios (id, nombre, apellido, email, password, direccion, foto, rol, fecha_registro, ubicacion_id) VALUES 

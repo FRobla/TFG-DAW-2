@@ -12,6 +12,7 @@ export class AuthService {
   private registroEndPoint = 'http://localhost:8082/admin/realms/EvidenLibrary/users';
   private usuarioActualSubject = new BehaviorSubject<any>(null);
   public usuarioActual = this.usuarioActualSubject.asObservable();
+  private isLoggingOut = false;
 
   constructor(private http: HttpClient, private router: Router) {
     // Intentar recuperar usuario del localStorage al iniciar
@@ -109,14 +110,25 @@ export class AuthService {
   
 
   logout() {
+    // Establecer bandera para indicar que se está haciendo logout
+    this.isLoggingOut = true;
+    
     // Limpiar localStorage y el subject
     localStorage.removeItem('access_token');  // Elimina el token de acceso
     localStorage.removeItem('usuario');  // Elimina la información del usuario
     this.usuarioActualSubject.next(null);  // Actualiza el subject a null
     
-    this.router.navigate(['/login']);
+    // Navegar al login
+    this.router.navigate(['/login']).then(() => {
+      // Resetear la bandera después de completar la navegación
+      this.isLoggingOut = false;
+    });
   }
   
+  // Método para consultar si se está realizando logout
+  get estaHaciendoLogout(): boolean {
+    return this.isLoggingOut;
+  }
 
   get usuarioLogueado() {
     return this.usuarioActualSubject.value;
