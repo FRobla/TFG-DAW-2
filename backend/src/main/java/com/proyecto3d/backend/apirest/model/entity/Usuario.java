@@ -84,6 +84,10 @@ public class Usuario implements Serializable{
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
 	private List<Favorito> favoritos = new ArrayList<>();
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	private List<Pedido> pedidos = new ArrayList<>();
+
 	
 	//Getters y setters
 
@@ -189,6 +193,14 @@ public class Usuario implements Serializable{
 
 	public void setFavoritos(List<Favorito> favoritos) {
 		this.favoritos = favoritos;
+	}
+
+	public List<Pedido> getPedidos() {
+		return pedidos;
+	}
+
+	public void setPedidos(List<Pedido> pedidos) {
+		this.pedidos = pedidos;
 	}
 
 	/**

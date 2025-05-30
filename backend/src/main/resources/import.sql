@@ -376,4 +376,56 @@ INSERT INTO favoritos (id, fecha_marcado, anuncio_id, usuario_id) VALUES
 (14, '2025-05-29', 15, 7),
 (15, '2025-05-30', 6, 8);
 
+-- Insertar Pedidos de ejemplo
+INSERT INTO pedidos (id, numero_pedido, fecha_pedido, estado, total, subtotal, descuento, impuestos, metodo_pago, referencia_pago, direccion_envio, codigo_postal, ciudad, provincia, notas_cliente, notas_internas, fecha_entrega_estimada, fecha_entrega_real, usuario_id) VALUES 
+(1, 'PED-2025-0001', '2025-01-15 10:30:00', 'completado', 45.50, 42.00, 5.00, 8.50, 'PayPal', 'PP-REF-123456789', 'Calle Mayor 123, Madrid', '28001', 'Madrid', 'Madrid', 'Entregar en horario de oficina', 'Cliente premium, prioridad alta', '2025-01-18 14:00:00', '2025-01-18 12:30:00', 2),
+(2, 'PED-2025-0002', '2025-01-16 14:45:00', 'en_proceso', 28.50, 25.00, 0.00, 3.50, 'tarjeta_credito', 'TC-789123456', 'Passeig de Gràcia 85, Barcelona', '08001', 'Barcelona', 'Barcelona', 'Contactar antes de la entrega', 'Pedido urgente', '2025-01-20 16:00:00', NULL, 3),
+(3, 'PED-2025-0003', '2025-01-17 09:15:00', 'enviado', 67.80, 62.00, 10.00, 15.80, 'transferencia', 'TR-456789123', 'Calle Colón 24, Valencia', '46001', 'Valencia', 'Valencia', 'Dejar en recepción del edificio', 'Revisar calidad antes del envío', '2025-01-22 11:00:00', NULL, 4),
+(4, 'PED-2025-0004', '2025-01-18 16:20:00', 'pendiente', 89.20, 82.00, 0.00, 7.20, 'contra_reembolso', NULL, 'Avenida de la Constitución 18, Sevilla', '41001', 'Sevilla', 'Sevilla', 'Llamar 1 hora antes', NULL, '2025-01-25 10:00:00', NULL, 5),
+(5, 'PED-2025-0005', '2025-01-19 11:30:00', 'completado', 125.75, 115.00, 15.00, 25.75, 'PayPal', 'PP-REF-987654321', 'Gran Vía 8, Bilbao', '48001', 'Bilbao', 'Vizcaya', 'Embalaje especial para objetos frágiles', 'Cliente VIP', '2025-01-23 15:00:00', '2025-01-23 13:45:00', 6),
+(6, 'PED-2025-0006', '2025-01-20 13:45:00', 'cancelado', 0.00, 0.00, 0.00, 0.00, NULL, NULL, 'Calle Alfonso I, 45, Zaragoza', '50001', 'Zaragoza', 'Zaragoza', 'Cancelar por cambio de requisitos', 'Cancelado por el cliente', NULL, NULL, 7),
+(7, 'PED-2025-0007', '2025-01-21 08:00:00', 'en_proceso', 56.40, 52.00, 0.00, 4.40, 'tarjeta_debito', 'TD-147258369', 'Plaza Mayor 67, Valladolid', '47001', 'Valladolid', 'Valladolid', 'Horario preferido: mañanas', 'Pedido regular', '2025-01-26 12:00:00', NULL, 8),
+(8, 'PED-2025-0008', '2025-01-22 15:30:00', 'pendiente', 73.60, 68.00, 5.00, 10.60, 'PayPal', 'PP-REF-456123789', 'Calle Larios 12, Málaga', '29001', 'Málaga', 'Málaga', 'Envío express solicitado', 'Verificar disponibilidad de material', '2025-01-27 09:00:00', NULL, 9),
+(9, 'PED-2025-0009', '2025-01-23 10:15:00', 'completado', 94.30, 87.00, 0.00, 7.30, 'transferencia', 'TR-963852741', 'Gran Vía Alfonso X El Sabio 89, Murcia', '30001', 'Murcia', 'Murcia', 'Incluir factura detallada', 'Pedido empresarial', '2025-01-28 14:00:00', '2025-01-28 11:20:00', 10),
+(10, 'PED-2025-0010', '2025-01-24 12:00:00', 'enviado', 112.80, 104.00, 8.00, 16.80, 'tarjeta_credito', 'TC-258147369', 'Calle Triana 34, Las Palmas de Gran Canaria', '35001', 'Las Palmas', 'Las Palmas', 'Cuidado con el transporte marítimo', 'Envío a Canarias - verificar transportista', '2025-01-30 16:00:00', NULL, 2);
+
+-- Insertar Detalles de Pedidos de ejemplo
+INSERT INTO detalles_pedido (id, cantidad, precio_unitario, subtotal, especificaciones, notas, estado_item, pedido_id, anuncio_id, material_id) VALUES 
+-- Detalles para Pedido 1 (completado)
+(1, 2, 15.00, 30.00, 'Color azul, infill 20%, altura capa 0.2mm', 'Calidad excelente', 'completado', 1, 1, 1),
+(2, 1, 12.00, 12.00, 'Color rojo, infill 15%', 'Sin problemas', 'completado', 1, 7, 1),
+
+-- Detalles para Pedido 2 (en proceso)
+(3, 1, 25.00, 25.00, 'Multicolor: rojo, azul, blanco', 'En proceso de impresión', 'en_proceso', 2, 4, 1),
+
+-- Detalles para Pedido 3 (enviado)
+(4, 1, 40.00, 40.00, 'Nylon negro, alta resistencia', 'Pieza crítica para maquinaria', 'completado', 3, 5, 9),
+(5, 1, 22.00, 22.00, 'PETG transparente, grosor 0.3mm', 'Para recipiente alimentario', 'completado', 3, 6, 3),
+
+-- Detalles para Pedido 4 (pendiente)
+(6, 3, 18.00, 54.00, 'PLA biodegradable verde', 'Para proyecto escolar', 'pendiente', 4, 3, 1),
+(7, 1, 28.00, 28.00, 'Nylon natural, precisión alta', 'Componente mecánico', 'pendiente', 4, 9, 9),
+
+-- Detalles para Pedido 5 (completado)
+(8, 1, 60.00, 60.00, 'Resina biocompatible, 25 micras', 'Prótesis dental', 'completado', 5, 12, 7),
+(9, 1, 30.00, 30.00, 'Modelo desde foto proporcionada', 'Figura personalizada', 'completado', 5, 10, 1),
+(10, 1, 25.00, 25.00, 'ABS negro, resistente al calor', 'Carcasa electrónica', 'completado', 5, 8, 2),
+
+-- Detalles para Pedido 6 (cancelado)
+(11, 2, 20.00, 40.00, 'PLA premium, múltiples colores', 'Cancelado por cambio de diseño', 'cancelado', 6, 2, 1),
+
+-- Detalles para Pedido 7 (en proceso)
+(12, 1, 50.00, 50.00, 'Consultoría técnica completa', 'Evaluación de viabilidad', 'en_proceso', 7, 14, NULL),
+
+-- Detalles para Pedido 8 (pendiente)
+(13, 1, 35.00, 35.00, 'Escaneado 3D objeto 20x15x10cm', 'Objeto cerámico antiguo', 'pendiente', 8, 11, NULL),
+(14, 2, 20.00, 40.00, 'Taller básico 2 personas', 'Curso fin de semana', 'pendiente', 8, 15, NULL),
+
+-- Detalles para Pedido 9 (completado)
+(15, 1, 100.00, 100.00, 'Maqueta 1:200, detalles finos', 'Proyecto residencial completo', 'completado', 9, 13, 1),
+
+-- Detalles para Pedido 10 (enviado)
+(16, 1, 24.00, 24.00, 'ABS gris, resistente UV', 'Componente exterior', 'completado', 10, 8, 2),
+(17, 2, 40.00, 80.00, 'Nylon reforzado, alta precisión', 'Engranajes industriales', 'completado', 10, 5, 9);
+
 SET SQL_SAFE_UPDATES = 1;

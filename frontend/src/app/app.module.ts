@@ -27,6 +27,7 @@ import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 import { PerfilComponent } from './paginas/perfil/perfil.component';
 import { FavoritoComponent } from './paginas/favorito/favorito.component';
 import { CarritoComponent } from './paginas/carrito/carrito.component';
+import { PaypalComponent } from './recursos/paypal/paypal.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { CarritoComponent } from './paginas/carrito/carrito.component';
     PerfilComponent,
     FavoritoComponent,
     CarritoComponent,
+    PaypalComponent,
   ],
   imports: [
     BrowserModule,

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CarritoService, CarritoElemento, CarritoResponse } from './carrito.service';
+import swal from 'sweetalert2';
 
 // Extendemos la interfaz para incluir la propiedad showServices
 interface CarritoElementoExtendido extends CarritoElemento {
@@ -45,7 +46,6 @@ export class CarritoComponent implements OnInit {
   usuarioId: number = 1;
   
   // Estados de interacción
-  mostrarConfirmacionVaciar: boolean = false;
   elementoEliminando: number | null = null;
   elementoActualizando: number | null = null;
 
@@ -186,10 +186,24 @@ export class CarritoComponent implements OnInit {
   }
 
   /**
-   * Vacía todo el carrito
+   * Vacía todo el carrito con confirmación SweetAlert
    */
   confirmarVaciarCarrito(): void {
-    this.mostrarConfirmacionVaciar = true;
+    swal({
+      title: '¿Vaciar carrito?',
+      text: 'Esta acción eliminará todos los artículos del carrito y no se puede deshacer.',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, vaciar carrito',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    }).then((result: any) => {
+      if (result.value) {
+        this.vaciarCarrito();
+      }
+    });
   }
 
   /**
@@ -197,16 +211,33 @@ export class CarritoComponent implements OnInit {
    */
   vaciarCarrito(): void {
     this.procesando = true;
-    this.mostrarConfirmacionVaciar = false;
     
     this.carritoService.vaciarCarrito(this.usuarioId).subscribe({
       next: (response) => {
         this.cargarCarrito();
         this.procesando = false;
+        
+        // Mostrar mensaje de éxito
+        swal({
+          title: '¡Carrito vaciado!',
+          text: 'Todos los artículos han sido eliminados del carrito.',
+          type: 'success',
+          confirmButtonColor: '#28a745',
+          confirmButtonText: 'Aceptar'
+        });
       },
       error: (error) => {
         console.error('Error al vaciar carrito:', error);
         this.procesando = false;
+        
+        // Mostrar mensaje de error
+        swal({
+          title: 'Error',
+          text: 'Ha ocurrido un error al vaciar el carrito. Por favor, inténtalo de nuevo.',
+          type: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Aceptar'
+        });
       }
     });
   }
@@ -215,7 +246,7 @@ export class CarritoComponent implements OnInit {
    * Cancela el vaciado del carrito
    */
   cancelarVaciarCarrito(): void {
-    this.mostrarConfirmacionVaciar = false;
+    // No se necesita implementar esta función
   }
 
   /**
