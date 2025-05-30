@@ -317,25 +317,86 @@
                   </div>
                 </div>
 
+                <!-- Notas del cliente -->
+                <div class="notas-cliente-section" *ngIf="!mostrarPayPal">
+                  <div class="notas-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notas del pedido</span>
+                  </div>
+                  <div class="notas-input-container">
+                    <textarea 
+                      class="form-control notas-textarea"
+                      [(ngModel)]="notasCliente"
+                      placeholder="Añade comentarios especiales sobre tu pedido (opcional)..."
+                      rows="3"
+                      maxlength="500">
+                    </textarea>
+                    <div class="character-counter">
+                      {{ notasCliente.length }}/500
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Botones de acción -->
                 <div class="acciones-checkout">
-                  <button 
-                    class="btn btn-checkout"
-                    (click)="procederAlCheckout()"
-                    [disabled]="procesando">
-                    <i class="fas fa-lock"></i>
-                    <span>{{ procesando ? 'Procesando...' : 'Proceder al Pago' }}</span>
-                  </button>
+                  <!-- Mostrar PayPal si está activado -->
+                  <div class="paypal-checkout-section" *ngIf="mostrarPayPal">
+                    <div class="paypal-header-inline">
+                      <h4>
+                        <i class="fab fa-paypal"></i>
+                        Completar Pago
+                      </h4>
+                      <button class="btn-cerrar-paypal-inline" (click)="cancelarCheckout()">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                    
+                    <!-- Componente PayPal integrado -->
+                    <div class="paypal-container-inline" *ngIf="!procesando">
+                      <app-paypal 
+                        [totalCarrito]="totalPrecio"
+                        [usuarioId]="usuarioId"
+                        [elementosCarrito]="elementosCarrito"
+                        (pagoCompletado)="onPagoCompletado($event)"
+                        (pagoCancelado)="onPagoCancelado($event)"
+                        (pagoError)="onPagoError($event)">
+                      </app-paypal>
+                    </div>
+                    
+                    <!-- Indicador de procesamiento -->
+                    <div class="procesando-pago-inline" *ngIf="procesando">
+                      <div class="spinner-border" role="status">
+                        <span class="sr-only">Procesando...</span>
+                      </div>
+                      <p>Procesando tu pago...</p>
+                    </div>
 
-                  <button 
-                    class="btn btn-continuar"
-                    (click)="continuarComprando()">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Seguir Comprando</span>
-                  </button>
+                    <button class="btn btn-secondary btn-volver" (click)="cancelarCheckout()" [disabled]="procesando">
+                      <i class="fas fa-arrow-left"></i>
+                      <span>Volver</span>
+                    </button>
+                  </div>
+
+                  <!-- Botones normales si PayPal no está activado -->
+                  <div *ngIf="!mostrarPayPal">
+                    <button 
+                      class="btn btn-checkout"
+                      (click)="procederAlCheckout()"
+                      [disabled]="procesando">
+                      <i class="fas fa-lock"></i>
+                      <span>{{ procesando ? 'Procesando...' : 'Proceder al Pago' }}</span>
+                    </button>
+
+                    <button 
+                      class="btn btn-continuar"
+                      (click)="continuarComprando()">
+                      <i class="fas fa-arrow-left"></i>
+                      <span>Seguir Comprando</span>
+                    </button>
+                  </div>
 
                   <!-- Métodos de pago aceptados -->
-                  <div class="metodos-pago">
+                  <div class="metodos-pago" *ngIf="!mostrarPayPal">
                     <div class="metodos-titulo">Métodos de pago aceptados</div>
                     <div class="metodos-iconos">
                       <i class="fab fa-cc-visa" title="Visa"></i>

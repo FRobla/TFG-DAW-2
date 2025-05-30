@@ -603,7 +603,7 @@
   align-items: center !important;
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a) !important;
   border: 1px solid var(--color-border) !important;
-  border-radius: var(--border-radius) !important;
+  border-radius: 10px !important;
   overflow: hidden !important;
 }
 
@@ -655,7 +655,7 @@
   background: linear-gradient(145deg, #2a2a2a, #1e1e1e) !important;
   color: var(--color-text-secondary) !important;
   border: 1px solid var(--color-border) !important;
-  border-radius: var(--border-radius) !important;
+  border-radius: 10px !important;
   padding: 0.75rem 1.25rem !important;
   font-size: 0.9rem !important;
   font-weight: 500 !important;
@@ -718,7 +718,7 @@
   cursor: pointer !important;
   transition: all var(--transition-speed) !important;
   padding: 1rem !important;
-  border-radius: var(--border-radius) !important;
+  border-radius: 10px !important;
   border: 1px solid var(--color-border) !important;
   background: linear-gradient(145deg, #1a1a1a, #2a2a2a) !important;
 }
@@ -956,8 +956,18 @@
 
 /* ========== BOTONES DE ACCIÓN ========== */
 .acciones-checkout {
+  margin-top: 2rem !important;
   display: flex !important;
   flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.acciones-checkout > div {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
   gap: 1rem !important;
 }
 
@@ -1003,6 +1013,8 @@
   background-color: transparent !important;
   color: var(--color-text-primary) !important;
   border: 1px solid var(--color-border) !important;
+  margin-top: 1.5rem !important;
+  border-radius: 10px !important;
 }
 
 .btn-continuar:hover {
@@ -1062,9 +1074,9 @@
 /* ========== MÉTODOS DE PAGO ========== */
 .metodos-pago {
   text-align: center !important;
-  margin-top: 1.5rem !important;
   padding-top: 1.5rem !important;
   border-top: 1px solid var(--color-border) !important;
+  width: 100% !important;
 }
 
 .metodos-titulo {
@@ -1153,5 +1165,229 @@
   
   .resumen-content {
     padding: 1.5rem !important;
+  }
+}
+
+/* =================================================================
+   PAYPAL INTEGRADO EN RESUMEN
+   ================================================================= */
+
+.paypal-checkout-section {
+  background: linear-gradient(145deg, #2a2a2a, #1e1e1e) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  margin-top: 1.5rem !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.paypal-header-inline {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1.5rem !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.paypal-header-inline h4 {
+  margin: 0 !important;
+  color: var(--color-primary) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.paypal-header-inline h4 i {
+  color: #0070ba !important;
+  font-size: 1.4rem !important;
+}
+
+.btn-cerrar-paypal-inline {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text-secondary) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-cerrar-paypal-inline:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.paypal-container-inline {
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef) !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 10px !important;
+  padding: 1.5rem !important;
+  margin: 1rem 0 !important;
+}
+
+.procesando-pago-inline {
+  text-align: center !important;
+  padding: 2rem 1rem !important;
+  background: linear-gradient(145deg, #2a2a2a, #1e1e1e) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+  margin: 1rem 0 !important;
+}
+
+.procesando-pago-inline .spinner-border {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  border-width: 0.25em !important;
+  color: var(--color-primary) !important;
+  margin-bottom: 1rem !important;
+}
+
+.procesando-pago-inline p {
+  color: var(--color-text-primary) !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+.btn-volver {
+  background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+  margin-top: 1rem !important;
+}
+
+.btn-volver:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a6268, #495057) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-volver:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+  .paypal-checkout-section {
+    padding: 1rem !important;
+  }
+
+  .paypal-header-inline {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    text-align: center !important;
+  }
+
+  .paypal-container-inline {
+    padding: 1rem !important;
+  }
+
+  .procesando-pago-inline {
+    padding: 1.5rem 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .paypal-header-inline h4 {
+    font-size: 1.1rem !important;
+  }
+
+  .btn-volver {
+    padding: 0.65rem 1.25rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* === NOTAS DEL CLIENTE === */
+.carrito-container .notas-cliente-section {
+  margin: 20px 0 !important;
+  padding: 15px !important;
+  background: linear-gradient(145deg, #2a2a2a, #1e1e1e) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.carrito-container .notas-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: var(--color-text-primary) !important;
+}
+
+.carrito-container .notas-header i {
+  color: var(--color-primary) !important;
+  font-size: 1rem !important;
+}
+
+.carrito-container .notas-input-container {
+  position: relative !important;
+}
+
+.carrito-container .notas-textarea {
+  width: 100% !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 6px !important;
+  padding: 10px !important;
+  font-size: 0.9rem !important;
+  font-family: inherit !important;
+  resize: vertical !important;
+  min-height: 80px !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.carrito-container .notas-textarea:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(93, 79, 255, 0.25) !important;
+  outline: none !important;
+}
+
+.carrito-container .notas-textarea::placeholder {
+  color: var(--color-text-muted) !important;
+  opacity: 0.8 !important;
+}
+
+.carrito-container .character-counter {
+  position: absolute !important;
+  bottom: 5px !important;
+  right: 10px !important;
+  font-size: 0.75rem !important;
+  color: var(--color-text-secondary) !important;
+  background: rgba(26, 26, 26, 0.9) !important;
+  padding: 2px 4px !important;
+  border-radius: 3px !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+/* Responsive para notas */
+@media (max-width: 768px) {
+  .carrito-container .notas-cliente-section {
+    margin: 15px 0 !important;
+    padding: 12px !important;
+  }
+  
+  .carrito-container .notas-textarea {
+    font-size: 16px !important; /* Evita zoom en iOS */
+    min-height: 70px !important;
   }
 }

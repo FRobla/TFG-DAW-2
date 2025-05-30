@@ -112,4 +112,11 @@ export class CarritoService {
   calcularTotalCarrito(usuarioId: number): Observable<{total: number}> {
     return this.http.get<{total: number}>(`${this.apiUrl}/total/${usuarioId}`);
   }
+
+  /**
+   * Procesa el checkout del carrito creando un pedido
+   */
+  procesarCheckout(checkoutData: any): Observable<any> {
+    return this.http.post<any>('http://localhost:8080/api/pedidos/checkout', checkoutData, this.httpOptions);
+  }
 } 

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyecto3d.backend.apirest.model.dto.CheckoutResponseDto;
 import com.proyecto3d.backend.apirest.model.entity.Pedido;
 import com.proyecto3d.backend.apirest.model.service.PedidoService;
 
@@ -673,5 +674,109 @@ public class PedidoController {
         response.put("mensaje", "El pedido ha sido marcado como completado con éxito");
         response.put("pedido", pedidoActualizado);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Procesa el checkout del carrito - Crea un pedido a partir del carrito
+     * POST /api/pedidos/checkout
+     */
+    @PostMapping("/pedidos/checkout")
+    public ResponseEntity<?> procesarCheckout(@RequestBody Map<String, Object> checkoutData) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Validar datos requeridos
+            if (checkoutData.get("usuarioId") == null) {
+                response.put("error", "usuarioId es requerido");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
+            Long usuarioId = Long.valueOf(checkoutData.get("usuarioId").toString());
+            String metodoPago = checkoutData.get("metodoPago") != null ? 
+                checkoutData.get("metodoPago").toString() : "paypal";
+            String referenciaPago = checkoutData.get("referenciaPago") != null ? 
+                checkoutData.get("referenciaPago").toString() : null;
+            String direccionEnvio = checkoutData.get("direccionEnvio") != null ? 
+                checkoutData.get("direccionEnvio").toString() : "Dirección por defecto";
+            String codigoPostal = checkoutData.get("codigoPostal") != null ? 
+                checkoutData.get("codigoPostal").toString() : "28000";
+            String ciudad = checkoutData.get("ciudad") != null ? 
+                checkoutData.get("ciudad").toString() : "Madrid";
+            String provincia = checkoutData.get("provincia") != null ? 
+                checkoutData.get("provincia").toString() : "Madrid";
+            String notasCliente = checkoutData.get("notasCliente") != null ? 
+                checkoutData.get("notasCliente").toString() : null;
+            String estado = checkoutData.get("estado") != null ? 
+                checkoutData.get("estado").toString() : "en_proceso";
+            String notasInternas = checkoutData.get("notasInternas") != null ? 
+                checkoutData.get("notasInternas").toString() : null;
+
+            // Crear el pedido
+            Pedido nuevoPedido = pedidoService.crearPedidoDesdeCarrito(usuarioId, metodoPago, 
+                referenciaPago, direccionEnvio, codigoPostal, ciudad, provincia, 
+                notasCliente, estado, notasInternas);
+
+            // Convertir a DTO para evitar problemas de serialización
+            CheckoutResponseDto pedidoDto = convertirPedidoADto(nuevoPedido);
+
+            response.put("mensaje", "Pedido creado exitosamente");
+            response.put("pedido", pedidoDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (IllegalArgumentException e) {
+            response.put("error", "Error de validación: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.put("error", "Error al procesar el checkout: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Convierte una entidad Pedido a DTO para evitar problemas de serialización
+     */
+    private CheckoutResponseDto convertirPedidoADto(Pedido pedido) {
+        CheckoutResponseDto.UsuarioSimpleDto usuarioDto = null;
+        if (pedido.getUsuario() != null) {
+            usuarioDto = CheckoutResponseDto.UsuarioSimpleDto.builder()
+                .id(pedido.getUsuario().getId())
+                .nombre(pedido.getUsuario().getNombreCompleto())
+                .email(pedido.getUsuario().getEmail())
+                .build();
+        }
+
+        List<CheckoutResponseDto.DetallePedidoSimpleDto> detallesDto = null;
+        if (pedido.getDetallesPedido() != null) {
+            detallesDto = pedido.getDetallesPedido().stream()
+                .map(detalle -> CheckoutResponseDto.DetallePedidoSimpleDto.builder()
+                    .id(detalle.getId())
+                    .cantidad(detalle.getCantidad())
+                    .precio_unitario(detalle.getPrecio_unitario())
+                    .subtotal(detalle.getSubtotal())
+                    .especificaciones(detalle.getEspecificaciones())
+                    .tituloAnuncio(detalle.getAnuncio() != null ? detalle.getAnuncio().getTitulo() : "")
+                    .nombreProveedor(detalle.getAnuncio() != null && detalle.getAnuncio().getUsuario() != null ? 
+                        detalle.getAnuncio().getUsuario().getNombreCompleto() : "")
+                    .build())
+                .collect(Collectors.toList());
+        }
+
+        return CheckoutResponseDto.builder()
+            .id(pedido.getId())
+            .numero_pedido(pedido.getNumero_pedido())
+            .fecha_pedido(pedido.getFecha_pedido())
+            .estado(pedido.getEstado())
+            .total(pedido.getTotal())
+            .subtotal(pedido.getSubtotal())
+            .metodo_pago(pedido.getMetodo_pago())
+            .referencia_pago(pedido.getReferencia_pago())
+            .direccion_envio(pedido.getDireccion_envio())
+            .codigo_postal(pedido.getCodigo_postal())
+            .ciudad(pedido.getCiudad())
+            .provincia(pedido.getProvincia())
+            .notas_cliente(pedido.getNotas_cliente())
+            .usuario(usuarioDto)
+            .detallesPedido(detallesDto)
+            .build();
     }
 } 

@@ -104,4 +104,12 @@ public interface PedidoService {
     
     public Pedido actualizarNotasInternas(Long pedidoId, String notas);
 
+    /**
+     * Crea un pedido a partir del carrito del usuario
+     */
+    public Pedido crearPedidoDesdeCarrito(Long usuarioId, String metodoPago, String referenciaPago, 
+                                        String direccionEnvio, String codigoPostal, String ciudad, 
+                                        String provincia, String notasCliente, String estado, 
+                                        String notasInternas);
+
 } 

@@ -3,6 +3,7 @@ package com.proyecto3d.backend.apirest.model.service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.proyecto3d.backend.apirest.model.dao.PedidoDao;
+import com.proyecto3d.backend.apirest.model.dao.CarritoDAO;
+import com.proyecto3d.backend.apirest.model.dao.UsuarioDao;
 import com.proyecto3d.backend.apirest.model.entity.Pedido;
+import com.proyecto3d.backend.apirest.model.entity.DetallePedido;
+import com.proyecto3d.backend.apirest.model.entity.Carrito;
+import com.proyecto3d.backend.apirest.model.entity.Usuario;
 
 /**
  * Implementación del servicio para la gestión de pedidos
@@ -22,6 +28,12 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Autowired
     private PedidoDao pedidoDao;
+
+    @Autowired
+    private CarritoDAO carritoDAO;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
 
     /**
      * Operaciones CRUD básicas
@@ -364,9 +376,96 @@ public class PedidoServiceImpl implements PedidoService {
         if (pedido == null) {
             throw new IllegalArgumentException("Pedido no encontrado con ID: " + pedidoId);
         }
-
+        
         pedido.setNotas_internas(notas);
         return pedidoDao.save(pedido);
+    }
+
+    @Override
+    @Transactional
+    public Pedido crearPedidoDesdeCarrito(Long usuarioId, String metodoPago, String referenciaPago, 
+                                        String direccionEnvio, String codigoPostal, String ciudad, 
+                                        String provincia, String notasCliente, String estado, 
+                                        String notasInternas) {
+        
+        // Validar que el usuario existe
+        Usuario usuario = usuarioDao.findById(usuarioId)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
+        
+        // Obtener elementos del carrito
+        List<Carrito> elementosCarrito = carritoDAO.findByUsuarioId(usuarioId);
+        if (elementosCarrito.isEmpty()) {
+            throw new IllegalArgumentException("El carrito está vacío. No se puede crear el pedido.");
+        }
+        
+        // Crear el pedido principal
+        Pedido pedido = new Pedido();
+        pedido.setUsuario(usuario);
+        pedido.setEstado(estado);
+        pedido.setMetodo_pago(metodoPago);
+        pedido.setReferencia_pago(referenciaPago);
+        pedido.setDireccion_envio(direccionEnvio);
+        pedido.setCodigo_postal(codigoPostal);
+        pedido.setCiudad(ciudad);
+        pedido.setProvincia(provincia);
+        pedido.setNotas_cliente(notasCliente);
+        pedido.setNotas_internas(notasInternas);
+        pedido.setFecha_pedido(new Date());
+        
+        // Generar número de pedido único
+        String numeroPedido;
+        do {
+            numeroPedido = "PED" + System.currentTimeMillis();
+        } while (existsByNumeroPedido(numeroPedido));
+        pedido.setNumero_pedido(numeroPedido);
+        
+        // Crear lista de detalles del pedido a partir del carrito
+        List<DetallePedido> detallesPedido = new ArrayList<>();
+        double subtotal = 0.0;
+        
+        for (Carrito elementoCarrito : elementosCarrito) {
+            DetallePedido detalle = new DetallePedido();
+            detalle.setPedido(pedido);
+            detalle.setAnuncio(elementoCarrito.getAnuncio());
+            detalle.setCantidad(elementoCarrito.getCantidad());
+            detalle.setPrecio_unitario(elementoCarrito.getPrecioUnitario());
+            detalle.setSubtotal(elementoCarrito.getPrecioTotal());
+            
+            // Construir especificaciones con los detalles del carrito
+            StringBuilder especificaciones = new StringBuilder();
+            especificaciones.append("Material: ").append(elementoCarrito.getMaterialSeleccionado());
+            if (elementoCarrito.getColorSeleccionado() != null) {
+                especificaciones.append(", Color: ").append(elementoCarrito.getColorSeleccionado());
+            }
+            if (elementoCarrito.getAcabadoPremium()) {
+                especificaciones.append(", Acabado Premium: Sí");
+            }
+            if (elementoCarrito.getUrgente()) {
+                especificaciones.append(", Urgente: Sí");
+            }
+            if (elementoCarrito.getEnvioGratis()) {
+                especificaciones.append(", Envío Gratis: Sí");
+            }
+            
+            detalle.setEspecificaciones(especificaciones.toString());
+            detalle.setEstado_item("pendiente");
+            
+            detallesPedido.add(detalle);
+            subtotal += elementoCarrito.getPrecioTotal();
+        }
+        
+        // Establecer totales del pedido
+        pedido.setSubtotal(subtotal);
+        pedido.setTotal(subtotal); // Por ahora sin impuestos ni descuentos adicionales
+        pedido.setDetallesPedido(detallesPedido);
+        
+        // Guardar el pedido (esto guardará también los detalles por cascada)
+        Pedido pedidoGuardado = pedidoDao.save(pedido);
+        
+        // Vaciar el carrito después de crear el pedido exitosamente
+        carritoDAO.deleteByUsuarioId(usuarioId);
+        
+        return pedidoGuardado;
     }
 
     /**

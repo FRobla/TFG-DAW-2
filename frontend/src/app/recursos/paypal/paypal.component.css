@@ -1,0 +1,24 @@
+.paypal-wrapper {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.paypal-wrapper ::ng-deep .paypal-button {
+  margin: 0.25rem 0;
+}
+
+.paypal-wrapper ::ng-deep .paypal-logo {
+  margin-bottom: 0.5rem;
+}
+
+.paypal-wrapper ::ng-deep .paypal-buttons {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .paypal-wrapper ::ng-deep .paypal-button {
+    margin: 0.15rem 0;
+  }
+}
+

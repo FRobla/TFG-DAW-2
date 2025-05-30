@@ -3,14 +3,14 @@
 ## ESTADOS PERMITIDOS (4 estados únicamente):
 
 1. **pendiente** - Pedido creado, esperando confirmación manual de pago desde dashboard
-2. **en_proceso** - Pago confirmado manualmente desde dashboard, pedido en procesamiento  
+2. **en_proceso** - Pago confirmado automáticamente (PayPal) o manualmente desde dashboard, pedido en procesamiento  
 3. **completado** - Pedido finalizado y entregado (marcado manualmente desde dashboard)
-4. **cancelado** - Pedido cancelado (puede ser desde pendiente o en_proceso)
+4. **cancelado** - Pedido cancelado (puede ser desde pendiente o en_proceso), incluye cancelaciones por cliente
 
 ## TRANSICIONES DE ESTADO VÁLIDAS:
 
 ### Desde "pendiente":
-- **pendiente → en_proceso**: Cuando el administrador confirma el pago manualmente
+- **pendiente → en_proceso**: Cuando el administrador confirma el pago manualmente O cuando se procesa automáticamente por PayPal
 - **pendiente → cancelado**: Cuando se cancela el pedido antes del pago
 
 ### Desde "en_proceso":  
@@ -80,6 +80,69 @@
 - 404: Pedido no encontrado  
 - 400: Solo se pueden completar pedidos que estén en proceso
 
+### 3. Checkout desde Carrito (NUEVO)
+**POST** `/api/pedidos/checkout`
+
+**Descripción**: Procesa el checkout del carrito creando un pedido automáticamente. Integrado con PayPal.
+
+**Body**:
+```json
+{
+  "usuarioId": 1,
+  "metodoPago": "paypal",
+  "referenciaPago": "PAYPAL_TRANSACTION_ID",
+  "direccionEnvio": "Calle Principal 123",
+  "codigoPostal": "28001",
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
+  "notasCliente": "Entrega por la mañana",
+  "estado": "en_proceso",
+  "notasInternas": "Pago automático PayPal"
+}
+```
+
+**Respuesta exitosa** (201):
+```json
+{
+  "mensaje": "Pedido creado exitosamente",
+  "pedido": {
+    "id": 1,
+    "numero_pedido": "PED1705123456789",
+    "estado": "en_proceso",
+    "total": 89.99,
+    "metodo_pago": "paypal",
+    "referencia_pago": "PAYPAL_TRANSACTION_ID",
+    "usuario": {
+      "id": 1,
+      "nombre": "Juan Pérez"
+    },
+    "detallesPedido": [
+      {
+        "anuncio": {
+          "titulo": "Modelo 3D Personalizado"
+        },
+        "cantidad": 2,
+        "precio_unitario": 44.99,
+        "subtotal": 89.98,
+        "especificaciones": "Material: PLA, Color: Azul, Acabado Premium: Sí"
+      }
+    ]
+  }
+}
+```
+
+**Errores**:
+- 400: usuarioId es requerido
+- 400: El carrito está vacío. No se puede crear el pedido.
+- 400: Usuario no encontrado
+- 500: Error interno del servidor
+
+**Funcionalidad**:
+- Convierte automáticamente el carrito del usuario en un pedido
+- Crea los detalles del pedido basados en los elementos del carrito
+- Vacía el carrito después de crear el pedido exitosamente
+- Soporta tanto pagos completados (estado "en_proceso") como cancelados (estado "cancelado")
+
 ## ACCIONES DEL DASHBOARD POR ESTADO:
 
 ### Pedidos PENDIENTES:
@@ -104,11 +167,21 @@
 
 ## WORKFLOW RECOMENDADO:
 
-1. **Creación**: Pedido se crea automáticamente en estado "pendiente"
+### Flujo Automático (PayPal):
+1. **Creación**: Usuario realiza checkout desde carrito con PayPal
+2. **Pago exitoso**: Pedido se crea automáticamente en estado "en_proceso"  
+3. **Procesamiento**: Admin gestiona el pedido internamente
+4. **Finalización manual**: Admin marca como completado → "completado"
+
+### Flujo Manual (Tradicional):
+1. **Creación**: Pedido se crea manualmente en estado "pendiente"
 2. **Confirmación manual**: Admin revisa y confirma pago → "en_proceso"  
 3. **Procesamiento**: Admin gestiona el pedido internamente
 4. **Finalización manual**: Admin marca como completado → "completado"
-5. **Cancelación**: Admin puede cancelar en cualquier momento antes de completar
+
+### Cancelaciones:
+- **Automáticas**: Usuario cancela el pago en PayPal → Pedido en estado "cancelado" con nota "Cancelado por el cliente"
+- **Manuales**: Admin puede cancelar en cualquier momento antes de completar
 
 ## VALIDACIONES IMPLEMENTADAS:
 
@@ -116,4 +189,6 @@
 - Solo se pueden completar pedidos "en_proceso"  
 - Solo se pueden cancelar pedidos "pendientes" o "en_proceso"
 - Los estados "completado" y "cancelado" son finales
-- Todas las transiciones requieren confirmación manual desde dashboard 
+- El checkout automático valida que el carrito no esté vacío
+- El checkout automático valida que el usuario exista
+- Todas las transiciones manuales requieren confirmación desde dashboard 

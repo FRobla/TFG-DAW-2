@@ -1,6 +1,3 @@
-<div>
-    <button (click)="makePayment()">Buy Now</button>
-</div>
-<div>
-    <!-- <ngx-paypal [config]="payPalConfig"></ngx-paypal> -->
+<div class="paypal-wrapper">
+  <ngx-paypal [config]="payPalConfig" *ngIf="payPalConfig"></ngx-paypal>
 </div>

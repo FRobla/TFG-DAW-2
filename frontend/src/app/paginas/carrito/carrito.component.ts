@@ -49,6 +49,9 @@ export class CarritoComponent implements OnInit {
   elementoEliminando: number | null = null;
   elementoActualizando: number | null = null;
 
+  // Notas del cliente para el pedido
+  notasCliente: string = '';
+
   constructor(
     private carritoService: CarritoService,
     private router: Router
@@ -116,7 +119,8 @@ export class CarritoComponent implements OnInit {
    * Recalcula los totales del carrito basándose en los elementos actuales
    */
   private recalcularTotales(): void {
-    this.totalElementos = this.elementosCarrito.length;
+    // Suma las cantidades individuales de cada elemento, no solo el número de elementos
+    this.totalElementos = this.elementosCarrito.reduce((total, elemento) => total + elemento.cantidad, 0);
     this.totalPrecio = this.elementosCarrito.reduce((total, elemento) => total + elemento.precioTotal, 0);
   }
 
@@ -260,8 +264,7 @@ export class CarritoComponent implements OnInit {
    * Procede al checkout (por implementar)
    */
   procederAlCheckout(): void {
-    // TODO: Implementar navegación al checkout/pago
-    console.log('Proceder al checkout...');
+    this.iniciarCheckout();
   }
 
   /**
@@ -287,5 +290,129 @@ export class CarritoComponent implements OnInit {
 
   trackByElementoId(index: number, elemento: any): any {
     return elemento.id || index;
+  }
+
+  /**
+   * Muestra el componente de PayPal para procesar el pago
+   */
+  mostrarPayPal: boolean = false;
+
+  /**
+   * Inicia el proceso de checkout mostrando PayPal
+   */
+  iniciarCheckout(): void {
+    if (this.elementosCarrito.length === 0) {
+      swal({
+        title: 'Carrito vacío',
+        text: 'Agrega productos al carrito antes de proceder al pago.',
+        type: 'warning',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    this.mostrarPayPal = true;
+  }
+
+  /**
+   * Cancela el proceso de checkout
+   */
+  cancelarCheckout(): void {
+    this.mostrarPayPal = false;
+  }
+
+  /**
+   * Maneja el evento de pago completado exitosamente
+   */
+  onPagoCompletado(checkoutData: any): void {
+    this.procesando = true;
+    
+    // Añadir las notas del cliente a los datos del checkout
+    const checkoutDataConNotas = {
+      ...checkoutData,
+      notasCliente: this.notasCliente.trim() || null
+    };
+    
+    this.carritoService.procesarCheckout(checkoutDataConNotas).subscribe({
+      next: (response) => {
+        this.procesando = false;
+        this.mostrarPayPal = false;
+        
+        // Limpiar las notas después del pago exitoso
+        this.notasCliente = '';
+        
+        // Mostrar mensaje de éxito
+        swal({
+          title: '¡Pago realizado!',
+          text: `Tu pedido ${response.pedido.numero_pedido} ha sido procesado exitosamente.`,
+          type: 'success',
+          confirmButtonColor: '#28a745',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          // Recargar carrito (debería estar vacío)
+          this.cargarCarrito();
+        });
+      },
+      error: (error) => {
+        this.procesando = false;
+        console.error('Error al procesar pago:', error);
+        
+        swal({
+          title: 'Error en el pago',
+          text: 'Ha ocurrido un error al procesar tu pago. Por favor, inténtalo de nuevo.',
+          type: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  }
+
+  /**
+   * Maneja el evento de pago cancelado
+   */
+  onPagoCancelado(checkoutData: any): void {
+    this.procesando = true;
+    
+    // Añadir las notas del cliente a los datos del checkout incluso en cancelación
+    const checkoutDataConNotas = {
+      ...checkoutData,
+      notasCliente: this.notasCliente.trim() || null
+    };
+    
+    this.carritoService.procesarCheckout(checkoutDataConNotas).subscribe({
+      next: (response) => {
+        this.procesando = false;
+        this.mostrarPayPal = false;
+        
+        swal({
+          title: 'Pago cancelado',
+          text: 'Has cancelado el pago. Puedes intentar de nuevo cuando lo desees.',
+          type: 'info',
+          confirmButtonColor: '#17a2b8',
+          confirmButtonText: 'Aceptar'
+        });
+      },
+      error: (error) => {
+        this.procesando = false;
+        console.error('Error al registrar cancelación:', error);
+      }
+    });
+  }
+
+  /**
+   * Maneja errores en el pago
+   */
+  onPagoError(error: any): void {
+    console.error('Error en PayPal:', error);
+    
+    swal({
+      title: 'Error en el pago',
+      text: 'Ha ocurrido un error técnico durante el pago. Por favor, inténtalo de nuevo.',
+      type: 'error',
+      confirmButtonColor: '#dc3545',
+      confirmButtonText: 'Aceptar'
+    });
   }
 }

@@ -12,11 +12,11 @@ import org.springframework.data.repository.query.Param;
 import com.proyecto3d.backend.apirest.model.entity.Pedido;
 
 /**
- * DAO para la entidad Pedido
- * Define las operaciones de acceso a datos para los pedidos
+ * Repositorio para la gestión de pedidos
+ * Contiene todos los métodos de consulta necesarios para el servicio
  */
 public interface PedidoDao extends JpaRepository<Pedido, Long> {
-
+    
     /**
      * Busca pedidos por usuario
      */
@@ -38,7 +38,7 @@ public interface PedidoDao extends JpaRepository<Pedido, Long> {
     /**
      * Busca pedidos por estado con paginación
      */
-    @Query("SELECT p FROM Pedido p WHERE p.estado = :estado ORDER BY p.fecha_pedido DESC")
+    @Query("SELECT p FROM Pedido p WHERE (:estado IS NULL OR p.estado = :estado) ORDER BY p.fecha_pedido DESC")
     Page<Pedido> findByEstadoWithPagination(@Param("estado") String estado, Pageable pageable);
 
     /**
@@ -120,4 +120,57 @@ public interface PedidoDao extends JpaRepository<Pedido, Long> {
     @Query("SELECT p FROM Pedido p WHERE p.ciudad = :ciudad ORDER BY p.fecha_pedido DESC")
     List<Pedido> findByCiudad(@Param("ciudad") String ciudad);
 
+    /**
+     * Busca pedidos por provincia
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.provincia = :provincia ORDER BY p.fecha_pedido DESC")
+    List<Pedido> findByProvincia(@Param("provincia") String provincia);
+
+    /**
+     * Busca pedidos por código postal
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.codigo_postal = :codigoPostal ORDER BY p.fecha_pedido DESC")
+    List<Pedido> findByCodigoPostal(@Param("codigoPostal") String codigoPostal);
+
+    /**
+     * Busca pedidos pendientes por usuario
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.usuario.id = :usuarioId AND p.estado IN ('pendiente', 'en_proceso') ORDER BY p.fecha_pedido DESC")
+    List<Pedido> findPedidosPendientesByUsuario(@Param("usuarioId") Long usuarioId);
+
+    /**
+     * Busca pedidos completados por usuario
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.usuario.id = :usuarioId AND p.estado = 'completado' ORDER BY p.fecha_pedido DESC")
+    List<Pedido> findPedidosCompletadosByUsuario(@Param("usuarioId") Long usuarioId);
+
+    /**
+     * Obtiene el total gastado por usuario
+     */
+    @Query("SELECT SUM(p.total) FROM Pedido p WHERE p.usuario.id = :usuarioId AND p.estado = 'completado'")
+    Double getTotalGastadoByUsuario(@Param("usuarioId") Long usuarioId);
+
+    /**
+     * Busca pedidos por referencia de pago
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.referencia_pago = :referenciaPago")
+    Pedido findByReferenciaPago(@Param("referenciaPago") String referenciaPago);
+
+    /**
+     * Busca pedidos que requieren atención (vencidos)
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.estado IN ('pendiente', 'en_proceso') AND p.fecha_entrega_estimada < CURRENT_DATE ORDER BY p.fecha_entrega_estimada ASC")
+    List<Pedido> findPedidosVencidos();
+
+    /**
+     * Obtiene estadísticas de ventas por método de pago
+     */
+    @Query("SELECT p.metodo_pago, COUNT(p), SUM(p.total) FROM Pedido p WHERE p.estado = 'completado' GROUP BY p.metodo_pago")
+    List<Object[]> getEstadisticasPorMetodoPago();
+
+    /**
+     * Busca pedidos entre fechas de entrega
+     */
+    @Query("SELECT p FROM Pedido p WHERE p.fecha_entrega_estimada BETWEEN :fechaInicio AND :fechaFin ORDER BY p.fecha_entrega_estimada ASC")
+    List<Pedido> findByFechaEntregaBetween(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin);
 } 
