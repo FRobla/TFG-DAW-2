@@ -36,7 +36,7 @@ export class AnuncioService {
   }
 
   getAnuncio(id: number): Observable<Anuncio> {
-    return this.http.get<any>(`${this.baseUrl}/anuncios/${id}`).pipe(
+    return this.http.get<any>(`${this.baseUrl}/anuncio/${id}`).pipe(
       map(response => Anuncio.fromBackend(response)),
       catchError(e => {
         this.router.navigate(['/anuncios']);

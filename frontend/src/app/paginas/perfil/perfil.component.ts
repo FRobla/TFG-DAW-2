@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Usuario } from '../../entidades/usuario/usuario';
+import { Ubicacion } from '../../entidades/ubicacion/ubicacion';
 import { UsuarioService } from '../../entidades/usuario/usuario.service';
 import { AuthService } from '../../auth/auth.service';
+import { HeroBuscadorService } from '../../recursos/hero-buscador/hero-buscador.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import swal from 'sweetalert2';
@@ -35,14 +37,20 @@ export class PerfilComponent implements OnInit, OnDestroy {
   archivoSeleccionado: File | null = null;
   imagenPreview: string | null = null;
 
+  // Variables para ubicaciones
+  ubicaciones: Ubicacion[] = [];
+  ubicacionSeleccionadaId: number | string = '';
+
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService,
+    private heroBuscadorService: HeroBuscadorService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.cargarDatosUsuario();
+    this.cargarUbicaciones();
   }
 
   ngOnDestroy(): void {
@@ -98,6 +106,8 @@ export class PerfilComponent implements OnInit, OnDestroy {
 
   abrirModalContacto(): void {
     this.usuarioEditado = new Usuario(this.usuario);
+    // Establecer la ubicación seleccionada actual
+    this.ubicacionSeleccionadaId = this.usuario.ubicacion ? this.usuario.ubicacion.id : '';
     this.modalContactoVisible = true;
   }
 
@@ -123,6 +133,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
   cerrarModalContacto(): void {
     this.modalContactoVisible = false;
     this.usuarioEditado = new Usuario();
+    this.ubicacionSeleccionadaId = '';
   }
 
   cerrarModalSeguridad(): void {
@@ -165,6 +176,14 @@ export class PerfilComponent implements OnInit, OnDestroy {
 
     this.usuario.email = this.usuarioEditado.email;
     this.usuario.direccion = this.usuarioEditado.direccion;
+
+    // Manejar la ubicación seleccionada
+    if (this.ubicacionSeleccionadaId) {
+      const ubicacionSeleccionada = this.ubicaciones.find(u => u.id == this.ubicacionSeleccionadaId);
+      this.usuario.ubicacion = ubicacionSeleccionada;
+    } else {
+      this.usuario.ubicacion = undefined;
+    }
 
     this.actualizarUsuario();
     this.cerrarModalContacto();
@@ -318,5 +337,17 @@ export class PerfilComponent implements OnInit, OnDestroy {
       });
     }
     return 'No disponible';
+  }
+
+  cargarUbicaciones(): void {
+    this.heroBuscadorService.getUbicaciones().subscribe({
+      next: (ubicaciones) => {
+        this.ubicaciones = ubicaciones;
+      },
+      error: (error) => {
+        console.error('Error al cargar ubicaciones:', error);
+        swal('Error', 'No se pudieron cargar las ubicaciones', 'error');
+      }
+    });
   }
 }

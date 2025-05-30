@@ -42,4 +42,12 @@ public interface UbicacionDao extends JpaRepository<Ubicacion, Long> {
            "GROUP BY u.id, u.nombre " +
            "ORDER BY cantidad DESC")
     List<Object[]> findUbicacionesConConteoAnuncios();
+    
+    // Obtener solo las ubicaciones que tienen usuarios con anuncios activos
+    @Query("SELECT DISTINCT u FROM Ubicacion u " +
+           "INNER JOIN u.usuarios us " +
+           "INNER JOIN us.anuncios a " +
+           "WHERE u.activo = true AND a.estado = 'activo' " +
+           "ORDER BY u.nombre")
+    List<Ubicacion> findUbicacionesConAnuncios();
 } 

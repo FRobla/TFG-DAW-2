@@ -1,3 +1,5 @@
+import { Ubicacion } from '../ubicacion/ubicacion';
+
 export class Usuario {
     id: number = 0;
     nombre: string = "";
@@ -8,6 +10,7 @@ export class Usuario {
     rol: string = "";
     fotoPerfil: string = "";
     fecha_registro: string = "";
+    ubicacion?: Ubicacion;
     
     // Propiedad para acceder a la fecha como objeto Date
     get fechaRegistro(): Date {
@@ -37,7 +40,8 @@ export class Usuario {
             email: data.email,
             password: data.password,
             rol: data.rol,
-            fotoPerfil: data.foto
+            fotoPerfil: data.foto,
+            ubicacion: data.ubicacion
         });
         
         // Manejar la fecha específicamente
@@ -50,7 +54,7 @@ export class Usuario {
     
     // Método para convertir al formato esperado por el backend
     toBackend(): any {
-        return {
+        const backendData: any = {
             id: this.id,
             nombre: this.nombre,
             apellido: this.apellido,
@@ -61,5 +65,21 @@ export class Usuario {
             foto: this.fotoPerfil,
             fecha_registro: this.fecha_registro
         };
+
+        // Manejar la ubicación - enviar solo el ID si existe
+        if (this.ubicacion && this.ubicacion.id) {
+            backendData.ubicacion = {
+                id: this.ubicacion.id
+            };
+        } else {
+            backendData.ubicacion = null;
+        }
+
+        return backendData;
+    }
+
+    // Método de utilidad para obtener el nombre de la ubicación
+    getNombreUbicacion(): string {
+        return this.ubicacion ? this.ubicacion.nombre : 'No especificada';
     }
 }

@@ -35,9 +35,15 @@ export class ErrorInterceptor implements HttpInterceptor {
               this.errorService.navigateToError('0', connectionMessage);
               break;
             case 401:
-              // Redirige a login si es un error de autenticación
-              // Esto es opcional, puedes simplemente mostrar el error
-              this.errorService.navigateToError('401');
+              // Verificar si el error viene del endpoint de login
+              if (request.url.includes('/api/login')) {
+                // Para errores de login, no redirigir automáticamente
+                // Dejar que el componente de login maneje el error
+                break;
+              } else {
+                // Para otros errores 401, redirigir a la página de error
+                this.errorService.navigateToError('401');
+              }
               break;
             case 403:
             case 404:

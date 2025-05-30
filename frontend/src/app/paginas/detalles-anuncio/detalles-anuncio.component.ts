@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritoService } from '../favorito/favorito.service';
+import { AnuncioService } from '../../entidades/anuncio/anuncio.service';
+import { Anuncio } from '../../entidades/anuncio/anuncio';
 
 @Component({
   selector: 'app-detalles-anuncio',
@@ -12,10 +14,24 @@ export class DetallesAnuncioComponent implements OnInit {
   // ID del anuncio
   anuncioId!: number;
   
-  // Datos del anuncio (simulados)
-  anuncio: any = {};
+  // Datos del anuncio desde el backend
+  anuncio!: Anuncio;
   
-  // Valoraciones (simuladas)
+  // Propiedades adicionales para el template (simuladas por ahora)
+  proveedor: string = '';
+  ubicacion: string = '';
+  valoracion: number = 0;
+  numValoraciones: number = 0;
+  descripcionLarga: string = '';
+  tiempoEntrega: string = '';
+  materiales: string[] = [];
+  colores: string[] = [];
+  tamanoMaximo: string = '';
+  serviciosAdicionales: any[] = [];
+  metodoPago: string = '';
+  politicasCancelacion: string = '';
+  
+  // Valoraciones (simuladas por ahora - se puede implementar más adelante)
   valoraciones: any[] = [];
   
   // Estado de carga
@@ -30,7 +46,7 @@ export class DetallesAnuncioComponent implements OnInit {
   cantidad: number = 1;
   
   // Servicios adicionales seleccionados
-  serviciosAdicionales: {[key: string]: boolean} = {
+  serviciosAdicionalesSeleccionados: {[key: string]: boolean} = {
     acabadoPremium: false,
     urgente: false,
     envioGratis: false
@@ -43,7 +59,8 @@ export class DetallesAnuncioComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private favoritoService: FavoritoService
+    private favoritoService: FavoritoService,
+    private anuncioService: AnuncioService
   ) { }
 
   ngOnInit(): void {
@@ -51,117 +68,95 @@ export class DetallesAnuncioComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.anuncioId = +params['id']; // Convertir a número
       
-      // Cargar los detalles del anuncio
+      // Cargar los detalles del anuncio desde el backend
       this.cargarDetallesAnuncio();
     });
   }
 
   /**
    * Carga los detalles del anuncio desde el backend
-   * Por ahora simulamos la carga con datos estáticos
    */
   cargarDetallesAnuncio(): void {
-    // Simulamos una carga desde el backend
-    setTimeout(() => {
-      // Datos simulados según el ID
-      this.cargarDatosSimulados();
-      
-      // Calcular precio inicial
-      this.calcularPrecio();
-      
-      // Verificar estado de favorito
-      this.verificarEstadoFavorito();
-      
-      // Marcar como cargado
-      this.cargando = false;
-    }, 800); // Simulamos un tiempo de carga
+    this.cargando = true;
+    
+    this.anuncioService.getAnuncio(this.anuncioId).subscribe({
+      next: (anuncio) => {
+        this.anuncio = anuncio;
+        
+        // Configurar valores por defecto basados en los datos del backend
+        this.precioBase = this.anuncio.precio;
+        
+        // Configurar datos adicionales simulados basados en el anuncio del backend
+        this.configurarDatosAdicionales();
+        
+        // Calcular precio inicial
+        this.calcularPrecio();
+        
+        // Verificar estado de favorito
+        this.verificarEstadoFavorito();
+        
+        // Generar valoraciones simuladas (por ahora)
+        this.generarValoracionesSimuladas();
+        
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar el anuncio:', error);
+        this.cargando = false;
+        // Redirigir a resultados de búsqueda si hay error
+        this.router.navigate(['/resultado-busqueda']);
+      }
+    });
   }
 
   /**
-   * Carga datos simulados según el ID del anuncio
+   * Configura datos adicionales simulados basados en el anuncio del backend
    */
-  cargarDatosSimulados(): void {
-    // Proveedores simulados
-    const proveedores = [
-      'TechPrint Madrid',
-      '3DExpress Madrid',
-      'EcoMakers Madrid',
-      'ColorPrint Madrid',
-      'ProMakers Madrid',
-      'TechSolutions Madrid',
-      'PrintStarters Madrid',
-      'IndustrialPrint Madrid',
-      'NylonTech Madrid',
+  configurarDatosAdicionales(): void {
+    // Usar el nombre del usuario como proveedor si está disponible
+    this.proveedor = this.anuncio.getNombreUsuario() || 'Proveedor de servicios 3D';
+    
+    // Ubicación simulada
+    this.ubicacion = 'Madrid';
+    
+    // Valoración simulada (entre 3 y 5 estrellas)
+    this.valoracion = Math.floor(Math.random() * 3) + 3;
+    this.numValoraciones = Math.floor(Math.random() * 120) + 30;
+    
+    // Descripción larga mejorada
+    this.descripcionLarga = 'Ofrecemos soluciones de impresión 3D personalizadas para satisfacer sus necesidades específicas. ' +
+                           'Nuestro equipo de expertos trabajará con usted para entender sus requisitos y proporcionar la mejor ' +
+                           'solución posible. Utilizamos materiales de alta calidad y equipos de última generación para garantizar ' +
+                           'la mejor calidad en cada impresión.';
+    
+    // Tiempo de entrega basado en el tiempoEstimado del backend o simulado
+    this.tiempoEntrega = this.anuncio.tiempoEstimado || '3-5 días laborables';
+    
+    // Materiales disponibles
+    this.materiales = ['PLA', 'PETG', 'ABS', 'TPU', 'Nylon'];
+    this.materialSeleccionado = this.materiales[0];
+    
+    // Colores disponibles
+    this.colores = ['Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Verde', 'Amarillo'];
+    
+    // Tamaño máximo
+    this.tamanoMaximo = '250mm x 250mm x 300mm';
+    
+    // Servicios adicionales
+    this.serviciosAdicionales = [
+      { id: 'acabadoPremium', nombre: 'Acabado Premium', descripcion: 'Tratamiento de superficie para un acabado profesional', precio: 10 },
+      { id: 'urgente', nombre: 'Entrega Urgente (24h)', descripcion: 'Impresión y entrega en 24 horas', precio: 15 },
+      { id: 'envioGratis', nombre: 'Entrega en casa', descripcion: 'Entrega en una dirección de su elección', precio: 5 }
     ];
     
-    // Títulos simulados
-    const titulos = [
-      'Impresión PLA de alta resolución',
-      'Impresión FDM con acabado premium',
-      'Impresión PLA biodegradable',
-      'Impresión FDM multicolor',
-      'Impresión FDM industrial',
-      'Impresión FDM con PETG',
-      'Pack impresión FDM básica',
-      'Impresión FDM con ABS',
-      'Impresión FDM con Nylon',
-    ];
+    // Métodos de pago
+    this.metodoPago = 'Tarjeta de crédito, PayPal, transferencia bancaria';
     
-    // Precios base simulados
-    const precios = [15, 20, 18, 25, 40, 22, 12, 24, 28];
-    
-    // Valoraciones simuladas (entre 3 y 5 estrellas, entre 30 y 150 valoraciones)
-    const estrellas = Math.floor(Math.random() * 2) + 3; // 3, 4 o 5 estrellas
-    const numValoraciones = Math.floor(Math.random() * 120) + 30;
-    
-    // Configuramos el anuncio con datos simulados
-    this.anuncio = {
-      id: this.anuncioId,
-      titulo: titulos[this.anuncioId - 1] || 'Servicio de impresión 3D',
-      proveedor: proveedores[this.anuncioId - 1] || 'Proveedor de servicios 3D',
-      ubicacion: 'Madrid',
-      valoracion: estrellas,
-      numValoraciones: numValoraciones,
-      descripcion: 'Servicio profesional de impresión 3D con la más alta calidad. ' +
-                  'Utilizamos tecnología de última generación para garantizar resultados ' +
-                  'precisos y acabados impecables. Ideal para prototipos, ' +
-                  'maquetas, piezas funcionales y proyectos creativos.',
-      descripcionLarga: 'Ofrecemos soluciones de impresión 3D personalizadas para satisfacer sus necesidades específicas. ' +
-                        'Nuestro equipo de expertos trabajará con usted para entender sus requisitos y proporcionar la mejor ' +
-                        'solución posible. Utilizamos materiales de alta calidad y equipos de última generación para garantizar ' +
-                        'la mejor calidad en cada impresión.\n\n' +
-                        'Nuestro proceso incluye una revisión detallada de su modelo 3D para asegurar su imprimibilidad, ' +
-                        'optimización para reducir costos sin comprometer la calidad, y un control de calidad riguroso ' +
-                        'después de la impresión. Todo esto para garantizar su completa satisfacción con el producto final.',
-      tiempoEntrega: '3-5 días laborables',
-      materiales: ['PLA', 'PETG', 'ABS', 'TPU', 'Nylon'],
-      colores: ['Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Verde', 'Amarillo'],
-      tamanoMaximo: '250mm x 250mm x 300mm',
-      precioBase: precios[this.anuncioId - 1] || 20,
-      serviciosAdicionales: [
-        { id: 'acabadoPremium', nombre: 'Acabado Premium', descripcion: 'Tratamiento de superficie para un acabado profesional', precio: 10 },
-        { id: 'urgente', nombre: 'Entrega Urgente (24h)', descripcion: 'Impresión y entrega en 24 horas', precio: 15 },
-        { id: 'envioGratis', nombre: 'Entrega en casa', descripcion: 'Entrega en una dirección de su elección', precio: 5 }
-      ],
-      imagenes: [
-        'https://ejemplo.com/imagen1.jpg',
-        'https://ejemplo.com/imagen2.jpg',
-        'https://ejemplo.com/imagen3.jpg'
-      ],
-      politicasCancelacion: 'Cancelación gratuita hasta 24 horas después de realizar el pedido. ' +
-                           'Para cancelaciones posteriores se retendrá el 20% del valor del pedido.',
-      metodoPago: 'Tarjeta de crédito, PayPal, transferencia bancaria',
-      informacionAdicional: 'Para pedidos especiales o consultas, contáctenos directamente.'
-    };
-    
-    // Precios base y material seleccionado por defecto
-    this.precioBase = this.anuncio.precioBase;
-    this.materialSeleccionado = this.anuncio.materiales[0];
-    
-    // Generar valoraciones simuladas
-    this.generarValoracionesSimuladas();
+    // Políticas de cancelación
+    this.politicasCancelacion = 'Cancelación gratuita hasta 24 horas después de realizar el pedido. ' +
+                              'Para cancelaciones posteriores se retendrá el 20% del valor del pedido.';
   }
-  
+
   /**
    * Genera valoraciones simuladas para el anuncio
    */
@@ -223,8 +218,8 @@ export class DetallesAnuncioComponent implements OnInit {
     precio = precio * this.cantidad;
     
     // Añadir servicios adicionales
-    for (const servicio of this.anuncio.serviciosAdicionales) {
-      if (this.serviciosAdicionales[servicio.id]) {
+    for (const servicio of this.serviciosAdicionales) {
+      if (this.serviciosAdicionalesSeleccionados[servicio.id]) {
         precio += servicio.precio;
       }
     }
@@ -254,7 +249,7 @@ export class DetallesAnuncioComponent implements OnInit {
    * Actualiza los servicios adicionales seleccionados
    */
   toggleServicioAdicional(servicioId: string): void {
-    this.serviciosAdicionales[servicioId] = !this.serviciosAdicionales[servicioId];
+    this.serviciosAdicionalesSeleccionados[servicioId] = !this.serviciosAdicionalesSeleccionados[servicioId];
     this.calcularPrecio();
   }
   

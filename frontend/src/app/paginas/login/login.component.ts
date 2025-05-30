@@ -81,6 +81,12 @@ export class LoginComponent {
         this.isLoading = false;
         console.error('Error de inicio de sesión:', error);
         
+        // Marcar todos los campos como tocados para mostrar los estilos de error
+        Object.keys(this.loginForm.controls).forEach(key => {
+          const control = this.loginForm.get(key);
+          control?.markAsTouched();
+        });
+        
         // Almacenar el mensaje de error
         this.errorMessage = error.error?.mensaje || 'Credenciales inválidas';
         

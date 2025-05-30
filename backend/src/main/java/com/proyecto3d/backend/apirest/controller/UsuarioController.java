@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto3d.backend.apirest.model.entity.Usuario;
+import com.proyecto3d.backend.apirest.model.entity.Ubicacion;
 import com.proyecto3d.backend.apirest.model.service.UsuarioService;
+import com.proyecto3d.backend.apirest.model.service.UbicacionService;
 
 @CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
@@ -32,6 +34,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private UbicacionService ubicacionService;
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -248,6 +253,14 @@ public class UsuarioController {
             // Actualizar la foto de perfil si se proporciona una nueva
             if (usuario.getFoto() != null) {
                 currentUsuario.setFoto(usuario.getFoto());
+            }
+            // Actualizar la ubicación si se proporciona
+            if (usuario.getUbicacion() != null && usuario.getUbicacion().getId() != null) {
+                Ubicacion ubicacion = ubicacionService.findById(usuario.getUbicacion().getId());
+                currentUsuario.setUbicacion(ubicacion);
+            } else if (usuario.getUbicacion() == null) {
+                // Si se envía ubicacion como null, eliminar la ubicación del usuario
+                currentUsuario.setUbicacion(null);
             }
             currentUsuario.setRol(usuario.getRol());
 

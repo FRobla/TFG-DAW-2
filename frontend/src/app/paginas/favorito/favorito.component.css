@@ -132,6 +132,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: all var(--transition-speed) ease;
   border-radius: var(--border-radius);
   font-weight: 500;
+  border-radius: 10px;
 }
 
 .btn-cta {

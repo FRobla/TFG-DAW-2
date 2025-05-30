@@ -21,11 +21,7 @@
               <div class="col-md-3">
                 <select class="form-select" [(ngModel)]="filtroUbicacion">
                   <option value="">Ubicación</option>
-                  <option value="Madrid">Madrid</option>
-                  <option value="Barcelona">Barcelona</option>
-                  <option value="Valencia">Valencia</option>
-                  <option value="Sevilla">Sevilla</option>
-                  <option value="Bilbao">Bilbao</option>
+                  <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.id">{{ ubicacion.nombre }}</option>
                 </select>
               </div>
               <div class="col-md-3">

@@ -22,4 +22,6 @@ public interface UbicacionService {
     public List<Map<String, Object>> getUbicacionesConConteoAnuncios();
     
     public List<Ubicacion> findByTerm(String term);
+    
+    public List<Ubicacion> findUbicacionesConAnuncios();
 } 

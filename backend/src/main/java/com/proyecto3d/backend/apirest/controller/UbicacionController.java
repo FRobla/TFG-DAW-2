@@ -50,6 +50,12 @@ public class UbicacionController {
 		return ubicacionService.findByActivoTrue();
 	}
 
+	// Obtener ubicaciones donde hay usuarios con anuncios publicados
+	@GetMapping("/ubicaciones/con-anuncios")
+	public List<Ubicacion> getUbicacionesConAnuncios() {
+		return ubicacionService.findUbicacionesConAnuncios();
+	}
+
 	// Buscar ubicaciones por término
 	@GetMapping("/ubicaciones/buscar")
 	public List<Ubicacion> searchUbicaciones(@RequestParam String term) {

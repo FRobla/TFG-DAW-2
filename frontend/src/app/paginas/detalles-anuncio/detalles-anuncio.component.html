@@ -10,7 +10,7 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#">Inicio</a></li>
           <li class="breadcrumb-item"><a href="javascript:void(0)" (click)="volverAResultados($event)">Resultados de búsqueda</a></li>
-          <li class="breadcrumb-item active" aria-current="page" [attr.data-view-id]="'anuncio-title-' + anuncioId" data-view-transition="header">{{anuncio.titulo}}</li>
+          <li class="breadcrumb-item active" aria-current="page" [attr.data-view-id]="'anuncio-title-' + anuncioId" data-view-transition="header">{{anuncio?.titulo}}</li>
         </ol>
       </nav>
     </div>
@@ -24,7 +24,7 @@
   </div>
 
   <!-- Contenido del anuncio (visible solo cuando se han cargado los datos) -->
-  <div class="container" *ngIf="!cargando" data-view-transition="card">
+  <div class="container" *ngIf="!cargando && anuncio" data-view-transition="card">
     <div class="row mt-4">
       <!-- Columna izquierda: Información del servicio -->
       <div class="col-lg-8">
@@ -55,22 +55,22 @@
           <div class="service-provider">
             <div class="provider-info">
               <div class="provider-avatar">
-                {{anuncio.proveedor.charAt(0)}}
+                {{proveedor.charAt(0)}}
               </div>
               <div>
-                <span class="provider-name">{{anuncio.proveedor}}</span>
+                <span class="provider-name">{{proveedor}}</span>
                 <div class="d-flex align-items-center mt-1">
                   <i class="bi bi-geo-alt-fill me-1"></i>
-                  <span>{{anuncio.ubicacion}}</span>
+                  <span>{{ubicacion}}</span>
                 </div>
               </div>
             </div>
             <div>
               <div class="rating">
-                <span *ngIf="anuncio.valoracion === 5">★★★★★</span>
-                <span *ngIf="anuncio.valoracion === 4">★★★★☆</span>
-                <span *ngIf="anuncio.valoracion === 3">★★★☆☆</span>
-                <span class="rating-count">({{anuncio.numValoraciones}})</span>
+                <span *ngIf="valoracion === 5">★★★★★</span>
+                <span *ngIf="valoracion === 4">★★★★☆</span>
+                <span *ngIf="valoracion === 3">★★★☆☆</span>
+                <span class="rating-count">({{numValoraciones}})</span>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@
           <div class="mt-4">
             <h3>Descripción</h3>
             <p>{{anuncio.descripcion}}</p>
-            <p>{{anuncio.descripcionLarga}}</p>
+            <p>{{descripcionLarga}}</p>
           </div>
           
           <!-- Especificaciones técnicas -->
@@ -132,27 +132,27 @@
               <tbody>
                 <tr>
                   <th>Tiempo de entrega</th>
-                  <td>{{anuncio.tiempoEntrega}}</td>
+                  <td>{{tiempoEntrega}}</td>
                 </tr>
                 <tr>
                   <th>Materiales disponibles</th>
-                  <td>{{anuncio.materiales.join(', ')}}</td>
+                  <td>{{materiales.join(', ')}}</td>
                 </tr>
                 <tr>
                   <th>Colores disponibles</th>
-                  <td>{{anuncio.colores.join(', ')}}</td>
+                  <td>{{colores.join(', ')}}</td>
                 </tr>
                 <tr>
                   <th>Tamaño máximo</th>
-                  <td>{{anuncio.tamanoMaximo}}</td>
+                  <td>{{tamanoMaximo}}</td>
                 </tr>
                 <tr>
                   <th>Métodos de pago</th>
-                  <td>{{anuncio.metodoPago}}</td>
+                  <td>{{metodoPago}}</td>
                 </tr>
                 <tr>
                   <th>Política de cancelación</th>
-                  <td>{{anuncio.politicasCancelacion}}</td>
+                  <td>{{politicasCancelacion}}</td>
                 </tr>
               </tbody>
             </table>
@@ -162,10 +162,10 @@
           <div class="reviews-section">
             <h3>Valoraciones y Opiniones</h3>
             <div class="rating mb-3">
-              <span *ngIf="anuncio.valoracion === 5">★★★★★</span>
-              <span *ngIf="anuncio.valoracion === 4">★★★★☆</span>
-              <span *ngIf="anuncio.valoracion === 3">★★★☆☆</span>
-              <span class="rating-count">({{anuncio.numValoraciones}} valoraciones)</span>
+              <span *ngIf="valoracion === 5">★★★★★</span>
+              <span *ngIf="valoracion === 4">★★★★☆</span>
+              <span *ngIf="valoracion === 3">★★★☆☆</span>
+              <span class="rating-count">({{numValoraciones}} valoraciones)</span>
             </div>
             
             <!-- Listado de valoraciones -->
@@ -213,7 +213,7 @@
           <div class="option-group">
             <label class="option-label">Material:</label>
             <div class="option-chips">
-              <div *ngFor="let material of anuncio.materiales" 
+              <div *ngFor="let material of materiales" 
                    class="option-chip" 
                    [class.active]="materialSeleccionado === material"
                    (click)="actualizarMaterial(material)">
@@ -235,12 +235,12 @@
           <!-- Servicios adicionales -->
           <div class="option-group">
             <label class="option-label">Servicios adicionales:</label>
-            <div *ngFor="let servicio of anuncio.serviciosAdicionales" 
+            <div *ngFor="let servicio of serviciosAdicionales" 
                  class="additional-service"
-                 [class.active]="serviciosAdicionales[servicio.id]"
+                 [class.active]="serviciosAdicionalesSeleccionados[servicio.id]"
                  (click)="toggleServicioAdicional(servicio.id)">
               <input type="checkbox" class="service-checkbox" 
-                     [checked]="serviciosAdicionales[servicio.id]"
+                     [checked]="serviciosAdicionalesSeleccionados[servicio.id]"
                      (click)="$event.stopPropagation();"
                      (change)="toggleServicioAdicional(servicio.id)">
               <div class="service-info">
@@ -261,9 +261,9 @@
               <div class="price-label">Cantidad</div>
               <div class="price-value">x{{cantidad}}</div>
             </div>
-            <div class="price-row" *ngFor="let servicio of anuncio.serviciosAdicionales">
-              <div class="price-label" *ngIf="serviciosAdicionales[servicio.id]">{{servicio.nombre}}</div>
-              <div class="price-value" *ngIf="serviciosAdicionales[servicio.id]">+{{servicio.precio}}€</div>
+            <div class="price-row" *ngFor="let servicio of serviciosAdicionales">
+              <div class="price-label" *ngIf="serviciosAdicionalesSeleccionados[servicio.id]">{{servicio.nombre}}</div>
+              <div class="price-value" *ngIf="serviciosAdicionalesSeleccionados[servicio.id]">+{{servicio.precio}}€</div>
             </div>
             <hr>
             <div class="price-row">

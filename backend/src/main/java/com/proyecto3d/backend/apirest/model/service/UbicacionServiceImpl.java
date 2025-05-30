@@ -96,4 +96,10 @@ public class UbicacionServiceImpl implements UbicacionService {
     public List<Ubicacion> findByTerm(String term) {
         return ubicacionDao.findByTerm(term);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Ubicacion> findUbicacionesConAnuncios() {
+        return ubicacionDao.findUbicacionesConAnuncios();
+    }
 } 

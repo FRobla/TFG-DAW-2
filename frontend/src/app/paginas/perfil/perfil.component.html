@@ -105,6 +105,10 @@
                     <label>Dirección</label>
                     <span>{{usuario.direccion || 'No especificada'}}</span>
                   </div>
+                  <div class="info-item">
+                    <label>Ciudad</label>
+                    <span>{{usuario.getNombreUbicacion()}}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -231,6 +235,18 @@
                  name="direccion" 
                  [(ngModel)]="usuarioEditado.direccion"
                  placeholder="Ej: Calle Principal 123, Ciudad, País">
+        </div>
+        <div class="form-group">
+          <label for="ubicacion">Ciudad</label>
+          <select id="ubicacion" 
+                  name="ubicacion" 
+                  class="form-select"
+                  [(ngModel)]="ubicacionSeleccionadaId">
+            <option value="">Seleccionar ciudad</option>
+            <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.id">
+              {{ubicacion.nombre}}
+            </option>
+          </select>
         </div>
       </form>
     </div>

@@ -16,7 +16,7 @@
           <!-- Formulario de login -->
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
             <!-- Alerta de error -->
-            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show text-black text-center" role="alert">
               {{ errorMessage }}
               <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
             </div>
