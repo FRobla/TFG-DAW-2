@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritoService } from '../favorito/favorito.service';
 import { AnuncioService } from '../../entidades/anuncio/anuncio.service';
+import { CarritoService, AnadirCarritoRequest } from '../carrito/carrito.service';
 import { Anuncio } from '../../entidades/anuncio/anuncio';
 import { Material } from '../../entidades/material/material';
 
@@ -62,11 +63,15 @@ export class DetallesAnuncioComponent implements OnInit {
   precioBase: number = 0;
   precioTotal: number = 0;
 
+  // Estado del carrito
+  agregandoAlCarrito: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private favoritoService: FavoritoService,
-    private anuncioService: AnuncioService
+    private anuncioService: AnuncioService,
+    private carritoService: CarritoService
   ) { }
 
   ngOnInit(): void {
@@ -278,11 +283,83 @@ export class DetallesAnuncioComponent implements OnInit {
   }
   
   /**
-   * Añade el servicio al carrito
+   * Añade el elemento al carrito
    */
   anadirAlCarrito(): void {
-    alert('Servicio añadido al carrito');
-    // Aquí iría la lógica para añadir al carrito
+    if (!this.materialSeleccionado) {
+      alert('Por favor, selecciona un material antes de añadir al carrito');
+      return;
+    }
+
+    if (this.cantidad <= 0) {
+      alert('La cantidad debe ser mayor a 0');
+      return;
+    }
+
+    this.agregandoAlCarrito = true;
+
+    const request: AnadirCarritoRequest = {
+      usuarioId: 1, // Usuario simulado - en el futuro vendrá del servicio de autenticación
+      anuncioId: this.anuncioId,
+      cantidad: this.cantidad,
+      materialSeleccionado: this.materialSeleccionado,
+      colorSeleccionado: this.colores.length > 0 ? this.colores[0] : undefined,
+      acabadoPremium: this.serviciosAdicionalesSeleccionados['acabadoPremium'],
+      urgente: this.serviciosAdicionalesSeleccionados['urgente'],
+      envioGratis: this.serviciosAdicionalesSeleccionados['envioGratis']
+    };
+
+    this.carritoService.anadirAlCarrito(request).subscribe({
+      next: (response) => {
+        console.log('Elemento añadido al carrito exitosamente:', response);
+        this.agregandoAlCarrito = false;
+        
+        // Mostrar mensaje de éxito
+        this.mostrarMensajeExito('Elemento añadido al carrito exitosamente');
+        
+        // Opcional: Redirigir al carrito
+        // this.router.navigate(['/carrito']);
+      },
+      error: (error) => {
+        console.error('Error al añadir al carrito:', error);
+        this.agregandoAlCarrito = false;
+      }
+    });
+  }
+
+  /**
+   * Muestra un mensaje de éxito temporal
+   */
+  private mostrarMensajeExito(mensaje: string): void {
+    // Crear elemento de mensaje
+    const messageElement = document.createElement('div');
+    messageElement.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        font-family: Inter, sans-serif;
+        font-weight: 500;
+      ">
+        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+        ${mensaje}
+      </div>
+    `;
+    
+    document.body.appendChild(messageElement);
+    
+    // Eliminar después de 3 segundos
+    setTimeout(() => {
+      if (messageElement.parentNode) {
+        messageElement.parentNode.removeChild(messageElement);
+      }
+    }, 3000);
   }
   
   /**

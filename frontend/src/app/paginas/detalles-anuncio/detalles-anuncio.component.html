@@ -315,8 +315,13 @@
           
           <!-- Botones de acción -->
           <div class="mt-4">
-            <button class="btn btn-cta w-100 mb-3" (click)="anadirAlCarrito()">
-              <i class="bi bi-cart-plus me-2"></i> Añadir al carrito
+            <button 
+              class="btn btn-cta w-100 mb-3" 
+              (click)="anadirAlCarrito()"
+              [disabled]="agregandoAlCarrito">
+              <i class="bi bi-cart-plus me-2" *ngIf="!agregandoAlCarrito"></i>
+              <i class="fas fa-spinner fa-spin me-2" *ngIf="agregandoAlCarrito"></i>
+              {{ agregandoAlCarrito ? 'Añadiendo...' : 'Añadir al carrito' }}
             </button>
             <button class="btn btn-outline w-100" (click)="contactarProveedor()">
               <i class="bi bi-chat-dots me-2"></i> Contactar con el proveedor

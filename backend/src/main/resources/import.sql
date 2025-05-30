@@ -190,8 +190,8 @@ VALUES
 (11, 'Escaneado 3D de objetos físicos', 'Captura de objetos reales con escáner 3D de alta precisión para posterior impresión.', 'activo', NULL, 35.00, '3 días', '2025-05-11', 28, 4.2, 3, 2),
 (12, 'Prototipos médicos impresos en resina', 'Fabricación de prototipos médicos con precisión de 25 micras usando tecnología SLA.', 'activo', NULL, 60.00, '5-7 días', '2025-05-12', 32, 4.9, 2, 3),
 (13, 'Maquetas arquitectónicas detalladas', 'Maquetas a escala para proyectos arquitectónicos. Detalles finos y acabados de calidad.', 'activo', NULL, 100.00, '7-10 días', '2025-05-13', 19, 4.7, 7, 5),
-(14, 'Consultoría técnica en impresión 3D', 'Evaluación de viabilidad, materiales y tecnologías para tus proyectos de impresión 3D.', 'activo', NULL, 50.00, '1-2 días', '2025-05-14', 22, 4.5, 1, 1),
-(15, 'Taller de impresión 3D para principiantes', 'Aprende a imprimir en 3D desde cero. Incluye teoría, práctica y certificados.', 'activo', NULL, 20.00, '1 día', '2025-05-15', 51, 4.3, 8, 1);
+(14, 'Consultoría técnica en impresión 3D', 'Evaluación de viabilidad, materiales y tecnologías para tus proyectos de impresión 3D.', 'activo', NULL, 50.00, '1-2 días', '2025-05-14', 501, 4.5, 1, 1),
+(15, 'Taller de impresión 3D para principiantes', 'Aprende a imprimir en 3D desde cero. Incluye teoría, práctica y certificados.', 'activo', NULL, 20.00, '1 día', '2025-05-15', 501, 4.3, 8, 1);
 
 -- Relaciones entre Anuncios y Categorías
 INSERT INTO anuncio_categoria (anuncio_id, categoria_id) VALUES (1, 1); -- Impresión PLA alta resolución - Impresión FDM

@@ -1,1 +1,399 @@
-<p>carrito works!</p>
+<app-navbar-busqueda></app-navbar-busqueda>
+
+<div class="carrito-container">
+  <!-- Cabecera del carrito -->
+  <div class="carrito-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="header-content">
+            <div class="header-left">
+              <h1>
+                <i class="fas fa-shopping-cart"></i>
+                Carrito de Compras
+              </h1>
+              <div class="breadcrumb-nav">
+                <span (click)="continuarComprando()" class="breadcrumb-link">
+                  <i class="fas fa-chevron-left"></i>
+                  Continuar comprando
+                </span>
+              </div>
+            </div>
+            <div class="header-right" *ngIf="!cargando && !carritoVacio()">
+              <div class="carrito-summary-header">
+                <div class="summary-item">
+                  <span class="summary-value">{{ totalElementos }}</span>
+                  <span class="summary-label">{{ totalElementos === 1 ? 'Artículo' : 'Artículos' }}</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item">
+                  <span class="summary-value">{{ formatearPrecio(totalPrecio) }}€</span>
+                  <span class="summary-label">Total</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="carrito-content">
+    <div class="container">
+      <!-- Estado de carga -->
+      <div *ngIf="cargando" class="loader-section">
+        <div class="loader-container">
+          <div class="loader"></div>
+          <p>Cargando tu carrito...</p>
+        </div>
+      </div>
+
+      <!-- Carrito vacío -->
+      <div *ngIf="!cargando && carritoVacio()" class="carrito-vacio-section">
+        <div class="row justify-content-center">
+          <div class="col-lg-6 col-md-8">
+            <div class="carrito-vacio">
+              <div class="empty-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+              <h2>Tu carrito está vacío</h2>
+              <p>Explora nuestros servicios de impresión 3D y encuentra exactamente lo que necesitas</p>
+              <div class="empty-actions">
+                <button class="btn btn-primary btn-large" (click)="continuarComprando()">
+                  <i class="fas fa-search"></i>
+                  Explorar Servicios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carrito con elementos -->
+      <div *ngIf="!cargando && !carritoVacio()" class="carrito-main">
+        <div class="row">
+          <!-- Columna principal - Lista de productos -->
+          <div class="col-lg-8">
+            <div class="productos-section">
+              <!-- Header de productos -->
+              <div class="productos-header">
+                <h2>
+                  <i class="fas fa-list"></i>
+                  Artículos en tu carrito
+                </h2>
+                <button 
+                  class="btn-vaciar-carrito" 
+                  (click)="confirmarVaciarCarrito()" 
+                  [disabled]="procesando"
+                  title="Vaciar carrito completo">
+                  <i class="fas fa-trash"></i>
+                  <span>Vaciar carrito</span>
+                </button>
+              </div>
+
+              <!-- Lista de productos -->
+              <div class="productos-lista">
+                <div class="producto-item" *ngFor="let elemento of elementosCarrito; trackBy: trackByElementoId">
+                  <div class="producto-row">
+                    <!-- Imagen del producto -->
+                    <div class="producto-imagen" (click)="verDetallesAnuncio(elemento.anuncioId)">
+                      <div class="imagen-container">
+                        <img 
+                          *ngIf="elemento.imagenAnuncio" 
+                          [src]="elemento.imagenAnuncio" 
+                          [alt]="elemento.tituloAnuncio"
+                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="imagen-placeholder" style="display: none;">
+                          <i class="fas fa-cube"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Información del producto -->
+                    <div class="producto-info">
+                      <div class="producto-details">
+                        <h3 class="producto-titulo" (click)="verDetallesAnuncio(elemento.anuncioId)">
+                          {{ elemento.tituloAnuncio }}
+                        </h3>
+                        
+                        <div class="producto-proveedor">
+                          <i class="fas fa-store"></i>
+                          <span>{{ elemento.nombreProveedor }}</span>
+                        </div>
+
+                        <div class="producto-specs">
+                          <div class="spec-item">
+                            <i class="fas fa-layer-group"></i>
+                            <span>{{ elemento.materialSeleccionado }}</span>
+                          </div>
+                          <div class="spec-item" *ngIf="elemento.colorSeleccionado">
+                            <i class="fas fa-palette"></i>
+                            <span>{{ elemento.colorSeleccionado }}</span>
+                          </div>
+                        </div>
+
+                        <!-- Servicios adicionales -->
+                        <div class="servicios-adicionales" *ngIf="elemento.acabadoPremium || elemento.urgente || elemento.envioGratis">
+                          <div class="servicios-titulo">
+                            <i class="fas fa-plus-circle"></i>
+                            Servicios incluidos:
+                          </div>
+                          <div class="servicios-lista">
+                            <span class="servicio-tag premium" *ngIf="elemento.acabadoPremium">
+                              <i class="fas fa-star"></i>
+                              Acabado Premium
+                            </span>
+                            <span class="servicio-tag urgente" *ngIf="elemento.urgente">
+                              <i class="fas fa-bolt"></i>
+                              Entrega Urgente
+                            </span>
+                            <span class="servicio-tag envio" *ngIf="elemento.envioGratis">
+                              <i class="fas fa-truck"></i>
+                              Envío Gratis
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Panel de servicios editables -->
+                      <div class="servicios-panel">
+                        <div class="panel-header">
+                          <h4>Personalizar servicios</h4>
+                        </div>
+                        <div class="servicios-opciones">
+                          <label class="servicio-option premium" 
+                                 [class.disabled]="elementoActualizando === elemento.id">
+                            <input 
+                              type="checkbox" 
+                              [checked]="elemento.acabadoPremium"
+                              [disabled]="elementoActualizando === elemento.id"
+                              (change)="toggleServicioAdicional(elemento, 'acabadoPremium')">
+                            <div class="option-content">
+                              <div class="option-info">
+                                <i class="fas fa-star" *ngIf="elementoActualizando !== elemento.id"></i>
+                                <i class="fas fa-spinner fa-spin" *ngIf="elementoActualizando === elemento.id"></i>
+                                <span class="option-name">Acabado Premium</span>
+                                <span class="option-price">+15%</span>
+                              </div>
+                              <div class="option-description">Tratamiento de superficie profesional</div>
+                            </div>
+                          </label>
+
+                          <label class="servicio-option urgente" 
+                                 [class.disabled]="elementoActualizando === elemento.id">
+                            <input 
+                              type="checkbox" 
+                              [checked]="elemento.urgente"
+                              [disabled]="elementoActualizando === elemento.id"
+                              (change)="toggleServicioAdicional(elemento, 'urgente')">
+                            <div class="option-content">
+                              <div class="option-info">
+                                <i class="fas fa-bolt" *ngIf="elementoActualizando !== elemento.id"></i>
+                                <i class="fas fa-spinner fa-spin" *ngIf="elementoActualizando === elemento.id"></i>
+                                <span class="option-name">Entrega Urgente</span>
+                                <span class="option-price">+25%</span>
+                              </div>
+                              <div class="option-description">Procesado en 24-48 horas</div>
+                            </div>
+                          </label>
+
+                          <label class="servicio-option envio" 
+                                 [class.disabled]="elementoActualizando === elemento.id">
+                            <input 
+                              type="checkbox" 
+                              [checked]="elemento.envioGratis"
+                              [disabled]="elementoActualizando === elemento.id"
+                              (change)="toggleServicioAdicional(elemento, 'envioGratis')">
+                            <div class="option-content">
+                              <div class="option-info">
+                                <i class="fas fa-truck" *ngIf="elementoActualizando !== elemento.id"></i>
+                                <i class="fas fa-spinner fa-spin" *ngIf="elementoActualizando === elemento.id"></i>
+                                <span class="option-name">Envío Gratis</span>
+                                <span class="option-price">Incluido</span>
+                              </div>
+                              <div class="option-description">Entrega sin coste adicional</div>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Controles de cantidad y precio -->
+                    <div class="producto-controls">
+                      <div class="cantidad-section">
+                        <label class="cantidad-label">Cantidad</label>
+                        <div class="cantidad-control">
+                          <button 
+                            class="cantidad-btn" 
+                            (click)="actualizarCantidad(elemento, { target: { value: elemento.cantidad - 1 } })"
+                            [disabled]="elemento.cantidad <= 1 || elementoActualizando === elemento.id">
+                            <i class="fas fa-minus" *ngIf="elementoActualizando !== elemento.id"></i>
+                            <i class="fas fa-spinner fa-spin" *ngIf="elementoActualizando === elemento.id"></i>
+                          </button>
+                          <input 
+                            type="number" 
+                            class="cantidad-input"
+                            [value]="elemento.cantidad"
+                            min="1" 
+                            max="99"
+                            [disabled]="elementoActualizando === elemento.id"
+                            (change)="actualizarCantidad(elemento, $event)">
+                          <button 
+                            class="cantidad-btn" 
+                            (click)="actualizarCantidad(elemento, { target: { value: elemento.cantidad + 1 } })"
+                            [disabled]="elemento.cantidad >= 99 || elementoActualizando === elemento.id">
+                            <i class="fas fa-plus" *ngIf="elementoActualizando !== elemento.id"></i>
+                            <i class="fas fa-spinner fa-spin" *ngIf="elementoActualizando === elemento.id"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="precio-section">
+                        <div class="precio-unitario">
+                          {{ formatearPrecio(elemento.precioUnitario) }}€ / unidad
+                        </div>
+                        <div class="precio-total">
+                          {{ formatearPrecio(elemento.precioTotal) }}€
+                        </div>
+                      </div>
+
+                      <div class="acciones-section">
+                        <button 
+                          class="btn-eliminar"
+                          (click)="eliminarElemento(elemento)"
+                          [disabled]="procesando || elementoEliminando === elemento.id"
+                          title="Eliminar artículo del carrito">
+                          <i class="fas fa-trash"></i>
+                          <span>{{ elementoEliminando === elemento.id ? 'Eliminando...' : 'Eliminar' }}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna lateral - Resumen del pedido -->
+          <div class="col-lg-4">
+            <div class="resumen-pedido">
+              <div class="resumen-header">
+                <h3>
+                  <i class="fas fa-receipt"></i>
+                  Resumen del Pedido
+                </h3>
+              </div>
+
+              <div class="resumen-content">
+                <!-- Desglose de precios -->
+                <div class="precio-desglose">
+                  <div class="precio-linea">
+                    <span class="linea-label">Subtotal ({{ totalElementos }} {{ totalElementos === 1 ? 'artículo' : 'artículos' }})</span>
+                    <span class="linea-valor">{{ formatearPrecio(totalPrecio) }}€</span>
+                  </div>
+                  
+                  <div class="precio-linea descuento" *ngIf="false">
+                    <span class="linea-label">Descuento</span>
+                    <span class="linea-valor descuento-valor">-0,00€</span>
+                  </div>
+                  
+                  <div class="precio-linea envio">
+                    <span class="linea-label">
+                      Envío
+                      <i class="fas fa-info-circle" title="Calculado al finalizar compra"></i>
+                    </span>
+                    <span class="linea-valor">Calculado en checkout</span>
+                  </div>
+                </div>
+
+                <div class="precio-total-section">
+                  <div class="precio-total-linea">
+                    <span class="total-label">Total</span>
+                    <span class="total-valor">{{ formatearPrecio(totalPrecio) }}€</span>
+                  </div>
+                  <div class="impuestos-info">
+                    <i class="fas fa-info-circle"></i>
+                    Impuestos incluidos
+                  </div>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="info-adicional">
+                  <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <div class="info-content">
+                      <div class="info-title">Tiempo de entrega</div>
+                      <div class="info-text">{{ calcularTiempoEntregaMaximo() }}</div>
+                    </div>
+                  </div>
+                  
+                  <div class="info-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="info-content">
+                      <div class="info-title">Garantía de calidad</div>
+                      <div class="info-text">Satisfacción garantizada</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="acciones-checkout">
+                  <button 
+                    class="btn btn-checkout"
+                    (click)="procederAlCheckout()"
+                    [disabled]="procesando">
+                    <i class="fas fa-lock"></i>
+                    <span>{{ procesando ? 'Procesando...' : 'Proceder al Pago' }}</span>
+                  </button>
+
+                  <button 
+                    class="btn btn-continuar"
+                    (click)="continuarComprando()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Seguir Comprando</span>
+                  </button>
+
+                  <!-- Métodos de pago aceptados -->
+                  <div class="metodos-pago">
+                    <div class="metodos-titulo">Métodos de pago aceptados</div>
+                    <div class="metodos-iconos">
+                      <i class="fab fa-cc-visa" title="Visa"></i>
+                      <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                      <i class="fab fa-paypal" title="PayPal"></i>
+                      <i class="fas fa-university" title="Transferencia"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación para vaciar carrito -->
+<div class="modal-overlay" *ngIf="mostrarConfirmacionVaciar" (click)="cancelarVaciarCarrito()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h4>Confirmar Acción</h4>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que quieres vaciar tu carrito?</p>
+      <p class="warning-text">Esta acción eliminará todos los artículos y no se puede deshacer.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="cancelarVaciarCarrito()">
+        <i class="fas fa-times"></i>
+        Cancelar
+      </button>
+      <button class="btn btn-danger" (click)="vaciarCarrito()">
+        <i class="fas fa-trash"></i>
+        Vaciar Carrito
+      </button>
+    </div>
+  </div>
+</div>
