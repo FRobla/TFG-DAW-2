@@ -263,6 +263,19 @@
             </div>
           </div>
           
+          <!-- Selección de color -->
+          <div class="option-group" *ngIf="colores.length > 0">
+            <label class="option-label">Color:</label>
+            <div class="option-chips">
+              <div *ngFor="let color of colores" 
+                   class="option-chip" 
+                   [class.active]="colorSeleccionado === color"
+                   (click)="actualizarColor(color)">
+                {{color}}
+              </div>
+            </div>
+          </div>
+          
           <!-- Control de cantidad -->
           <div class="option-group">
             <label class="option-label">Cantidad:</label>
@@ -297,6 +310,14 @@
             <div class="price-row">
               <div class="price-label">Precio base</div>
               <div class="price-value">{{precioBase}}€</div>
+            </div>
+            <div class="price-row" *ngIf="materialSeleccionado">
+              <div class="price-label">Material</div>
+              <div class="price-value">{{materialSeleccionado}}</div>
+            </div>
+            <div class="price-row" *ngIf="colorSeleccionado">
+              <div class="price-label">Color</div>
+              <div class="price-value">{{colorSeleccionado}}</div>
             </div>
             <div class="price-row" *ngIf="cantidad > 1">
               <div class="price-label">Cantidad</div>

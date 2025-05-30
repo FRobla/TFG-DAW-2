@@ -50,13 +50,14 @@ export class DetallesAnuncioComponent implements OnInit {
   
   // Material seleccionado y cantidad
   materialSeleccionado: string = '';
+  colorSeleccionado: string = '';
   cantidad: number = 1;
   
   // Servicios adicionales seleccionados
   serviciosAdicionalesSeleccionados: {[key: string]: boolean} = {
     acabadoPremium: false,
     urgente: false,
-    envioGratis: false
+    envioGratis: true
   };
   
   // Precio calculado
@@ -150,11 +151,13 @@ export class DetallesAnuncioComponent implements OnInit {
       
       // Colores disponibles de los materiales
       this.colores = this.anuncio.getColoresDisponibles();
+      this.colorSeleccionado = this.colores.length > 0 ? this.colores[0] : '';
     } else {
       // Fallback a materiales simulados si no hay datos del backend
       this.materiales = ['PLA', 'PETG', 'ABS', 'TPU', 'Nylon'];
       this.materialSeleccionado = this.materiales[0];
       this.colores = ['Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Verde', 'Amarillo'];
+      this.colorSeleccionado = this.colores[0];
     }
     
     // Información de la impresora del backend
@@ -175,7 +178,7 @@ export class DetallesAnuncioComponent implements OnInit {
     this.serviciosAdicionales = [
       { id: 'acabadoPremium', nombre: 'Acabado Premium', descripcion: 'Tratamiento de superficie para un acabado profesional', precio: 10 },
       { id: 'urgente', nombre: 'Entrega Urgente (24h)', descripcion: 'Impresión y entrega en 24 horas', precio: 15 },
-      { id: 'envioGratis', nombre: 'Entrega en casa', descripcion: 'Entrega en una dirección de su elección', precio: 5 }
+      { id: 'envioGratis', nombre: 'Envío gratuito', descripcion: 'Entrega en una dirección de su elección gratuitamente', precio: 0 }
     ];
     
     // Métodos de pago
@@ -275,6 +278,15 @@ export class DetallesAnuncioComponent implements OnInit {
   }
   
   /**
+   * Actualiza el color seleccionado
+   */
+  actualizarColor(color: string): void {
+    this.colorSeleccionado = color;
+    // Recalcular precio en caso de que el color afecte al precio en el futuro
+    this.calcularPrecio();
+  }
+  
+  /**
    * Actualiza los servicios adicionales seleccionados
    */
   toggleServicioAdicional(servicioId: string): void {
@@ -291,6 +303,11 @@ export class DetallesAnuncioComponent implements OnInit {
       return;
     }
 
+    if (this.colores.length > 0 && !this.colorSeleccionado) {
+      alert('Por favor, selecciona un color antes de añadir al carrito');
+      return;
+    }
+
     if (this.cantidad <= 0) {
       alert('La cantidad debe ser mayor a 0');
       return;
@@ -303,7 +320,7 @@ export class DetallesAnuncioComponent implements OnInit {
       anuncioId: this.anuncioId,
       cantidad: this.cantidad,
       materialSeleccionado: this.materialSeleccionado,
-      colorSeleccionado: this.colores.length > 0 ? this.colores[0] : undefined,
+      colorSeleccionado: this.colorSeleccionado || undefined,
       acabadoPremium: this.serviciosAdicionalesSeleccionados['acabadoPremium'],
       urgente: this.serviciosAdicionalesSeleccionados['urgente'],
       envioGratis: this.serviciosAdicionalesSeleccionados['envioGratis']

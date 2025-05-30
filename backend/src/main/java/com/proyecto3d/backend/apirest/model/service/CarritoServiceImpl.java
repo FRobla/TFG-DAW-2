@@ -43,6 +43,7 @@ public class CarritoServiceImpl implements CarritoService {
         System.out.println("anuncioId: " + anuncioId);
         System.out.println("cantidad: " + cantidad);
         System.out.println("materialSeleccionado: " + materialSeleccionado);
+        System.out.println("colorSeleccionado: " + colorSeleccionado);
 
         // Validar que el usuario existe
         Usuario usuario = usuarioDao.findById(usuarioId)
@@ -57,13 +58,13 @@ public class CarritoServiceImpl implements CarritoService {
         System.out.println("Anuncio encontrado: " + anuncio.getTitulo());
         System.out.println("Precio base del anuncio: " + anuncio.getPrecioBase());
 
-        // Verificar si ya existe un elemento con el mismo material en el carrito
-        Optional<Carrito> carritoExistente = carritoDAO.findByUsuarioIdAndAnuncioIdAndMaterial(
-            usuarioId, anuncioId, materialSeleccionado);
+        // Verificar si ya existe un elemento con el mismo material y color en el carrito
+        Optional<Carrito> carritoExistente = carritoDAO.findByUsuarioIdAndAnuncioIdAndMaterialAndColor(
+            usuarioId, anuncioId, materialSeleccionado, colorSeleccionado);
 
         if (carritoExistente.isPresent()) {
-            System.out.println("Actualizando elemento existente en el carrito");
-            // Si existe, actualizar la cantidad y servicios adicionales
+            System.out.println("Actualizando elemento existente en el carrito (mismo material y color)");
+            // Si existe un elemento con la misma combinación de material y color, actualizar la cantidad y servicios adicionales
             Carrito carrito = carritoExistente.get();
             carrito.setCantidad(carrito.getCantidad() + cantidad);
             carrito.setColorSeleccionado(colorSeleccionado);
@@ -74,8 +75,8 @@ public class CarritoServiceImpl implements CarritoService {
             Carrito carritoGuardado = carritoDAO.save(carrito);
             return convertirACarritoDTO(carritoGuardado);
         } else {
-            System.out.println("Creando nuevo elemento en el carrito");
-            // Si no existe, crear un nuevo elemento
+            System.out.println("Creando nuevo elemento en el carrito (diferente combinación de material/color)");
+            // Si no existe, crear un nuevo elemento (diferente combinación de material y color)
             Carrito nuevoCarrito = Carrito.builder()
                 .usuario(usuario)
                 .anuncio(anuncio)

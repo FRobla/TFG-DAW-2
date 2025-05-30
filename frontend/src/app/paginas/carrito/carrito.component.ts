@@ -1,17 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CarritoService, CarritoElemento, CarritoResponse } from './carrito.service';
+
+// Extendemos la interfaz para incluir la propiedad showServices
+interface CarritoElementoExtendido extends CarritoElemento {
+  showServices?: boolean;
+}
 
 @Component({
   selector: 'app-carrito',
   standalone: false,
   templateUrl: './carrito.component.html',
-  styleUrl: './carrito.component.css'
+  styleUrl: './carrito.component.css',
+  animations: [
+    trigger('slideInOut', [
+      state('in', style({
+        height: '*',
+        opacity: 1,
+        overflow: 'hidden'
+      })),
+      state('out', style({
+        height: '0px',
+        opacity: 0,
+        overflow: 'hidden'
+      })),
+      transition('in => out', animate('300ms ease-in-out')),
+      transition('out => in', animate('300ms ease-in-out'))
+    ])
+  ]
 })
 export class CarritoComponent implements OnInit {
   
   // Datos del carrito
-  elementosCarrito: CarritoElemento[] = [];
+  elementosCarrito: CarritoElementoExtendido[] = [];
   totalElementos: number = 0;
   totalPrecio: number = 0;
   
@@ -59,7 +81,7 @@ export class CarritoComponent implements OnInit {
   /**
    * Actualiza la cantidad de un elemento del carrito
    */
-  actualizarCantidad(elemento: CarritoElemento, event: any): void {
+  actualizarCantidad(elemento: CarritoElementoExtendido, event: any): void {
     const nuevaCantidad = parseInt(event.target.value);
     
     if (nuevaCantidad <= 0 || nuevaCantidad > 99) {
@@ -75,6 +97,8 @@ export class CarritoComponent implements OnInit {
         const elementoActualizado = response.elemento;
         const index = this.elementosCarrito.findIndex(item => item.id === elemento.id);
         if (index !== -1) {
+          // Preservar el estado de showServices
+          elementoActualizado.showServices = this.elementosCarrito[index].showServices;
           this.elementosCarrito[index] = elementoActualizado;
           this.recalcularTotales();
         }
@@ -99,7 +123,7 @@ export class CarritoComponent implements OnInit {
   /**
    * Alterna un servicio adicional para un elemento del carrito
    */
-  toggleServicioAdicional(elemento: CarritoElemento, servicio: string): void {
+  toggleServicioAdicional(elemento: CarritoElementoExtendido, servicio: string): void {
     this.elementoActualizando = elemento.id;
     
     const servicios = {
@@ -127,6 +151,8 @@ export class CarritoComponent implements OnInit {
         const elementoActualizado = response.elemento;
         const index = this.elementosCarrito.findIndex(item => item.id === elemento.id);
         if (index !== -1) {
+          // Preservar el estado de showServices
+          elementoActualizado.showServices = this.elementosCarrito[index].showServices;
           this.elementosCarrito[index] = elementoActualizado;
           this.recalcularTotales();
         }
@@ -142,7 +168,7 @@ export class CarritoComponent implements OnInit {
   /**
    * Elimina un elemento del carrito
    */
-  eliminarElemento(elemento: CarritoElemento): void {
+  eliminarElemento(elemento: CarritoElementoExtendido): void {
     this.elementoEliminando = elemento.id;
     
     this.carritoService.eliminarElementoCarrito(elemento.id).subscribe({
@@ -212,14 +238,6 @@ export class CarritoComponent implements OnInit {
    */
   continuarComprando(): void {
     this.router.navigate(['/resultados-busqueda']);
-  }
-
-  /**
-   * Calcula el tiempo estimado de entrega más alto
-   */
-  calcularTiempoEntregaMaximo(): string {
-    // Por ahora retorna un valor fijo, se puede mejorar con datos reales
-    return '5-7 días laborables';
   }
 
   /**

@@ -39,6 +39,20 @@ public interface CarritoDAO extends JpaRepository<Carrito, Long> {
                                                             @Param("materialSeleccionado") String materialSeleccionado);
 
     /**
+     * Busca un elemento específico del carrito por usuario, anuncio, material y color
+     * @param usuarioId ID del usuario
+     * @param anuncioId ID del anuncio
+     * @param materialSeleccionado Material seleccionado
+     * @param colorSeleccionado Color seleccionado
+     * @return Optional con el elemento del carrito si existe
+     */
+    @Query("SELECT c FROM Carrito c WHERE c.usuario.id = :usuarioId AND c.anuncio.id = :anuncioId AND c.materialSeleccionado = :materialSeleccionado AND (c.colorSeleccionado = :colorSeleccionado OR (c.colorSeleccionado IS NULL AND :colorSeleccionado IS NULL))")
+    Optional<Carrito> findByUsuarioIdAndAnuncioIdAndMaterialAndColor(@Param("usuarioId") Long usuarioId, 
+                                                                    @Param("anuncioId") Long anuncioId,
+                                                                    @Param("materialSeleccionado") String materialSeleccionado,
+                                                                    @Param("colorSeleccionado") String colorSeleccionado);
+
+    /**
      * Elimina todos los elementos del carrito de un usuario
      * @param usuarioId ID del usuario
      */
