@@ -4,7 +4,7 @@ import { Ubicacion } from '../../entidades/ubicacion/ubicacion';
 import { UsuarioService } from '../../entidades/usuario/usuario.service';
 import { AuthService } from '../../auth/auth.service';
 import { HeroBuscadorService } from '../../recursos/hero-buscador/hero-buscador.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import swal from 'sweetalert2';
 
@@ -21,6 +21,12 @@ export class PerfilComponent implements OnInit, OnDestroy {
   cargando: boolean = false;
   private usuarioSubscription: Subscription = new Subscription();
   private componenteActivo: boolean = true;
+  
+  // Variable para determinar si es el perfil propio o de otro usuario
+  esMiPerfil: boolean = true;
+  usuarioIdPerfil: number | null = null;
+  esAdmin: boolean = false; // Variable para detectar si el usuario actual es admin
+  puedeEditar: boolean = false; // Variable combinada para permisos de edición
   
   // Variables para controlar modales
   modalDatosPersonalesVisible: boolean = false;
@@ -45,12 +51,18 @@ export class PerfilComponent implements OnInit, OnDestroy {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private heroBuscadorService: HeroBuscadorService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.cargarDatosUsuario();
-    this.cargarUbicaciones();
+    this.route.params.subscribe(params => {
+      this.usuarioIdPerfil = params['id'];
+      this.esMiPerfil = !this.usuarioIdPerfil;
+      this.verificarPermisosUsuario();
+      this.cargarDatosUsuario();
+      this.cargarUbicaciones();
+    });
   }
 
   ngOnDestroy(): void {
@@ -70,32 +82,51 @@ export class PerfilComponent implements OnInit, OnDestroy {
       this.usuarioSubscription.unsubscribe();
     }
     
-    // Obtener el usuario actual del servicio de autenticación
-    this.usuarioSubscription = this.authService.usuarioActual.subscribe(usuarioAuth => {
-      if (usuarioAuth && usuarioAuth.id) {
-        this.usuarioService.getUsuario(usuarioAuth.id).subscribe({
-          next: (usuario) => {
-            this.usuario = Usuario.fromBackend(usuario);
-            this.cargando = false;
-          },
-          error: (error) => {
-            console.error('Error al cargar datos del usuario:', error);
-            this.cargando = false;
-            if (this.componenteActivo) {
-              swal('Error', 'No se pudieron cargar los datos del usuario', 'error');
+    if (this.esMiPerfil) {
+      // Cargar perfil propio - necesita autenticación
+      this.usuarioSubscription = this.authService.usuarioActual.subscribe(usuarioAuth => {
+        if (usuarioAuth && usuarioAuth.id) {
+          this.usuarioService.getUsuario(usuarioAuth.id).subscribe({
+            next: (usuario) => {
+              this.usuario = Usuario.fromBackend(usuario);
+              this.cargando = false;
+            },
+            error: (error) => {
+              console.error('Error al cargar datos del usuario:', error);
+              this.cargando = false;
+              if (this.componenteActivo) {
+                swal('Error', 'No se pudieron cargar los datos del usuario', 'error');
+              }
             }
-          }
-        });
-      } else {
-        this.cargando = false;
-        // Solo mostrar la alerta si el componente está activo, no estamos en proceso de logout, y estamos en la ruta de perfil
-        if (this.componenteActivo && !this.authService.estaHaciendoLogout && this.router.url.includes('/perfil')) {
-          swal('Error', 'No se encontró información del usuario autenticado', 'error').then(() => {
-            this.router.navigate(['/login']);
           });
+        } else {
+          this.cargando = false;
+          // Solo mostrar la alerta si el componente está activo, no estamos en proceso de logout, y estamos en la ruta de perfil
+          if (this.componenteActivo && !this.authService.estaHaciendoLogout && this.router.url.includes('/perfil')) {
+            swal('Error', 'No se encontró información del usuario autenticado', 'error').then(() => {
+              this.router.navigate(['/login']);
+            });
+          }
         }
-      }
-    });
+      });
+    } else {
+      // Cargar perfil de otro usuario - usar ID de la URL
+      this.usuarioService.getUsuario(this.usuarioIdPerfil!).subscribe({
+        next: (usuario) => {
+          this.usuario = Usuario.fromBackend(usuario);
+          this.cargando = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar datos del usuario:', error);
+          this.cargando = false;
+          if (this.componenteActivo) {
+            swal('Error', 'No se pudo cargar el perfil del usuario', 'error').then(() => {
+              this.router.navigate(['/servicios']);
+            });
+          }
+        }
+      });
+    }
   }
 
   // Métodos para abrir modales
@@ -347,6 +378,20 @@ export class PerfilComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error al cargar ubicaciones:', error);
         swal('Error', 'No se pudieron cargar las ubicaciones', 'error');
+      }
+    });
+  }
+
+  verificarPermisosUsuario(): void {
+    // Verificar permisos del usuario actual
+    this.authService.usuarioActual.subscribe(usuarioAuth => {
+      if (usuarioAuth && usuarioAuth.id) {
+        this.esAdmin = usuarioAuth.rol === 'ADMIN';
+        // Se puede editar si es el perfil propio O si el usuario actual es admin
+        this.puedeEditar = this.esMiPerfil || this.esAdmin;
+      } else {
+        this.esAdmin = false;
+        this.puedeEditar = false;
       }
     });
   }

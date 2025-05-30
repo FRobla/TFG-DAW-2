@@ -47,6 +47,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'perfil/:id',
+    component: PerfilComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'favoritos',
     component: FavoritoComponent
     // canActivate: [AuthGuard] // Temporalmente comentado para pruebas

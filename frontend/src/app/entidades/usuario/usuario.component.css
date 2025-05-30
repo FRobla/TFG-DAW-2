@@ -996,3 +996,141 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===========================================
+   PREVIEW DE IMAGEN DE PERFIL
+   =========================================== */
+
+.imagen-preview-container {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+  border-radius: 12px;
+  border: 1px solid #333;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.preview-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #e0e0e0;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preview-label i {
+  color: #0d6efd;
+  font-size: 16px;
+}
+
+.imagen-preview {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 3px rgba(13, 110, 253, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  background: linear-gradient(145deg, #333, #1a1a1a);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  background-color: #2a2a2a;
+}
+
+.preview-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.preview-info i {
+  font-size: 24px;
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.preview-info span {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Efecto de loading para imagen */
+.preview-img {
+  background-image: linear-gradient(
+    45deg,
+    #2a2a2a 25%,
+    transparent 25%,
+    transparent 75%,
+    #2a2a2a 75%,
+    #2a2a2a
+  ),
+  linear-gradient(
+    45deg,
+    #2a2a2a 25%,
+    transparent 25%,
+    transparent 75%,
+    #2a2a2a 75%,
+    #2a2a2a
+  );
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+}
+
+.preview-img[src] {
+  background-image: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .imagen-preview {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .preview-info i {
+    font-size: 20px;
+  }
+  
+  .preview-info span {
+    font-size: 10px;
+  }
+}
+
+/* Error de carga de imagen */
+.preview-img[src=""]:after,
+.preview-img:not([src]):after {
+  content: '\f007';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  color: #666;
+}
+
+/* ===========================================
+   FIN PREVIEW DE IMAGEN DE PERFIL
+   =========================================== */

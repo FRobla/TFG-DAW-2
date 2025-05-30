@@ -223,4 +223,72 @@ INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (3, 1); -- Impresi
 INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (3, 5); -- Impresión PLA biodegradable - Wood PLA
 INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (4, 1); -- Impresión FDM multicolor - PLA
 INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (4, 5); -- Impresión FDM multicolor - Wood PLA
-INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (5, 2); -- Impresión FDM industrial
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (5, 2); -- Impresión FDM industrial - ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (5, 9); -- Impresión FDM industrial - Nylon
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (5, 6); -- Impresión FDM industrial - Carbon Fiber
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (6, 3); -- Impresión FDM con PETG - PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (7, 1); -- Pack impresión FDM básica - PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (8, 2); -- Impresión FDM con ABS - ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (9, 9); -- Impresión FDM con Nylon - Nylon
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 1); -- Modelado 3D personalizado - PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 2); -- Modelado 3D personalizado - ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (11, 1); -- Escaneado 3D - PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (12, 7); -- Prototipos médicos - Resina Standard
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (12, 8); -- Prototipos médicos - Resina Flexible
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 1); -- Maquetas arquitectónicas - PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 7); -- Maquetas arquitectónicas - Resina Standard
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 1); -- Consultoría técnica - PLA (para ejemplos)
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (15, 1); -- Taller de impresión 3D - PLA
+
+-- Insertar Valoraciones
+INSERT INTO valoraciones (id, puntuacion, comentario, fecha_valoracion, respuesta_proveedor, fecha_respuesta, verificado, anuncio_id, usuario_id) VALUES
+(1, 5, 'Excelente calidad de impresión, muy recomendable!', '2025-05-16', NULL, NULL, true, 1, 3),
+(2, 4, 'Buen servicio, entrega puntual', '2025-05-17', NULL, NULL, true, 1, 4),
+(3, 4, 'Muy profesional, acabado perfecto', '2025-05-18', 'Gracias por confiar en nosotros', '2025-05-19', true, 2, 5),
+(4, 4, 'Rápido y eficiente', '2025-05-19', NULL, NULL, true, 2, 6),
+(5, 5, 'Material ecológico de primera calidad', '2025-05-20', 'Nos alegra que valores nuestro compromiso ecológico', '2025-05-21', true, 3, 7),
+(6, 5, 'Perfecta para proyectos sostenibles', '2025-05-21', NULL, NULL, true, 3, 8),
+(7, 4, 'Impresión multicolor muy lograda', '2025-05-22', NULL, NULL, true, 4, 9),
+(8, 4, 'Colores vibrantes y bien definidos', '2025-05-23', 'Trabajamos con filamentos de alta calidad', '2025-05-24', true, 4, 10),
+(9, 5, 'Calidad industrial excepcional', '2025-05-24', 'Perfecto para aplicaciones industriales', '2025-05-25', true, 5, 2),
+(10, 4, 'Resistencia comprobada', '2025-05-25', NULL, NULL, true, 5, 3),
+(11, 4, 'PETG de alta calidad', '2025-05-26', NULL, NULL, true, 6, 4),
+(12, 4, 'Resistente y transparente', '2025-05-27', 'PETG es ideal para estas aplicaciones', '2025-05-28', true, 6, 5),
+(13, 4, 'Buena relación calidad-precio', '2025-05-28', NULL, NULL, false, 7, 6),
+(14, 3, 'Básico pero cumple', '2025-05-29', 'Entendemos, es nuestro servicio más económico', '2025-05-30', false, 7, 7),
+(15, 4, 'ABS de buena calidad', '2025-05-30', NULL, NULL, true, 8, 8),
+(16, 4, 'Resistente para piezas funcionales', '2025-05-31', NULL, NULL, true, 8, 9),
+(17, 5, 'Nylon excepcional para uso industrial', '2025-06-01', 'Material premium para aplicaciones exigentes', '2025-06-02', true, 9, 10),
+(18, 4, 'Muy resistente y duradero', '2025-06-02', NULL, NULL, true, 9, 2),
+(19, 4, 'Modelado profesional y detallado', '2025-06-03', NULL, NULL, true, 10, 3),
+(20, 4, 'Diseño personalizado perfecto', '2025-06-04', 'Nos especializamos en diseños únicos', '2025-06-05', true, 10, 5),
+(21, 4, 'Escaneado de alta precisión', '2025-06-05', NULL, NULL, true, 11, 6),
+(22, 4, 'Excelente captura 3D', '2025-06-06', NULL, NULL, true, 11, 7),
+(23, 5, 'Prototipos médicos perfectos', '2025-06-07', 'Cumplimos con los estándares médicos más exigentes', '2025-06-08', true, 12, 8),
+(24, 5, 'Precisión médica excepcional', '2025-06-08', NULL, NULL, true, 12, 9),
+(25, 5, 'Maqueta arquitectónica impresionante', '2025-06-09', 'Cada detalle cuenta en arquitectura', '2025-06-10', true, 13, 10),
+(26, 4, 'Detalles arquitectónicos perfectos', '2025-06-10', NULL, NULL, true, 13, 2),
+(27, 4, 'Consultoría muy útil', '2025-06-11', NULL, NULL, false, 14, 3),
+(28, 5, 'Asesoramiento profesional', '2025-06-12', 'Siempre disponibles para ayudar', '2025-06-13', true, 14, 4),
+(29, 4, 'Taller muy educativo', '2025-06-13', NULL, NULL, false, 15, 5),
+(30, 4, 'Aprendizaje práctico excelente', '2025-06-14', 'Seguimos mejorando nuestros talleres', '2025-06-15', false, 15, 6);
+
+-- Insertar Favoritos
+INSERT INTO favoritos (id, fecha_marcado, anuncio_id, usuario_id) VALUES
+(1, '2025-05-16', 1, 3),
+(2, '2025-05-17', 1, 4),
+(3, '2025-05-18', 2, 5),
+(4, '2025-05-19', 3, 6),
+(5, '2025-05-20', 3, 7),
+(6, '2025-05-21', 5, 8),
+(7, '2025-05-22', 5, 9),
+(8, '2025-05-23', 12, 10),
+(9, '2025-05-24', 12, 2),
+(10, '2025-05-25', 13, 3),
+(11, '2025-05-26', 9, 4),
+(12, '2025-05-27', 10, 5),
+(13, '2025-05-28', 14, 6),
+(14, '2025-05-29', 15, 7),
+(15, '2025-05-30', 6, 8);
+
+SET SQL_SAFE_UPDATES = 1;

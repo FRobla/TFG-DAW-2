@@ -383,7 +383,7 @@ export class UsuarioComponent implements OnInit {
    * Navega a la página de detalles de un usuario
    */
   verDetallesUsuario(usuario: Usuario): void {
-    this.router.navigate(['/usuario', usuario.id]);
+    this.router.navigate(['/perfil', usuario.id]);
   }
 
   /**

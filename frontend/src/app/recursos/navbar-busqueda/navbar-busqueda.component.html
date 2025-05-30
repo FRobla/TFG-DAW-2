@@ -37,8 +37,9 @@
         
         <!-- Si está autenticado como ADMIN: mostrar botones de admin -->
         <div *ngIf="estaLogueado() && esAdmin()" class="navbar-user-actions">
-          <button class="btn btn-icon" (click)="irAlDashboard()" title="Dashboard">
+          <button class="btn btn-dashboard" (click)="irAlDashboard()" title="Dashboard">
             <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
           </button>
           <button class="btn btn-icon btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">
             <i class="bi bi-box-arrow-right"></i>
