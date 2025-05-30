@@ -1,0 +1,119 @@
+# API DE GESTIÓN DE PEDIDOS - SISTEMA DE ESTADOS
+
+## ESTADOS PERMITIDOS (4 estados únicamente):
+
+1. **pendiente** - Pedido creado, esperando confirmación manual de pago desde dashboard
+2. **en_proceso** - Pago confirmado manualmente desde dashboard, pedido en procesamiento  
+3. **completado** - Pedido finalizado y entregado (marcado manualmente desde dashboard)
+4. **cancelado** - Pedido cancelado (puede ser desde pendiente o en_proceso)
+
+## TRANSICIONES DE ESTADO VÁLIDAS:
+
+### Desde "pendiente":
+- **pendiente → en_proceso**: Cuando el administrador confirma el pago manualmente
+- **pendiente → cancelado**: Cuando se cancela el pedido antes del pago
+
+### Desde "en_proceso":  
+- **en_proceso → completado**: Cuando el administrador marca el pedido como completado
+- **en_proceso → cancelado**: Cuando se requiere cancelar después del pago
+
+### Estados finales:
+- **completado**: Estado final, no permite más transiciones
+- **cancelado**: Estado final, no permite más transiciones
+
+## NUEVOS ENDPOINTS PARA GESTIÓN MANUAL:
+
+### 1. Confirmar Pago (pendiente → en_proceso)
+**PUT** `/api/pedido/{id}/confirmar-pago`
+
+**Descripción**: Confirma el pago de un pedido manualmente desde el dashboard administrativo.
+
+**Body** (opcional):
+```json
+{
+  "metodoPago": "paypal|tarjeta|transferencia|efectivo",
+  "referenciaPago": "REF123456"
+}
+```
+
+**Respuesta exitosa** (200):
+```json
+{
+  "mensaje": "El pago del pedido ha sido confirmado con éxito",
+  "pedido": {
+    "id": 1,
+    "numero_pedido": "PED123456",
+    "estado": "en_proceso",
+    "metodo_pago": "paypal",
+    "referencia_pago": "REF123456",
+    // ... resto de campos del pedido
+  }
+}
+```
+
+**Errores**:
+- 404: Pedido no encontrado
+- 400: Solo se puede confirmar el pago de pedidos pendientes
+
+### 2. Marcar como Completado (en_proceso → completado)
+**PUT** `/api/pedido/{id}/marcar-completado`
+
+**Descripción**: Marca un pedido como completado manualmente desde el dashboard.
+
+**Body**: No requiere cuerpo
+
+**Respuesta exitosa** (200):
+```json
+{
+  "mensaje": "El pedido ha sido marcado como completado con éxito",
+  "pedido": {
+    "id": 1,
+    "numero_pedido": "PED123456", 
+    "estado": "completado",
+    "fecha_entrega_real": "2024-01-15T10:30:00.000Z",
+    // ... resto de campos del pedido
+  }
+}
+```
+
+**Errores**:
+- 404: Pedido no encontrado  
+- 400: Solo se pueden completar pedidos que estén en proceso
+
+## ACCIONES DEL DASHBOARD POR ESTADO:
+
+### Pedidos PENDIENTES:
+- **Confirmar Pago**: Cambiar a estado "en_proceso"
+- **Ver Detalles**: Mostrar información completa
+- **Cancelar**: Cambiar a estado "cancelado"
+
+### Pedidos EN PROCESO:
+- **Ver Detalles**: Mostrar información completa
+- **Marcar Completado**: Cambiar a estado "completado"  
+- **Cancelar**: Cambiar a estado "cancelado"
+
+### Pedidos COMPLETADOS:
+- **Editar**: Modificar información del pedido
+- **Ver Detalles**: Mostrar información completa
+- **Eliminar**: Eliminar el pedido del sistema
+
+### Pedidos CANCELADOS:
+- **Editar**: Modificar información del pedido
+- **Ver Detalles**: Mostrar información completa  
+- **Eliminar**: Eliminar el pedido del sistema
+
+## WORKFLOW RECOMENDADO:
+
+1. **Creación**: Pedido se crea automáticamente en estado "pendiente"
+2. **Confirmación manual**: Admin revisa y confirma pago → "en_proceso"  
+3. **Procesamiento**: Admin gestiona el pedido internamente
+4. **Finalización manual**: Admin marca como completado → "completado"
+5. **Cancelación**: Admin puede cancelar en cualquier momento antes de completar
+
+## VALIDACIONES IMPLEMENTADAS:
+
+- Solo se pueden confirmar pagos de pedidos "pendientes"
+- Solo se pueden completar pedidos "en_proceso"  
+- Solo se pueden cancelar pedidos "pendientes" o "en_proceso"
+- Los estados "completado" y "cancelado" son finales
+- Todas las transiciones requieren confirmación manual desde dashboard 

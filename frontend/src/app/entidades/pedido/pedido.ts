@@ -58,7 +58,7 @@ export class Pedido {
     id: number = 0;
     numero_pedido: string = "";
     fecha_pedido: string = "";
-    estado: string = "pendiente"; // (pendiente, en_proceso, completado, cancelado, enviado)
+    estado: string = "pendiente"; // (pendiente, en_proceso, completado, cancelado)
     total: number = 0;
     descuento: number = 0;
     impuestos: number = 0;
@@ -229,11 +229,10 @@ export class Pedido {
      */
     getEstadoTexto(): string {
         const estados: { [key: string]: string } = {
-            'pendiente': 'Pendiente',
+            'pendiente': 'Pendiente de Pago',
             'en_proceso': 'En Proceso',
             'completado': 'Completado',
-            'cancelado': 'Cancelado',
-            'enviado': 'Enviado'
+            'cancelado': 'Cancelado'
         };
         return estados[this.estado] || this.estado;
     }
@@ -246,10 +245,23 @@ export class Pedido {
             'pendiente': 'estado-pendiente',
             'en_proceso': 'estado-proceso',
             'completado': 'estado-completado',
-            'cancelado': 'estado-cancelado',
-            'enviado': 'estado-enviado'
+            'cancelado': 'estado-cancelado'
         };
         return clases[this.estado] || 'estado-default';
+    }
+    
+    /**
+     * Verifica si el pedido está pagado (en proceso o completado)
+     */
+    estaPagado(): boolean {
+        return this.estado === 'en_proceso' || this.estado === 'completado';
+    }
+
+    /**
+     * Verifica si el pedido está pendiente de pago
+     */
+    estaPendientePago(): boolean {
+        return this.estado === 'pendiente';
     }
     
     /**

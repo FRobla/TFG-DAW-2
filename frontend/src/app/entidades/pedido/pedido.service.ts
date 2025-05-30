@@ -273,21 +273,10 @@ export class PedidoService {
   }
 
   /**
-   * Exporta pedidos a CSV
-   */
-  exportarPedidos(): Observable<Blob> {
-    return this.http.get(`${this.urlEndPoint}/export`, { 
-      responseType: 'blob' 
-    }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  /**
    * Obtiene los estados disponibles para pedidos
    */
   getEstadosDisponibles(): string[] {
-    return ['pendiente', 'en_proceso', 'completado', 'cancelado', 'enviado'];
+    return ['pendiente', 'en_proceso', 'completado', 'cancelado'];
   }
 
   /**
@@ -295,5 +284,37 @@ export class PedidoService {
    */
   getMetodosPagoDisponibles(): string[] {
     return ['paypal', 'tarjeta', 'transferencia', 'efectivo'];
+  }
+
+  /**
+   * Confirma el pago de un pedido (cambio manual desde dashboard)
+   * Cambia el estado de 'pendiente' a 'en_proceso'
+   */
+  confirmarPago(id: number, pagoInfo?: { metodoPago?: string; referenciaPago?: string }): Observable<any> {
+    return this.http.put<any>(`${this.urlEndPointSingle}/${id}/confirmar-pago`, pagoInfo || {}).pipe(
+      map(response => {
+        if (response.pedido) {
+          response.pedido = Pedido.fromBackend(response.pedido);
+        }
+        return response;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Marca un pedido como completado (cambio manual desde dashboard)
+   * Cambia el estado de 'en_proceso' a 'completado'
+   */
+  marcarCompletado(id: number): Observable<any> {
+    return this.http.put<any>(`${this.urlEndPointSingle}/${id}/marcar-completado`, {}).pipe(
+      map(response => {
+        if (response.pedido) {
+          response.pedido = Pedido.fromBackend(response.pedido);
+        }
+        return response;
+      }),
+      catchError(this.handleError)
+    );
   }
 }

@@ -182,13 +182,6 @@ public class PedidoServiceImpl implements PedidoService {
         }
 
         pedido.setEstado(nuevoEstado);
-        
-        // Si se marca como enviado, establecer fecha de entrega estimada si no existe
-        if ("enviado".equals(nuevoEstado) && pedido.getFecha_entrega_estimada() == null) {
-            // Agregar 5 días como estimación por defecto
-            Date fechaEstimada = new Date(System.currentTimeMillis() + (5 * 24 * 60 * 60 * 1000L));
-            pedido.setFecha_entrega_estimada(fechaEstimada);
-        }
 
         return pedidoDao.save(pedido);
     }
@@ -220,8 +213,8 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("Pedido no encontrado con ID: " + pedidoId);
         }
 
-        if (!"en_proceso".equals(pedido.getEstado()) && !"enviado".equals(pedido.getEstado())) {
-            throw new IllegalArgumentException("Solo se pueden completar pedidos en proceso o enviados");
+        if (!"en_proceso".equals(pedido.getEstado())) {
+            throw new IllegalArgumentException("Solo se pueden completar pedidos en proceso");
         }
 
         pedido.setEstado("completado");
@@ -378,6 +371,12 @@ public class PedidoServiceImpl implements PedidoService {
 
     /**
      * Método auxiliar para validar transiciones de estado
+     * Estados permitidos: pendiente, en_proceso, completado, cancelado
+     * Transiciones válidas:
+     * - pendiente -> en_proceso (cuando se confirma el pago manualmente)
+     * - pendiente -> cancelado (cuando se cancela el pago)
+     * - en_proceso -> completado (cuando se completa el pedido manualmente)
+     * - en_proceso -> cancelado (si se requiere cancelar después del pago)
      */
     private boolean esTransicionValida(String estadoActual, String nuevoEstado) {
         if (estadoActual == null || nuevoEstado == null) {
@@ -388,12 +387,10 @@ public class PedidoServiceImpl implements PedidoService {
             case "pendiente":
                 return "en_proceso".equals(nuevoEstado) || "cancelado".equals(nuevoEstado);
             case "en_proceso":
-                return "enviado".equals(nuevoEstado) || "completado".equals(nuevoEstado) || "cancelado".equals(nuevoEstado);
-            case "enviado":
-                return "completado".equals(nuevoEstado);
+                return "completado".equals(nuevoEstado) || "cancelado".equals(nuevoEstado);
             case "completado":
             case "cancelado":
-                return false; // Estados finales
+                return false; // Estados finales, no permiten transiciones
             default:
                 return false;
         }

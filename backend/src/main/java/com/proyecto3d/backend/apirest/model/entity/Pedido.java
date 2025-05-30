@@ -51,7 +51,7 @@ public class Pedido implements Serializable {
     private Date fecha_pedido;
 
     @Column(nullable = false)
-    private String estado; // (pendiente, en_proceso, completado, cancelado, enviado)
+    private String estado; // (pendiente, en_proceso, completado, cancelado)
 
     @Column(nullable = false)
     private Double total;
@@ -175,6 +175,20 @@ public class Pedido implements Serializable {
      */
     public boolean estaCompletado() {
         return "completado".equals(estado);
+    }
+
+    /**
+     * Verifica si el pedido está pagado (en proceso o completado)
+     */
+    public boolean estaPagado() {
+        return "en_proceso".equals(estado) || "completado".equals(estado);
+    }
+
+    /**
+     * Verifica si el pedido está pendiente de pago
+     */
+    public boolean estaPendientePago() {
+        return "pendiente".equals(estado);
     }
 
     /**

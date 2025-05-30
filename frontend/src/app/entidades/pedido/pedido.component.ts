@@ -100,7 +100,9 @@ export class PedidoComponent implements OnInit {
         pedido.getNombreCliente().toLowerCase().includes(terminoLower) ||
         pedido.estado.toLowerCase().includes(terminoLower) ||
         pedido.direccion_envio.toLowerCase().includes(terminoLower) ||
-        pedido.metodo_pago.toLowerCase().includes(terminoLower)
+        pedido.metodo_pago.toLowerCase().includes(terminoLower) ||
+        (pedido.notas_cliente && pedido.notas_cliente.toLowerCase().includes(terminoLower)) ||
+        (pedido.notas_internas && pedido.notas_internas.toLowerCase().includes(terminoLower))
       );
     }
     
@@ -143,6 +145,13 @@ export class PedidoComponent implements OnInit {
         case 'cliente':
           valorA = a.getNombreCliente().toLowerCase();
           valorB = b.getNombreCliente().toLowerCase();
+          break;
+        case 'notas':
+          // Concatenar notas del cliente e internas para ordenación
+          const notasA = ((a.notas_cliente || '') + ' ' + (a.notas_internas || '')).toLowerCase().trim();
+          const notasB = ((b.notas_cliente || '') + ' ' + (b.notas_internas || '')).toLowerCase().trim();
+          valorA = notasA || 'zzz'; // Los sin notas van al final
+          valorB = notasB || 'zzz';
           break;
         default:
           valorA = a.id;
@@ -487,28 +496,6 @@ export class PedidoComponent implements OnInit {
   }
 
   /**
-   * Exporta los pedidos
-   */
-  exportarPedidos(): void {
-    this.pedidoService.exportarPedidos().subscribe({
-      next: (response) => {
-        const blob = new Blob([response], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `pedidos_${formatDate(new Date(), 'yyyy-MM-dd', 'en-US')}.csv`;
-        anchor.click();
-        window.URL.revokeObjectURL(url);
-        swal('Éxito', 'Pedidos exportados correctamente', 'success');
-      },
-      error: (error) => {
-        console.error('Error al exportar pedidos', error);
-        swal('Error', 'No se pudieron exportar los pedidos', 'error');
-      }
-    });
-  }
-
-  /**
    * Cierra el modal
    */
   cerrarModal(): void {
@@ -523,11 +510,10 @@ export class PedidoComponent implements OnInit {
    */
   getEstadoTexto(estado: string): string {
     const estados: { [key: string]: string } = {
-      'pendiente': 'Pendiente',
+      'pendiente': 'Pendiente de Pago',
       'en_proceso': 'En Proceso',
       'completado': 'Completado',
-      'cancelado': 'Cancelado',
-      'enviado': 'Enviado'
+      'cancelado': 'Cancelado'
     };
     return estados[estado] || estado;
   }
@@ -543,5 +529,69 @@ export class PedidoComponent implements OnInit {
       'efectivo': 'Efectivo'
     };
     return metodos[metodo] || metodo;
+  }
+
+  /**
+   * Confirma el pago de un pedido (cambio manual desde dashboard)
+   */
+  confirmarPago(pedido: Pedido): void {
+    swal({
+      title: 'Confirmar pago',
+      text: `¿Estás seguro de confirmar el pago del pedido ${pedido.numero_pedido}?`,
+      type: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, confirmar pago',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.value) {
+        this.pedidoService.confirmarPago(pedido.id).subscribe({
+          next: (response) => {
+            const index = this.pedidos.findIndex(p => p.id === response.pedido.id);
+            if (index !== -1) {
+              this.pedidos[index] = response.pedido;
+            }
+            this.filtrarPedidos();
+            swal('Éxito', response.mensaje || 'Pago confirmado correctamente', 'success');
+          },
+          error: (error) => {
+            console.error('Error al confirmar pago', error);
+            const mensaje = error.error?.mensaje || 'No se pudo confirmar el pago';
+            swal('Error', mensaje, 'error');
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Marca un pedido como completado (cambio manual desde dashboard)
+   */
+  marcarCompletado(pedido: Pedido): void {
+    swal({
+      title: 'Marcar como completado',
+      text: `¿Estás seguro de marcar como completado el pedido ${pedido.numero_pedido}?`,
+      type: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, marcar completado',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.value) {
+        this.pedidoService.marcarCompletado(pedido.id).subscribe({
+          next: (response) => {
+            const index = this.pedidos.findIndex(p => p.id === response.pedido.id);
+            if (index !== -1) {
+              this.pedidos[index] = response.pedido;
+            }
+            this.filtrarPedidos();
+            swal('Éxito', response.mensaje || 'Pedido marcado como completado', 'success');
+          },
+          error: (error) => {
+            console.error('Error al marcar como completado', error);
+            const mensaje = error.error?.mensaje || 'No se pudo marcar como completado';
+            swal('Error', mensaje, 'error');
+          }
+        });
+      }
+    });
   }
 }

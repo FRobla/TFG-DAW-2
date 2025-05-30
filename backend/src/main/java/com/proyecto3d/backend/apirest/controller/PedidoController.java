@@ -586,19 +586,92 @@ public class PedidoController {
     }
 
     /**
-     * Exporta pedidos a CSV
+     * Confirma el pago de un pedido (cambio manual desde dashboard)
+     * Cambia el estado de 'pendiente' a 'en_proceso'
      */
-    @GetMapping("/pedidos/export")
-    public ResponseEntity<String> exportarPedidos() {
+    @PutMapping("/pedido/{id}/confirmar-pago")
+    public ResponseEntity<?> confirmarPago(@PathVariable Long id, @RequestBody(required = false) Map<String, String> pagoInfo) {
+        Pedido pedidoActualizado;
+        Map<String, Object> response = new HashMap<>();
+
+        String metodoPago = pagoInfo != null ? pagoInfo.get("metodoPago") : null;
+        String referenciaPago = pagoInfo != null ? pagoInfo.get("referenciaPago") : null;
+
         try {
-            String csvContent = pedidoService.exportarPedidosCSV();
-            return ResponseEntity.ok()
-                    .header("Content-Type", "text/csv; charset=UTF-8")
-                    .header("Content-Disposition", "attachment; filename=\"pedidos.csv\"")
-                    .body(csvContent);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al exportar pedidos: " + e.getMessage());
+            Pedido pedido = pedidoService.findById(id);
+            if (pedido == null) {
+                response.put("mensaje", "Pedido no encontrado con ID: " + id);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            if (!"pendiente".equals(pedido.getEstado())) {
+                response.put("mensaje", "Solo se puede confirmar el pago de pedidos pendientes");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
+            // Actualizar información de pago si se proporciona
+            if (metodoPago != null && !metodoPago.isEmpty()) {
+                pedido.setMetodo_pago(metodoPago);
+            }
+            if (referenciaPago != null && !referenciaPago.isEmpty()) {
+                pedido.setReferencia_pago(referenciaPago);
+            }
+
+            pedidoActualizado = pedidoService.actualizarEstado(id, "en_proceso");
+        } catch (IllegalArgumentException e) {
+            response.put("mensaje", "Error de validación");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al actualizar en la base de datos");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        response.put("mensaje", "El pago del pedido ha sido confirmado con éxito");
+        response.put("pedido", pedidoActualizado);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Marca un pedido como completado (cambio manual desde dashboard)
+     * Cambia el estado de 'en_proceso' a 'completado'
+     */
+    @PutMapping("/pedido/{id}/marcar-completado")
+    public ResponseEntity<?> marcarCompletado(@PathVariable Long id) {
+        Pedido pedidoActualizado;
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Pedido pedido = pedidoService.findById(id);
+            if (pedido == null) {
+                response.put("mensaje", "Pedido no encontrado con ID: " + id);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            if (!"en_proceso".equals(pedido.getEstado())) {
+                response.put("mensaje", "Solo se pueden completar pedidos que estén en proceso");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
+            pedidoActualizado = pedidoService.actualizarEstado(id, "completado");
+            
+            // Establecer fecha de entrega real
+            pedidoActualizado.setFecha_entrega_real(new Date());
+            pedidoActualizado = pedidoService.save(pedidoActualizado);
+
+        } catch (IllegalArgumentException e) {
+            response.put("mensaje", "Error de validación");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al actualizar en la base de datos");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("mensaje", "El pedido ha sido marcado como completado con éxito");
+        response.put("pedido", pedidoActualizado);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 } 
