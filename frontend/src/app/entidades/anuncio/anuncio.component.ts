@@ -55,7 +55,7 @@ export class AnuncioComponent implements OnInit {
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
       precio: [0, [Validators.required, Validators.min(0)]],
-      estado: ['ACTIVO'],
+      estado: ['activo'],
       urlImagen: [''],
       categoriaId: [0, Validators.required],
       impresoraId: [0, Validators.required]
@@ -321,7 +321,7 @@ export class AnuncioComponent implements OnInit {
       titulo: '',
       descripcion: '',
       precio: 0,
-      estado: 'ACTIVO',
+      estado: 'activo',
       urlImagen: '',
       categoriaId: 0,
       impresoraId: 0

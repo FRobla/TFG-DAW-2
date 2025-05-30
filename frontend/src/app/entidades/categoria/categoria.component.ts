@@ -51,6 +51,8 @@ export class CategoriasComponent implements OnInit {
   
   // Datos de servicios (simulados)
   serviciosPorCategoria: Map<number, number> = new Map();
+  // Datos reales de conteo de anuncios por categoría
+  conteoAnunciosPorCategoria: Map<number, number> = new Map();
   
   @ViewChild('categoriaForm') categoriaForm!: NgForm;
 
@@ -58,6 +60,7 @@ export class CategoriasComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarCategorias();
+    this.cargarConteoAnuncios();
   }
 
   /**
@@ -79,6 +82,32 @@ export class CategoriasComponent implements OnInit {
         this.cargando = false;
         console.error('Error al cargar categorías', error);
         swal('Error', 'Hubo un problema al cargar las categorías', 'error');
+      }
+    );
+  }
+
+  /**
+   * Carga el conteo real de anuncios por categoría desde el backend
+   */
+  cargarConteoAnuncios(): void {
+    this.categoriaService.getCategoriasConConteoAnuncios().subscribe(
+      categoriasConConteo => {
+        console.log('Datos recibidos del backend:', categoriasConConteo);
+        
+        // Limpiamos el mapa anterior
+        this.conteoAnunciosPorCategoria.clear();
+        
+        // Llenamos el mapa con los datos reales
+        categoriasConConteo.forEach(categoria => {
+          this.conteoAnunciosPorCategoria.set(categoria.id, categoria.cantidad);
+          console.log(`Categoría ${categoria.nombre} (ID: ${categoria.id}): ${categoria.cantidad} anuncios`);
+        });
+        
+        console.log('Mapa de conteo actualizado:', this.conteoAnunciosPorCategoria);
+      },
+      error => {
+        console.error('Error al cargar conteo de anuncios', error);
+        // En caso de error, mantenemos la funcionalidad con datos simulados
       }
     );
   }
@@ -197,6 +226,15 @@ export class CategoriasComponent implements OnInit {
    */
   getServiciosAsociados(): number {
     let total = 0;
+    // Usar datos reales si están disponibles
+    if (this.conteoAnunciosPorCategoria.size > 0) {
+      for (const cantidad of this.conteoAnunciosPorCategoria.values()) {
+        total += cantidad;
+      }
+      return total;
+    }
+    
+    // Fallback a datos simulados si no hay datos reales
     for (const cantidad of this.serviciosPorCategoria.values()) {
       total += cantidad;
     }
@@ -230,14 +268,24 @@ export class CategoriasComponent implements OnInit {
    * Obtiene el número de servicios asociados a una categoría
    */
   getNumeroServicios(categoria: Categoria): number {
-    // Si tenemos datos reales, los usamos
-    if (this.serviciosPorCategoria.has(categoria.id)) {
-      return this.serviciosPorCategoria.get(categoria.id) || 0;
+    // Usar datos reales si están disponibles
+    if (this.conteoAnunciosPorCategoria.has(categoria.id)) {
+      const cantidad = this.conteoAnunciosPorCategoria.get(categoria.id) || 0;
+      console.log(`Conteo REAL para categoría ${categoria.nombre} (ID: ${categoria.id}): ${cantidad}`);
+      return cantidad;
     }
     
-    // Simulamos datos
+    // Fallback a datos simulados
+    if (this.serviciosPorCategoria.has(categoria.id)) {
+      const cantidad = this.serviciosPorCategoria.get(categoria.id) || 0;
+      console.log(`Conteo SIMULADO (cached) para categoría ${categoria.nombre} (ID: ${categoria.id}): ${cantidad}`);
+      return cantidad;
+    }
+    
+    // Simulamos datos solo si no tenemos datos reales
     const servicio = Math.floor(Math.random() * 10) + 1;
     this.serviciosPorCategoria.set(categoria.id, servicio);
+    console.log(`Conteo SIMULADO (nuevo) para categoría ${categoria.nombre} (ID: ${categoria.id}): ${servicio}`);
     return servicio;
   }
   
@@ -325,6 +373,7 @@ export class CategoriasComponent implements OnInit {
         response => {
           this.cerrarModal();
           this.cargarCategorias();
+          this.cargarConteoAnuncios(); // Recargar conteo después de actualizar
           swal('¡Actualizada!', `La categoría ha sido actualizada con éxito`, 'success');
         },
         error => {
@@ -337,6 +386,7 @@ export class CategoriasComponent implements OnInit {
         response => {
           this.cerrarModal();
           this.cargarCategorias();
+          this.cargarConteoAnuncios(); // Recargar conteo después de crear
           swal('¡Creada!', `La categoría ha sido creada con éxito`, 'success');
         },
         error => {
@@ -403,6 +453,7 @@ export class CategoriasComponent implements OnInit {
     this.categoriaService.deleteCategoria(categoria.id).subscribe(
       response => {
         this.cargarCategorias();
+        this.cargarConteoAnuncios(); // Recargar conteo después de eliminar
         swal(
           '¡Eliminada!',
           `La categoría "${categoria.nombre}" ha sido eliminada con éxito`,
@@ -428,6 +479,7 @@ export class CategoriasComponent implements OnInit {
       response => {
         this.categorias = [];
         this.categoriasFiltradas = [];
+        this.conteoAnunciosPorCategoria.clear(); // Limpiar conteo al eliminar todas
         swal(
           '¡Eliminadas!',
           'Todas las categorías han sido eliminadas con éxito',

@@ -90,23 +90,23 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getCategoriasConConteoAnuncios() {
-        // Obtener todas las categorías
-        List<Categoria> categorias = findAll();
-        
-        // Crear una lista para almacenar las categorías con su conteo de anuncios
+        // Usar la consulta optimizada del DAO que hace un JOIN y GROUP BY
+        List<Object[]> resultados = categoriaDao.findCategoriasConConteoAnuncios();
         List<Map<String, Object>> categoriasConConteo = new ArrayList<>();
         
-        // Para cada categoría, contar los anuncios activos asociados usando una consulta directa
-        for (Categoria categoria : categorias) {
-            // Contar anuncios activos de esta categoría usando el DAO
-            long conteoAnuncios = anuncioDao.countByCategoriasContainingAndEstado(categoria, "activo");
+        for (Object[] resultado : resultados) {
+            Long categoriaId = (Long) resultado[0];
+            String categoriaNombre = (String) resultado[1];
+            Long cantidad = (Long) resultado[2];
             
-            // Crear el mapa con la información de la categoría
+            // Obtener la categoría completa para incluir la descripción
+            Categoria categoria = findById(categoriaId);
+            
             Map<String, Object> categoriaInfo = new HashMap<>();
-            categoriaInfo.put("id", categoria.getId());
-            categoriaInfo.put("nombre", categoria.getNombre());
-            categoriaInfo.put("descripcion", categoria.getDescripcion());
-            categoriaInfo.put("cantidad", conteoAnuncios);
+            categoriaInfo.put("id", categoriaId);
+            categoriaInfo.put("nombre", categoriaNombre);
+            categoriaInfo.put("descripcion", categoria != null ? categoria.getDescripcion() : "");
+            categoriaInfo.put("cantidad", cantidad);
             
             categoriasConConteo.add(categoriaInfo);
         }

@@ -22,9 +22,8 @@ public interface CategoriaDao extends JpaRepository<Categoria, Long> {
      
      // Contar anuncios por categoría
      @Query("SELECT c.id, c.nombre, COUNT(a) as cantidad " +
-            "FROM Categoria c LEFT JOIN c.anuncios a " +
-            "WHERE a.estado = 'activo' OR a.estado IS NULL " +
+            "FROM Categoria c LEFT JOIN c.anuncios a ON a.estado = 'activo' " +
             "GROUP BY c.id, c.nombre " +
-            "ORDER BY cantidad DESC")
+            "ORDER BY c.id")
      List<Object[]> findCategoriasConConteoAnuncios();
 }

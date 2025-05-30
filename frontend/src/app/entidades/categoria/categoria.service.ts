@@ -93,4 +93,15 @@ export class CategoriaService implements OnInit{
     return this.http.delete<any>(this.urlEndPoint);
   }
 
+  // Obtener categorías con conteo real de anuncios
+  getCategoriasConConteoAnuncios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.urlEndPoint}/con-conteo`).pipe(
+      catchError(e => {
+        console.log('Error al obtener categorías con conteo:', e.error.mensaje);
+        swal('Error al obtener categorías con conteo', e.error.mensaje, 'error');
+        return throwError(e);
+      })
+    );
+  }
+
 }

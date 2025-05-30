@@ -76,6 +76,10 @@ export class Pedido {
     usuario?: Usuario;
     detallesPedido: DetallePedido[] = [];
     
+    // Propiedades para controlar la expansión de notas en la interfaz
+    notasClienteExpandidas: boolean = false;
+    notasInternasExpandidas: boolean = false;
+    
     // Propiedad para acceder a la fecha como objeto Date
     get fechaPedido(): Date {
         return this.fecha_pedido ? new Date(this.fecha_pedido) : new Date();

@@ -9,7 +9,7 @@ export class Anuncio {
     descripcion: string = "";
     precio: number = 0;
     fechaPublicacion: string = "";
-    estado: string = "ACTIVO";
+    estado: string = "activo";
     urlImagen: string = "";
     usuarioId: number = 0;
     categoriaId: number = 0;

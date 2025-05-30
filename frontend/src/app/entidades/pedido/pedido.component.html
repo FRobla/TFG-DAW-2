@@ -120,14 +120,43 @@
                         <td class="user-email text-center" data-label="Método Pago">{{pedido.getMetodoPagoTexto()}}</td>
                         <td class="notas-column" data-label="Notas">
                             <div class="notas-container">
+                                <!-- Notas del cliente -->
                                 <div class="nota-item" *ngIf="pedido.notas_cliente" title="Notas del Cliente">
                                     <i class="fas fa-user text-primary"></i>
-                                    <span class="nota-texto">{{pedido.notas_cliente | slice:0:50}}{{pedido.notas_cliente && pedido.notas_cliente.length > 50 ? '...' : ''}}</span>
+                                    <div class="nota-content">
+                                        <span class="nota-texto" 
+                                              [class.expandida]="pedido.notasClienteExpandidas"
+                                              [innerHTML]="pedido.notasClienteExpandidas ? pedido.notas_cliente : (pedido.notas_cliente | slice:0:50) + (pedido.notas_cliente.length > 50 ? '...' : '')">
+                                        </span>
+                                        <button class="btn-expandir" 
+                                                *ngIf="pedido.notas_cliente && pedido.notas_cliente.length > 10"
+                                                (click)="toggleNotasCliente(pedido)"
+                                                [title]="pedido.notasClienteExpandidas ? 'Contraer' : 'Expandir'">
+                                            <i class="fas" [class.fa-chevron-down]="!pedido.notasClienteExpandidas" 
+                                               [class.fa-chevron-up]="pedido.notasClienteExpandidas"></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                
+                                <!-- Notas internas -->
                                 <div class="nota-item" *ngIf="pedido.notas_internas" title="Notas Internas">
                                     <i class="fas fa-cog text-warning"></i>
-                                    <span class="nota-texto">{{pedido.notas_internas | slice:0:50}}{{pedido.notas_internas && pedido.notas_internas.length > 50 ? '...' : ''}}</span>
+                                    <div class="nota-content">
+                                        <span class="nota-texto" 
+                                              [class.expandida]="pedido.notasInternasExpandidas"
+                                              [innerHTML]="pedido.notasInternasExpandidas ? pedido.notas_internas : (pedido.notas_internas | slice:0:50) + (pedido.notas_internas.length > 50 ? '...' : '')">
+                                        </span>
+                                        <button class="btn-expandir" 
+                                                *ngIf="pedido.notas_internas && pedido.notas_internas.length > 10"
+                                                (click)="toggleNotasInternas(pedido)"
+                                                [title]="pedido.notasInternasExpandidas ? 'Contraer' : 'Expandir'">
+                                            <i class="fas" [class.fa-chevron-down]="!pedido.notasInternasExpandidas" 
+                                               [class.fa-chevron-up]="pedido.notasInternasExpandidas"></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                
+                                <!-- Sin notas -->
                                 <span class="sin-notas" *ngIf="!pedido.notas_cliente && !pedido.notas_internas">
                                     <i class="fas fa-minus text-muted"></i>
                                 </span>

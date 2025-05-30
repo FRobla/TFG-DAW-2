@@ -594,4 +594,18 @@ export class PedidoComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * Alterna la expansión de las notas del cliente
+   */
+  toggleNotasCliente(pedido: Pedido): void {
+    pedido.notasClienteExpandidas = !pedido.notasClienteExpandidas;
+  }
+
+  /**
+   * Alterna la expansión de las notas internas
+   */
+  toggleNotasInternas(pedido: Pedido): void {
+    pedido.notasInternasExpandidas = !pedido.notasInternasExpandidas;
+  }
 }
