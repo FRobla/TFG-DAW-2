@@ -120,7 +120,7 @@ export class ImpresoraComponent implements OnInit {
       resultado = resultado.filter(impresora => 
         impresora.modelo.toLowerCase().includes(terminoLower) ||
         impresora.marca.toLowerCase().includes(terminoLower) ||
-        impresora.tecnologiaImpresion?.toLowerCase().includes(terminoLower) ||
+        impresora.tecnologia?.toLowerCase().includes(terminoLower) ||
         impresora.descripcion?.toLowerCase().includes(terminoLower)
       );
     }

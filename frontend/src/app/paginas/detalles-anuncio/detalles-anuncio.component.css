@@ -567,3 +567,119 @@
     height: 80px;
   }
 }
+
+/* Estilos para la sección de materiales */
+.materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.material-card {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.material-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: #0dcaf0;
+  background: #232323;
+}
+
+.material-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.material-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f1f1f1;
+  margin: 0;
+}
+
+.material-price {
+  background: #0dcaf0;
+  color: #121212 !important;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.material-description {
+  color: #adb5bd;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.material-properties {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+.material-properties strong {
+  color: #f1f1f1;
+}
+
+.material-colors {
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+.material-colors strong {
+  color: #f1f1f1;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.color-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.color-chip {
+  background: #232323;
+  color: #f1f1f1;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.color-chip:hover {
+  background: #0dcaf0;
+  color: #121212;
+  cursor: pointer;
+  transform: translateY(-1px);
+}
+
+/* Responsive para materiales */
+@media (max-width: 768px) {
+  .materials-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .material-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .material-price {
+    align-self: flex-start;
+  }
+}

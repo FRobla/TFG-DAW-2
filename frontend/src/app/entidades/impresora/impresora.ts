@@ -2,14 +2,29 @@ export class Impresora {
     id: number = 0;
     modelo: string = "";
     marca: string = "";
-    fechaFabricacion: string = "";
-    precio: number = 0;
-    volumenImpresion: string = "";
+    tecnologia: string = "";
+    volumen_impresion_x: number = 0;
+    volumen_impresion_y: number = 0;
+    volumen_impresion_z: number = 0;
+    precision_valor: number = 0;
     descripcion: string = "";
-    tecnologiaImpresion: string = "";
+    imagen: string = "";
+    
+    // Propiedades adicionales para compatibilidad con el frontend
+    precio: number = 0;
     urlImagen: string = "";
-    enStock: boolean = true;
+    tecnologiaImpresion: string = "";
+    volumenImpresion: string = "";
     categoriaId: number = 0;
+    enStock: boolean = true;
+    fechaFabricacion: string = "";
+    
+    // Constructor para facilitar la transformación
+    constructor(data?: Partial<Impresora>) {
+        if (data) {
+            Object.assign(this, data);
+        }
+    }
     
     // Propiedad para acceder a la fecha como objeto Date
     get fechaFormateada(): Date {
@@ -18,14 +33,7 @@ export class Impresora {
     
     set fechaFormateada(fecha: Date) {
         if (fecha) {
-            this.fechaFabricacion = fecha.toISOString();
-        }
-    }
-    
-    // Constructor para facilitar la transformación
-    constructor(data?: Partial<Impresora>) {
-        if (data) {
-            Object.assign(this, data);
+            this.fechaFabricacion = fecha.toISOString().split('T')[0];
         }
     }
     
@@ -35,25 +43,34 @@ export class Impresora {
             id: data.id,
             modelo: data.modelo,
             marca: data.marca,
-            precio: data.precio,
-            volumenImpresion: data.volumenImpresion,
+            tecnologia: data.tecnologia,
+            volumen_impresion_x: data.volumen_impresion_x,
+            volumen_impresion_y: data.volumen_impresion_y,
+            volumen_impresion_z: data.volumen_impresion_z,
+            precision_valor: data.precision_valor,
             descripcion: data.descripcion,
-            tecnologiaImpresion: data.tecnologiaImpresion,
-            urlImagen: data.urlImagen,
-            enStock: data.enStock
+            imagen: data.imagen
         });
         
-        // Manejar la fecha específicamente
-        if (data.fechaFabricacion) {
-            impresora.fechaFabricacion = data.fechaFabricacion;
-        }
+        // Mapear propiedades adicionales para compatibilidad
+        impresora.urlImagen = data.imagen || "";
+        impresora.tecnologiaImpresion = data.tecnologia || "";
+        impresora.precio = data.precio || 0;
+        impresora.categoriaId = data.categoriaId || 0;
+        impresora.enStock = data.enStock !== undefined ? data.enStock : true;
+        impresora.fechaFabricacion = data.fechaFabricacion || "";
         
-        // Manejar la categoría
-        if (data.categoria) {
-            impresora.categoriaId = data.categoria.id;
+        // Generar volumenImpresion como string
+        if (data.volumen_impresion_x && data.volumen_impresion_y && data.volumen_impresion_z) {
+            impresora.volumenImpresion = `${data.volumen_impresion_x}x${data.volumen_impresion_y}x${data.volumen_impresion_z}mm`;
         }
         
         return impresora;
+    }
+
+    // Método específico para mapear desde backend (para compatibilidad)
+    static fromBackendImpresora(data: any): Impresora {
+        return Impresora.fromBackend(data);
     }
     
     // Método para convertir al formato esperado por el backend
@@ -62,16 +79,38 @@ export class Impresora {
             id: this.id,
             modelo: this.modelo,
             marca: this.marca,
-            fechaFabricacion: this.fechaFabricacion,
-            precio: this.precio,
-            volumenImpresion: this.volumenImpresion,
+            tecnologia: this.tecnologiaImpresion || this.tecnologia,
+            volumen_impresion_x: this.volumen_impresion_x,
+            volumen_impresion_y: this.volumen_impresion_y,
+            volumen_impresion_z: this.volumen_impresion_z,
+            precision_valor: this.precision_valor,
             descripcion: this.descripcion,
-            tecnologiaImpresion: this.tecnologiaImpresion,
-            urlImagen: this.urlImagen,
+            imagen: this.urlImagen || this.imagen,
+            precio: this.precio,
+            categoriaId: this.categoriaId,
             enStock: this.enStock,
-            categoria: {
-                id: this.categoriaId
-            }
+            fechaFabricacion: this.fechaFabricacion
         };
+    }
+
+    // Métodos de utilidad
+    getNombreCompleto(): string {
+        return `${this.marca} ${this.modelo}`;
+    }
+
+    getVolumenFormateado(): string {
+        return `${this.volumen_impresion_x}mm x ${this.volumen_impresion_y}mm x ${this.volumen_impresion_z}mm`;
+    }
+
+    getPrecisionFormateada(): string {
+        return `${this.precision_valor}mm`;
+    }
+    
+    // Método de utilidad para obtener precio formateado
+    getPrecioFormateado(): string {
+        return new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(this.precio);
     }
 }

@@ -1,6 +1,7 @@
 import { Categoria } from "../categoria/categoria";
 import { Usuario } from "../usuario/usuario";
 import { Impresora } from "../impresora/impresora";
+import { Material } from "../material/material";
 
 export class Anuncio {
     id: number = 0;
@@ -15,11 +16,13 @@ export class Anuncio {
     impresoraId: number = 0;
     tiempoEstimado: string = "";
     vistas: number = 0;
+    valoracionMedia: number = 0;
     
     // Propiedades de relaciones
     usuario?: Usuario;
     categorias?: Categoria[];
     impresora?: Impresora;
+    materiales?: Material[];
 
     // Propiedad para acceder a la fecha como objeto Date
     get fechaFormateada(): Date {
@@ -49,7 +52,8 @@ export class Anuncio {
             estado: data.estado,
             urlImagen: data.imagen || data.urlImagen, // Considerar ambos posibles nombres
             tiempoEstimado: data.tiempo_estimado || "",
-            vistas: data.vistas || 0
+            vistas: data.vistas || 0,
+            valoracionMedia: data.valoracion_media || 0
         });
         
         // Manejar la fecha específicamente
@@ -72,7 +76,10 @@ export class Anuncio {
         }
         if (data.impresora) {
             anuncio.impresoraId = data.impresora.id;
-            anuncio.impresora = data.impresora;
+            anuncio.impresora = Impresora.fromBackendImpresora(data.impresora);
+        }
+        if (data.materiales && data.materiales.length > 0) {
+            anuncio.materiales = data.materiales.map((material: any) => Material.fromBackend(material));
         }
         
         return anuncio;
@@ -125,5 +132,65 @@ export class Anuncio {
             return this.categorias.map(c => c.nombre).join(', ');
         }
         return '';
+    }
+
+    // Métodos de utilidad para impresora
+    getNombreImpresora(): string {
+        return this.impresora ? `${this.impresora.marca} ${this.impresora.modelo}` : '';
+    }
+
+    getTecnologiaImpresora(): string {
+        return this.impresora?.tecnologia || '';
+    }
+
+    getVolumenMaximoImpresion(): string {
+        if (this.impresora?.volumen_impresion_x && this.impresora?.volumen_impresion_y && this.impresora?.volumen_impresion_z) {
+            return `${this.impresora.volumen_impresion_x}mm x ${this.impresora.volumen_impresion_y}mm x ${this.impresora.volumen_impresion_z}mm`;
+        }
+        return '';
+    }
+
+    getPrecisionImpresora(): string {
+        return this.impresora?.precision_valor ? `${this.impresora.precision_valor}mm` : '';
+    }
+
+    // Métodos de utilidad para materiales
+    getNombresMateriales(): string[] {
+        return this.materiales ? this.materiales.map(m => m.nombre) : [];
+    }
+
+    getColoresDisponibles(): string[] {
+        if (!this.materiales) return [];
+        const colores = new Set<string>();
+        this.materiales.forEach(material => {
+            material.getColoresArray().forEach(color => colores.add(color));
+        });
+        return Array.from(colores);
+    }
+
+    getPropsiedadesMateriales(): string[] {
+        if (!this.materiales) return [];
+        return this.materiales
+            .map(m => m.propiedades)
+            .filter(prop => prop && prop.trim() !== '')
+            .flatMap(prop => prop.split(',').map(p => p.trim()));
+    }
+
+    // Método para obtener el material más económico
+    getMaterialMasEconomico(): Material | undefined {
+        if (!this.materiales || this.materiales.length === 0) return undefined;
+        return this.materiales.reduce((prev, current) => 
+            (prev.precio_kg < current.precio_kg) ? prev : current
+        );
+    }
+
+    // Método para obtener información de valoración formateada
+    getEstrellas(): string {
+        const puntuacion = Math.round(this.valoracionMedia);
+        let estrellas = '';
+        for (let i = 1; i <= 5; i++) {
+            estrellas += i <= puntuacion ? '★' : '☆';
+        }
+        return estrellas;
     }
 }

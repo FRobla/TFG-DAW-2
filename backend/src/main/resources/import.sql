@@ -240,6 +240,91 @@ INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 7); -- Maquet
 INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 1); -- Consultoría técnica - PLA (para ejemplos)
 INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (15, 1); -- Taller de impresión 3D - PLA
 
+-- RELACIONES ADICIONALES PARA MÁS OPCIONES DE MATERIALES
+-- Anuncio 1: Impresión PLA alta resolución - añadiendo más materiales compatibles
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (1, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (1, 5); -- Wood PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (1, 10); -- Metal Fill
+
+-- Anuncio 2: Impresión FDM acabado premium - añadiendo más opciones premium
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (2, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (2, 4); -- TPU
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (2, 5); -- Wood PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (2, 6); -- Carbon Fiber
+
+-- Anuncio 3: Impresión PLA biodegradable - ya tiene buena selección, añadiendo una más
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (3, 3); -- PETG (también reciclable)
+
+-- Anuncio 4: Impresión FDM multicolor - añadiendo más materiales coloridos
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (4, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (4, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (4, 4); -- TPU
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (4, 10); -- Metal Fill
+
+-- Anuncio 5: Impresión FDM industrial - añadiendo más materiales industriales
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (5, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (5, 10); -- Metal Fill
+
+-- Anuncio 6: Impresión FDM con PETG - añadiendo materiales compatibles
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (6, 1); -- PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (6, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (6, 4); -- TPU
+
+-- Anuncio 7: Pack impresión FDM básica - añadiendo opciones básicas
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (7, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (7, 3); -- PETG
+
+-- Anuncio 8: Impresión FDM con ABS - añadiendo materiales similares
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (8, 1); -- PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (8, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (8, 9); -- Nylon
+
+-- Anuncio 9: Impresión FDM con Nylon - añadiendo materiales de alta resistencia
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (9, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (9, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (9, 6); -- Carbon Fiber
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (9, 10); -- Metal Fill
+
+-- Anuncio 10: Modelado 3D personalizado - añadiendo más opciones para prototipos
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 4); -- TPU
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 5); -- Wood PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 7); -- Resina Standard
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (10, 9); -- Nylon
+
+-- Anuncio 11: Escaneado 3D - añadiendo más opciones para replicar objetos
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (11, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (11, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (11, 7); -- Resina Standard
+
+-- Anuncio 12: Prototipos médicos - añadiendo más opciones médicas
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (12, 3); -- PETG (biocompatible)
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (12, 4); -- TPU (para prótesis flexibles)
+
+-- Anuncio 13: Maquetas arquitectónicas - añadiendo más opciones para detalles
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 5); -- Wood PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 8); -- Resina Flexible
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (13, 10); -- Metal Fill
+
+-- Anuncio 14: Consultoría técnica - añadiendo más ejemplos de materiales
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 4); -- TPU
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 5); -- Wood PLA
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 6); -- Carbon Fiber
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 7); -- Resina Standard
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 8); -- Resina Flexible
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 9); -- Nylon
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (14, 10); -- Metal Fill
+
+-- Anuncio 15: Taller de impresión 3D - añadiendo materiales para aprendizaje
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (15, 2); -- ABS
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (15, 3); -- PETG
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (15, 4); -- TPU
+INSERT INTO anuncio_material (anuncio_id, material_id) VALUES (15, 5); -- Wood PLA
+
 -- Insertar Valoraciones
 INSERT INTO valoraciones (id, puntuacion, comentario, fecha_valoracion, respuesta_proveedor, fecha_respuesta, verificado, anuncio_id, usuario_id) VALUES
 (1, 5, 'Excelente calidad de impresión, muy recomendable!', '2025-05-16', NULL, NULL, true, 1, 3),

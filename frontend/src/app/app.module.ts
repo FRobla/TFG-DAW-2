@@ -25,6 +25,7 @@ import { AnuncioComponent } from './entidades/anuncio/anuncio.component';
 import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 import { PerfilComponent } from './paginas/perfil/perfil.component';
 import { FavoritoComponent } from './paginas/favorito/favorito.component';
+import { CarritoComponent } from './paginas/carrito/carrito.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { FavoritoComponent } from './paginas/favorito/favorito.component';
     ImpresoraComponent,
     PerfilComponent,
     FavoritoComponent,
+    CarritoComponent,
   ],
   imports: [
     BrowserModule,

@@ -10,7 +10,7 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#">Inicio</a></li>
           <li class="breadcrumb-item"><a href="javascript:void(0)" (click)="volverAResultados($event)">Resultados de búsqueda</a></li>
-          <li class="breadcrumb-item active" aria-current="page" [attr.data-view-id]="'anuncio-title-' + anuncioId" data-view-transition="header">{{anuncio?.titulo}}</li>
+          <li class="breadcrumb-item active" aria-current="page" [attr.data-view-id]="'anuncio-title-' + anuncioId" data-view-transition="header">{{anuncio.titulo}}</li>
         </ol>
       </nav>
     </div>
@@ -127,24 +127,38 @@
           
           <!-- Especificaciones técnicas -->
           <div class="mt-5">
-            <h3>Especificaciones</h3>
+            <h3>Especificaciones Técnicas</h3>
             <table class="specs-table">
               <tbody>
+                <!-- Información de la impresora -->
+                <tr *ngIf="nombreImpresora">
+                  <th>Impresora</th>
+                  <td>{{nombreImpresora}}</td>
+                </tr>
+                <tr *ngIf="tecnologiaImpresora">
+                  <th>Tecnología de impresión</th>
+                  <td>{{tecnologiaImpresora}}</td>
+                </tr>
+                <tr *ngIf="tamanoMaximo">
+                  <th>Volumen máximo de impresión</th>
+                  <td>{{tamanoMaximo}}</td>
+                </tr>
+                <tr *ngIf="precisionImpresora">
+                  <th>Precisión</th>
+                  <td>{{precisionImpresora}}</td>
+                </tr>
+                <!-- Información del servicio -->
                 <tr>
                   <th>Tiempo de entrega</th>
                   <td>{{tiempoEntrega}}</td>
                 </tr>
-                <tr>
+                <tr *ngIf="materiales.length > 0">
                   <th>Materiales disponibles</th>
                   <td>{{materiales.join(', ')}}</td>
                 </tr>
-                <tr>
+                <tr *ngIf="colores.length > 0">
                   <th>Colores disponibles</th>
                   <td>{{colores.join(', ')}}</td>
-                </tr>
-                <tr>
-                  <th>Tamaño máximo</th>
-                  <td>{{tamanoMaximo}}</td>
                 </tr>
                 <tr>
                   <th>Métodos de pago</th>
@@ -156,6 +170,33 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          
+          <!-- Información detallada de materiales (si hay materiales del backend) -->
+          <div class="mt-5" *ngIf="anuncio.materiales && anuncio.materiales.length > 0">
+            <h3>Materiales Disponibles</h3>
+            <div class="materials-grid">
+              <div *ngFor="let material of anuncio.materiales" class="material-card">
+                <div class="material-header">
+                  <h4 class="material-name">{{material.nombre}}</h4>
+                  <span class="material-price">{{material.getPrecioFormateado()}}/kg</span>
+                </div>
+                <div class="material-description" *ngIf="material.descripcion">
+                  {{material.descripcion}}
+                </div>
+                <div class="material-properties" *ngIf="material.propiedades">
+                  <strong>Propiedades:</strong> {{material.propiedades}}
+                </div>
+                <div class="material-colors" *ngIf="material.color_disponibles">
+                  <strong>Colores:</strong>
+                  <div class="color-chips">
+                    <span *ngFor="let color of material.getColoresArray()" class="color-chip">
+                      {{color}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <!-- Sección de valoraciones -->

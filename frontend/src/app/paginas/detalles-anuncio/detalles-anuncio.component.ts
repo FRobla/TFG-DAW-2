@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritoService } from '../favorito/favorito.service';
 import { AnuncioService } from '../../entidades/anuncio/anuncio.service';
 import { Anuncio } from '../../entidades/anuncio/anuncio';
+import { Material } from '../../entidades/material/material';
 
 @Component({
   selector: 'app-detalles-anuncio',
@@ -17,7 +18,7 @@ export class DetallesAnuncioComponent implements OnInit {
   // Datos del anuncio desde el backend
   anuncio!: Anuncio;
   
-  // Propiedades adicionales para el template (simuladas por ahora)
+  // Propiedades para el template
   proveedor: string = '';
   ubicacion: string = '';
   valoracion: number = 0;
@@ -30,6 +31,11 @@ export class DetallesAnuncioComponent implements OnInit {
   serviciosAdicionales: any[] = [];
   metodoPago: string = '';
   politicasCancelacion: string = '';
+  
+  // Información de la impresora
+  nombreImpresora: string = '';
+  tecnologiaImpresora: string = '';
+  precisionImpresora: string = '';
   
   // Valoraciones (simuladas por ahora - se puede implementar más adelante)
   valoraciones: any[] = [];
@@ -86,8 +92,8 @@ export class DetallesAnuncioComponent implements OnInit {
         // Configurar valores por defecto basados en los datos del backend
         this.precioBase = this.anuncio.precio;
         
-        // Configurar datos adicionales simulados basados en el anuncio del backend
-        this.configurarDatosAdicionales();
+        // Configurar datos basados en la información real del anuncio del backend
+        this.configurarDatosDelBackend();
         
         // Calcular precio inicial
         this.calcularPrecio();
@@ -110,17 +116,17 @@ export class DetallesAnuncioComponent implements OnInit {
   }
 
   /**
-   * Configura datos adicionales simulados basados en el anuncio del backend
+   * Configura datos basados en la información real del anuncio del backend
    */
-  configurarDatosAdicionales(): void {
+  configurarDatosDelBackend(): void {
     // Usar el nombre del usuario como proveedor si está disponible
     this.proveedor = this.anuncio.getNombreUsuario() || 'Proveedor de servicios 3D';
     
-    // Ubicación simulada
+    // Ubicación simulada (esto podría venir del usuario en el futuro)
     this.ubicacion = 'Madrid';
     
-    // Valoración simulada (entre 3 y 5 estrellas)
-    this.valoracion = Math.floor(Math.random() * 3) + 3;
+    // Valoración del backend o simulada
+    this.valoracion = this.anuncio.valoracionMedia > 0 ? Math.round(this.anuncio.valoracionMedia) : Math.floor(Math.random() * 3) + 3;
     this.numValoraciones = Math.floor(Math.random() * 120) + 30;
     
     // Descripción larga mejorada
@@ -129,20 +135,38 @@ export class DetallesAnuncioComponent implements OnInit {
                            'solución posible. Utilizamos materiales de alta calidad y equipos de última generación para garantizar ' +
                            'la mejor calidad en cada impresión.';
     
-    // Tiempo de entrega basado en el tiempoEstimado del backend o simulado
+    // Tiempo de entrega del backend
     this.tiempoEntrega = this.anuncio.tiempoEstimado || '3-5 días laborables';
     
-    // Materiales disponibles
-    this.materiales = ['PLA', 'PETG', 'ABS', 'TPU', 'Nylon'];
-    this.materialSeleccionado = this.materiales[0];
+    // Materiales del backend
+    if (this.anuncio.materiales && this.anuncio.materiales.length > 0) {
+      this.materiales = this.anuncio.getNombresMateriales();
+      this.materialSeleccionado = this.materiales[0];
+      
+      // Colores disponibles de los materiales
+      this.colores = this.anuncio.getColoresDisponibles();
+    } else {
+      // Fallback a materiales simulados si no hay datos del backend
+      this.materiales = ['PLA', 'PETG', 'ABS', 'TPU', 'Nylon'];
+      this.materialSeleccionado = this.materiales[0];
+      this.colores = ['Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Verde', 'Amarillo'];
+    }
     
-    // Colores disponibles
-    this.colores = ['Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Verde', 'Amarillo'];
+    // Información de la impresora del backend
+    if (this.anuncio.impresora) {
+      this.nombreImpresora = this.anuncio.getNombreImpresora();
+      this.tecnologiaImpresora = this.anuncio.getTecnologiaImpresora();
+      this.tamanoMaximo = this.anuncio.getVolumenMaximoImpresion();
+      this.precisionImpresora = this.anuncio.getPrecisionImpresora();
+    } else {
+      // Fallback a valores simulados si no hay impresora
+      this.nombreImpresora = 'Impresora 3D profesional';
+      this.tecnologiaImpresora = 'FDM';
+      this.tamanoMaximo = '250mm x 250mm x 300mm';
+      this.precisionImpresora = '0.1mm';
+    }
     
-    // Tamaño máximo
-    this.tamanoMaximo = '250mm x 250mm x 300mm';
-    
-    // Servicios adicionales
+    // Servicios adicionales (estos pueden seguir siendo simulados o configurables)
     this.serviciosAdicionales = [
       { id: 'acabadoPremium', nombre: 'Acabado Premium', descripcion: 'Tratamiento de superficie para un acabado profesional', precio: 10 },
       { id: 'urgente', nombre: 'Entrega Urgente (24h)', descripcion: 'Impresión y entrega en 24 horas', precio: 15 },
