@@ -398,7 +398,7 @@ export class UsuarioComponent implements OnInit {
    */
   getUsuariosRecientes(): number {
     const fechaLimite = new Date();
-    fechaLimite.setDate(fechaLimite.getDate() - 1);
+    fechaLimite.setDate(fechaLimite.getDate() - 7);
     
     return this.usuarios.filter(usuario => {
       if (!usuario.fechaRegistro) return false;

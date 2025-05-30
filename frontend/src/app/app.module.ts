@@ -28,6 +28,7 @@ import { PerfilComponent } from './paginas/perfil/perfil.component';
 import { FavoritoComponent } from './paginas/favorito/favorito.component';
 import { CarritoComponent } from './paginas/carrito/carrito.component';
 import { PaypalComponent } from './recursos/paypal/paypal.component';
+import { PedidoComponent } from './entidades/pedido/pedido.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { PaypalComponent } from './recursos/paypal/paypal.component';
     FavoritoComponent,
     CarritoComponent,
     PaypalComponent,
+    PedidoComponent,
   ],
   imports: [
     BrowserModule,

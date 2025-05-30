@@ -584,4 +584,21 @@ public class PedidoController {
         response.put("pedido", pedidoActualizado);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    /**
+     * Exporta pedidos a CSV
+     */
+    @GetMapping("/pedidos/export")
+    public ResponseEntity<String> exportarPedidos() {
+        try {
+            String csvContent = pedidoService.exportarPedidosCSV();
+            return ResponseEntity.ok()
+                    .header("Content-Type", "text/csv; charset=UTF-8")
+                    .header("Content-Disposition", "attachment; filename=\"pedidos.csv\"")
+                    .body(csvContent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al exportar pedidos: " + e.getMessage());
+        }
+    }
 } 

@@ -16,6 +16,7 @@ import { ImpresoraComponent } from './entidades/impresora/impresora.component';
 import { PerfilComponent } from './paginas/perfil/perfil.component';
 import { FavoritoComponent } from './paginas/favorito/favorito.component';
 import { CarritoComponent } from './paginas/carrito/carrito.component';
+import { PedidoComponent } from './entidades/pedido/pedido.component';
 
 const routes: Routes = [
   { 
@@ -70,7 +71,8 @@ const routes: Routes = [
       { path: 'usuarios', component: UsuarioComponent },
       { path: 'categorias', component: CategoriasComponent },
       { path: 'anuncios', component: AnuncioComponent },
-      { path: 'impresoras', component: ImpresoraComponent }
+      { path: 'impresoras', component: ImpresoraComponent },
+      { path: 'pedidos', component: PedidoComponent }
     ]
   },
   { 

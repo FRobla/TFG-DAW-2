@@ -1,0 +1,346 @@
+<div class="dashboard-container" @viewTransition>
+    <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarUsuariosEvent)="exportarPedidos()"></app-navbar-admin>
+
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-number">{{pedidos.length}}</h3>
+                <p class="stat-label">Total Pedidos</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-number">{{getPedidosPorEstado('pendiente')}}</h3>
+                <p class="stat-label">Pendientes</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-number">{{getPedidosPorEstado('completado')}}</h3>
+                <p class="stat-label">Completados</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-euro-sign"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-number">{{getVentasTotalesMes() | currency:'EUR':'symbol':'1.2-2'}}</h3>
+                <p class="stat-label">Ventas Este Mes</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content" *ngIf="!editando">
+        <!-- Filtros y Ordenación -->
+        <div class="filtros-container">
+            <div class="filtro-grupo">
+                <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrarPorEstado()">
+                    <option value="">Todos los estados</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="en_proceso">En Proceso</option>
+                    <option value="completado">Completados</option>
+                    <option value="cancelado">Cancelados</option>
+                    <option value="enviado">Enviados</option>
+                </select>
+            </div>
+            <div class="orden-grupo">
+                <button class="orden-btn" [class.activo]="ordenarPor === 'numero'" (click)="cambiarOrden('numero')">
+                    Número
+                    <i class="fas" [class.fa-arrow-up]="ordenarPor === 'numero' && ordenAscendente" 
+                       [class.fa-arrow-down]="ordenarPor === 'numero' && !ordenAscendente"></i>
+                </button>
+                <button class="orden-btn" [class.activo]="ordenarPor === 'fecha'" (click)="cambiarOrden('fecha')">
+                    Fecha
+                    <i class="fas" [class.fa-arrow-up]="ordenarPor === 'fecha' && ordenAscendente" 
+                       [class.fa-arrow-down]="ordenarPor === 'fecha' && !ordenAscendente"></i>
+                </button>
+                <button class="orden-btn" [class.activo]="ordenarPor === 'total'" (click)="cambiarOrden('total')">
+                    Total
+                    <i class="fas" [class.fa-arrow-up]="ordenarPor === 'total' && ordenAscendente" 
+                       [class.fa-arrow-down]="ordenarPor === 'total' && !ordenAscendente"></i>
+                </button>
+                <button class="orden-btn" [class.activo]="ordenarPor === 'cliente'" (click)="cambiarOrden('cliente')">
+                    Cliente
+                    <i class="fas" [class.fa-arrow-up]="ordenarPor === 'cliente' && ordenAscendente" 
+                       [class.fa-arrow-down]="ordenarPor === 'cliente' && !ordenAscendente"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-container" [class.loading]="cargando" data-view-transition="card">
+            <table class="usuarios-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Número Pedido</th>
+                        <th class="text-center">Cliente</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Método Pago</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let pedido of getPedidosPaginados()">
+                        <td class="user-id" data-label="ID">{{pedido.id}}</td>
+                        <td class="user-name" data-label="Número">
+                            <div class="user-info" data-view-transition="header" [attr.data-view-id]="'pedido-numero-' + pedido.id">
+                                <span class="nombre">{{pedido.numero_pedido}}</span>
+                            </div>
+                        </td>
+                        <td class="user-name" data-label="Cliente">
+                            <div class="user-info" data-view-transition="header" [attr.data-view-id]="'pedido-cliente-' + pedido.id">
+                                <span class="nombre">{{pedido.getNombreCliente()}}</span>
+                                <span class="direccion" *ngIf="pedido.usuario">{{pedido.usuario.email}}</span>
+                            </div>
+                        </td>
+                        <td class="user-date text-center" data-label="Fecha">{{pedido.fechaPedido | date:'dd/MM/yyyy HH:mm'}}</td>
+                        <td class="user-role text-center" data-label="Estado">
+                            <span class="role-badge" [ngClass]="pedido.getEstadoClase()" data-view-transition="card" [attr.data-view-id]="'pedido-estado-' + pedido.id">
+                                {{pedido.getEstadoTexto()}}
+                            </span>
+                        </td>
+                        <td class="user-email text-center" data-label="Total">{{pedido.total | currency:'EUR':'symbol':'1.2-2'}}</td>
+                        <td class="user-email text-center" data-label="Método Pago">{{pedido.getMetodoPagoTexto()}}</td>
+                        <td class="user-actions" data-label="Acciones">
+                            <button class="action-btn edit-btn" (click)="editarPedido(pedido)" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn details-btn" (click)="verDetallesPedido(pedido)" title="Ver detalles">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <button class="action-btn delete-btn" (click)="confirmarEliminar(pedido)" 
+                                    *ngIf="pedido.estado === 'cancelado' || pedido.estado === 'pendiente'" title="Eliminar">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div *ngIf="cargando" class="loading-container" data-view-transition="loading-indicator">
+            <div class="spinner"></div>
+        </div>
+        
+        <!-- Mensaje de sin resultados -->
+        <div *ngIf="!cargando && pedidosFiltrados.length === 0" class="no-results">
+            <div class="no-results-content">
+                <i class="fas fa-search no-results-icon"></i>
+                <h3>No se encontraron pedidos</h3>
+                <p>Intenta con otra búsqueda o crea un nuevo pedido</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination-container" *ngIf="pedidos.length > itemsPorPagina">
+        <div class="pagination">
+            <button class="pagination-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="pagination-info">Página {{paginaActual}} de {{totalPaginas}}</span>
+            <button class="pagination-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div class="pagination-select">
+            <select [(ngModel)]="itemsPorPagina" (change)="cambiarItemsPorPagina()">
+                <option [value]="5">5 por página</option>
+                <option [value]="10">10 por página</option>
+                <option [value]="20">20 por página</option>
+                <option [value]="50">50 por página</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="dashboard-actions" data-view-transition="action-buttons" *ngIf="!cargando">
+        <button class="btn btn-export" (click)="exportarPedidos()">
+            <i class="fas fa-download"></i> Exportar Pedidos
+        </button>
+        <button class="btn btn-success" (click)="abrirModalCrearPedido()">
+            <i class="fas fa-plus"></i> Nuevo Pedido
+        </button>
+    </div>
+</div>
+
+<!-- Modal para crear/editar pedido -->
+<div class="modal" [class.active]="modalVisible">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2>{{modoEdicion ? 'Editar Pedido' : 'Crear Nuevo Pedido'}}</h2>
+            <button class="close-btn" (click)="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form #pedidoForm="ngForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="numero_pedido">Número de Pedido</label>
+                        <input type="text" id="numero_pedido" name="numero_pedido" [(ngModel)]="pedidoActual.numero_pedido" 
+                               [readonly]="modoEdicion" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado *</label>
+                        <select id="estado" name="estado" [(ngModel)]="pedidoActual.estado" required class="form-control">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_proceso">En Proceso</option>
+                            <option value="completado">Completado</option>
+                            <option value="cancelado">Cancelado</option>
+                            <option value="enviado">Enviado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="direccion_envio">Dirección de Envío *</label>
+                        <input type="text" id="direccion_envio" name="direccion_envio" [(ngModel)]="pedidoActual.direccion_envio" 
+                               required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="codigo_postal">Código Postal</label>
+                        <input type="text" id="codigo_postal" name="codigo_postal" [(ngModel)]="pedidoActual.codigo_postal" 
+                               class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label>
+                        <input type="text" id="ciudad" name="ciudad" [(ngModel)]="pedidoActual.ciudad" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="provincia">Provincia</label>
+                        <input type="text" id="provincia" name="provincia" [(ngModel)]="pedidoActual.provincia" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="metodo_pago">Método de Pago</label>
+                        <select id="metodo_pago" name="metodo_pago" [(ngModel)]="pedidoActual.metodo_pago" class="form-control">
+                            <option value="">Seleccionar método</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="tarjeta">Tarjeta de Crédito</option>
+                            <option value="transferencia">Transferencia Bancaria</option>
+                            <option value="efectivo">Efectivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="referencia_pago">Referencia de Pago</label>
+                        <input type="text" id="referencia_pago" name="referencia_pago" [(ngModel)]="pedidoActual.referencia_pago" 
+                               class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="subtotal">Subtotal</label>
+                        <input type="number" id="subtotal" name="subtotal" [(ngModel)]="pedidoActual.subtotal" 
+                               step="0.01" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="total">Total</label>
+                        <input type="number" id="total" name="total" [(ngModel)]="pedidoActual.total" 
+                               step="0.01" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notas_cliente">Notas del Cliente</label>
+                    <textarea id="notas_cliente" name="notas_cliente" [(ngModel)]="pedidoActual.notas_cliente" 
+                              rows="3" class="form-control"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="guardarPedido()" [disabled]="!pedidoForm.valid">
+                {{modoEdicion ? 'Actualizar' : 'Crear'}} Pedido
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalles del pedido -->
+<div class="modal" [class.active]="modalDetallesVisible">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2>Detalles del Pedido {{pedidoActual.numero_pedido}}</h2>
+            <button class="close-btn" (click)="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="pedido-details">
+                <div class="details-row">
+                    <div class="detail-group">
+                        <label>Cliente:</label>
+                        <span>{{pedidoActual.getNombreCliente()}}</span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Estado:</label>
+                        <span class="estado-badge" [ngClass]="pedidoActual.getEstadoClase()">
+                            {{pedidoActual.getEstadoTexto()}}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="detail-group">
+                        <label>Fecha del Pedido:</label>
+                        <span>{{pedidoActual.fechaPedido | date:'dd/MM/yyyy HH:mm'}}</span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Método de Pago:</label>
+                        <span>{{pedidoActual.getMetodoPagoTexto()}}</span>
+                    </div>
+                </div>
+
+                <div class="details-row">
+                    <div class="detail-group full-width">
+                        <label>Dirección de Envío:</label>
+                        <span>{{pedidoActual.direccion_envio}}</span>
+                        <span *ngIf="pedidoActual.codigo_postal">, {{pedidoActual.codigo_postal}}</span>
+                        <span *ngIf="pedidoActual.ciudad">, {{pedidoActual.ciudad}}</span>
+                        <span *ngIf="pedidoActual.provincia">, {{pedidoActual.provincia}}</span>
+                    </div>
+                </div>
+
+                <div class="details-row">
+                    <div class="detail-group">
+                        <label>Subtotal:</label>
+                        <span>{{pedidoActual.subtotal | currency:'EUR':'symbol':'1.2-2'}}</span>
+                    </div>
+                    <div class="detail-group total">
+                        <label>Total:</label>
+                        <span class="total-amount">{{pedidoActual.total | currency:'EUR':'symbol':'1.2-2'}}</span>
+                    </div>
+                </div>
+
+                <div class="notes-section" *ngIf="pedidoActual.notas_cliente">
+                    <label>Notas del Cliente:</label>
+                    <p>{{pedidoActual.notas_cliente}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
