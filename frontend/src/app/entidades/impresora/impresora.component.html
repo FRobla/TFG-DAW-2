@@ -1,5 +1,5 @@
-<div class="dashboard-container" @viewTransition>
-  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarUsuariosEvent)="exportarImpresoras()"></app-navbar-admin>
+<div class="dashboard-container">
+  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarEvent)="exportarImpresoras()"></app-navbar-admin>
 
   <div class="dashboard-stats">
     <div class="stat-card">
@@ -92,11 +92,16 @@
               </div>
             </td>
             <td class="impresora-modelo" data-label="Modelo">
-              <div class="impresora-info" data-view-transition="header" [attr.data-view-id]="'impresora-model-' + impresora.id">
-                <span class="modelo">{{impresora.modelo}}</span></div>
+              <div class="impresora-info" data-view-transition="header" [attr.data-view-id]="'impresora-title-' + impresora.id">
+                <span class="modelo">{{impresora.modelo}}</span>
+              </div>
             </td>
             <td class="impresora-marca text-center" data-label="Marca">{{impresora.marca}}</td>
-            <td class="impresora-precio text-center" data-label="Precio">{{impresora.precio}} €</td>
+            <td class="impresora-precio text-center" data-label="Precio">
+              <span class="precio-badge" data-view-transition="card" [attr.data-view-id]="'impresora-precio-' + impresora.id">
+                {{impresora.precio | currency:'EUR'}}
+              </span>
+            </td>
             <td class="impresora-tecnologia text-center" data-label="Tecnología">{{impresora.tecnologiaImpresion || 'No especificada'}}</td>
             <td class="impresora-categoria text-center" data-label="Categoría">
               <span class="categoria-badge" data-view-transition="card" [attr.data-view-id]="'impresora-category-' + impresora.id">
@@ -104,7 +109,7 @@
               </span>
             </td>
             <td class="impresora-stock text-center" data-label="Stock">
-              <span class="stock-badge" [ngClass]="{'en-stock': impresora.enStock, 'sin-stock': !impresora.enStock}">
+              <span class="stock-badge" [ngClass]="{'en-stock': impresora.enStock, 'sin-stock': !impresora.enStock}" data-view-transition="card" [attr.data-view-id]="'impresora-stock-' + impresora.id">
                 {{impresora.enStock ? 'En Stock' : 'Sin Stock'}}
               </span>
             </td>
@@ -124,8 +129,8 @@
       </table>
     </div>
 
-    <!-- Indicador de carga con transición fluida -->
-    <div *ngIf="cargando" class="loading-container" data-view-transition="loading-indicator">
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" class="loading-container">
       <div class="spinner"></div>
     </div>
     
@@ -159,7 +164,7 @@
     </div>
   </div>
 
-  <div class="dashboard-actions" data-view-transition="action-buttons" *ngIf="!cargando">
+  <div class="dashboard-actions">
     <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
       <i class="fas fa-trash-alt"></i> Eliminar Todas
     </button>
@@ -240,7 +245,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-cancel" (click)="cerrarModal()">Cancelar</button>
-      <button class="btn btn-save btn-outline-light btn-lg" [disabled]="!impresoraForm.valid" (click)="guardarImpresora()">
+      <button class="btn btn-save" [disabled]="!impresoraForm.valid" (click)="guardarImpresora()">
         {{modoEdicion ? 'Actualizar' : 'Crear'}}
       </button>
     </div>
@@ -256,7 +261,7 @@
     <h2 class="confirmacion-titulo">{{tituloConfirmacion}}</h2>
     <p class="confirmacion-mensaje">{{mensajeConfirmacion}}</p>
     <div class="confirmacion-acciones">
-      <button class="btn btn-cancel" (click)="cancelarConfirmacion()">Cancelar</button>
+      <button class="btn btn-cancel" (click)="modalConfirmacionVisible = false">Cancelar</button>
       <button class="btn btn-confirmar" (click)="ejecutarAccionConfirmacion()">Confirmar</button>
     </div>
   </div>

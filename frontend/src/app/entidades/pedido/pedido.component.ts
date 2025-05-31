@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { PedidoService } from './pedido.service';
 import { Pedido } from './pedido';
 import swal from 'sweetalert2';
@@ -11,18 +10,7 @@ import { formatDate } from '@angular/common';
   selector: 'app-pedido',
   standalone: false,
   templateUrl: './pedido.component.html',
-  styleUrls: ['./pedido.component.css'],
-  animations: [
-    trigger('viewTransition', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
-      ])
-    ])
-  ]
+  styleUrls: ['./pedido.component.css']
 })
 export class PedidoComponent implements OnInit {
 
@@ -731,5 +719,56 @@ export class PedidoComponent implements OnInit {
         swal('Error', mensaje, 'error');
       }
     });
+  }
+
+  /**
+   * Exporta los pedidos a un archivo CSV
+   */
+  exportarPedidos(): void {
+    const pedidosExport = this.pedidos.map(pedido => ({
+      ID: pedido.id,
+      'Número Pedido': pedido.numero_pedido,
+      Cliente: pedido.getNombreCliente(),
+      'Email Cliente': pedido.usuario ? pedido.usuario.email : '',
+      Fecha: new Date(pedido.fechaPedido).toLocaleDateString('es-ES'),
+      Estado: pedido.getEstadoTexto(),
+      'Total (€)': pedido.total.toFixed(2),
+      'Método Pago': pedido.getMetodoPagoTexto(),
+      'Dirección Envío': pedido.direccion_envio,
+      'Código Postal': pedido.codigo_postal,
+      Ciudad: pedido.ciudad,
+      Provincia: pedido.provincia,
+      'Notas Cliente': pedido.notas_cliente || '',
+      'Notas Internas': pedido.notas_internas || ''
+    }));
+
+    // Convertir a CSV
+    const headers = Object.keys(pedidosExport[0]);
+    const csvContent = [
+      headers.join(','),
+      ...pedidosExport.map(row => 
+        headers.map(header => {
+          const value = row[header as keyof typeof row] || '';
+          // Escape commas and quotes in CSV values
+          return typeof value === 'string' && (value.includes(',') || value.includes('"')) 
+            ? `"${value.replace(/"/g, '""')}"` 
+            : value;
+        }).join(',')
+      )
+    ].join('\n');
+
+    // Crear y descargar el archivo CSV
+    const BOM = '\uFEFF'; // UTF-8 BOM para caracteres especiales
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pedidos_export_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Limpiar recursos
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 }

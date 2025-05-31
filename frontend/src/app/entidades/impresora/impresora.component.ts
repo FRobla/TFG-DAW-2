@@ -231,8 +231,10 @@ export class ImpresoraComponent implements OnInit {
    * Cambia la página actual
    */
   cambiarPagina(pagina: number): void {
-    this.paginaActual = pagina;
-    this.cargarImpresoras();
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+      this.aplicarPaginacion();
+    }
   }
 
   /**

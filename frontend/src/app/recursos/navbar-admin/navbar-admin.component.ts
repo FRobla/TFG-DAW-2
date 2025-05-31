@@ -21,65 +21,114 @@ export class NavbarAdminComponent implements OnInit {
   }
   
   /**
+   * Navega a una ruta específica con transición visual si está disponible
+   * @param ruta La ruta a la que navegar
+   */
+  navegarConTransicion(ruta: string): void {
+    // Prevenir navegación si ya estamos en la misma ruta
+    if (this.router.url === ruta) {
+      return;
+    }
+
+    // Verificar si el navegador soporta View Transitions API
+    if ('startViewTransition' in document && document.startViewTransition) {
+      // Preparar elementos para la transición
+      this.prepararElementosParaTransicion();
+      
+      // Iniciar transición y navegar
+      document.startViewTransition(() => {
+        this.router.navigateByUrl(ruta);
+        return Promise.resolve();
+      });
+    } else {
+      // Fallback para navegadores sin soporte
+      this.router.navigateByUrl(ruta);
+    }
+  }
+
+  /**
+   * Prepara los elementos actuales para una transición suave
+   */
+  private prepararElementosParaTransicion(): void {
+    // Agregar atributos de transición a elementos clave
+    const navbar = document.querySelector('.dashboard-header');
+    const tabs = document.querySelector('.entity-tabs');
+    const container = document.querySelector('.dashboard-container');
+    
+    if (navbar) {
+      navbar.setAttribute('data-view-transition', 'navbar');
+    }
+    
+    if (tabs) {
+      tabs.setAttribute('data-view-transition', 'tabs');
+    }
+    
+    if (container) {
+      container.setAttribute('data-view-transition', 'container');
+    }
+  }
+
+  /**
    * Devuelve el título correspondiente a la página actual
    */
   getTituloPagina(): string {
-    const ruta = this.router.url;
-    
-    if (ruta.includes('/admin/usuarios')) {
-      return 'Administración de Usuarios';
-    } else if (ruta.includes('/admin/anuncios')) {
-      return 'Administración de Anuncios';
-    } else if (ruta.includes('/admin/categorias')) {
-      return 'Administración de Categorías';
-    } else if (ruta.includes('/admin/servicios')) {
-      return 'Administración de Servicios';
-    } else if (ruta.includes('/admin/pedidos')) {
-      return 'Administración de Pedidos';
-    } else if (ruta.includes('/admin/impresoras')) {
-      return 'Administración de Impresoras';
+    const url = this.router.url;
+    switch (true) {
+      case url.includes('/admin/usuarios'):
+        return 'Gestión de Usuarios';
+      case url.includes('/admin/anuncios'):
+        return 'Gestión de Anuncios';
+      case url.includes('/admin/categorias'):
+        return 'Gestión de Categorías';
+      case url.includes('/admin/impresoras'):
+        return 'Gestión de Impresoras';
+      case url.includes('/admin/pedidos'):
+        return 'Gestión de Pedidos';
+      case url.includes('/admin/materiales'):
+        return 'Gestión de Materiales';
+      case url.includes('/admin/ubicaciones'):
+        return 'Gestión de Ubicaciones';
+      default:
+        return 'Panel de Administración';
     }
-    
-    return 'Panel de Administración';
   }
   
   /**
    * Devuelve el placeholder adecuado para el campo de búsqueda según la página actual
    */
   getPlaceholderBusqueda(): string {
-    const ruta = this.router.url;
-    
-    if (ruta.includes('/admin/usuarios')) {
-      return 'Buscar usuario...';
-    } else if (ruta.includes('/admin/anuncios')) {
-      return 'Buscar anuncio...';
-    } else if (ruta.includes('/admin/categorias')) {
-      return 'Buscar categoría...';
-    } else if (ruta.includes('/admin/servicios')) {
-      return 'Buscar servicio...';
-    } else if (ruta.includes('/admin/pedidos')) {
-      return 'Buscar pedido...';
-    } else if (ruta.includes('/admin/impresoras')) {
-      return 'Buscar impresora...';
+    const url = this.router.url;
+    switch (true) {
+      case url.includes('/admin/usuarios'):
+        return 'Buscar usuarios por nombre, email o rol...';
+      case url.includes('/admin/anuncios'):
+        return 'Buscar anuncios por título, descripción o precio...';
+      case url.includes('/admin/categorias'):
+        return 'Buscar categorías por nombre o descripción...';
+      case url.includes('/admin/impresoras'):
+        return 'Buscar impresoras por modelo o marca...';
+      case url.includes('/admin/pedidos'):
+        return 'Buscar pedidos por número, cliente o estado...';
+      case url.includes('/admin/materiales'):
+        return 'Buscar materiales por nombre o propiedades...';
+      case url.includes('/admin/ubicaciones'):
+        return 'Buscar ubicaciones por nombre o provincia...';
+      default:
+        return 'Buscar...';
     }
-    
-    return 'Buscar...';
   }
 
   /**
-   * Filtra los usuarios según el término de búsqueda
+   * Filtra los elementos según el término de búsqueda
    */
   filtrarUsuarios(): void {
     this.busquedaChange.emit(this.termino);
   }
 
   /**
-   * Exporta los usuarios a un archivo CSV
-   * Esta función emite un evento que será capturado por el componente padre
+   * Exporta los datos actuales
    */
   exportarUsuarios(): void {
-    this.exportarUsuariosEvent.emit();
-    // También emitimos el evento genérico para componentes que lo usen
     this.exportarEvent.emit();
   }
 }

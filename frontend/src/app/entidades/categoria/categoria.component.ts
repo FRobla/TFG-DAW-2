@@ -326,14 +326,10 @@ export class CategoriasComponent implements OnInit {
    * @param pagina Número de página a cambiar
    */
   cambiarPagina(pagina: number): void {
-    // Activar estado de carga para evitar parpadeos
-    this.cargando = true;
-    
-    // Usar setTimeout para permitir actualizar la UI antes del cambio
-    setTimeout(() => {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
       this.paginaActual = pagina;
-      this.cargarCategorias();
-    }, 50);
+      this.aplicarPaginacion();
+    }
   }
 
   /**

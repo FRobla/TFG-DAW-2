@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from './usuario';
 import swal from 'sweetalert2';
@@ -12,18 +11,7 @@ import { formatDate } from '@angular/common';
   selector: 'app-usuario',
   standalone: false,
   templateUrl: './usuario.component.html',
-  styleUrls: ['./usuario.component.css'],
-  animations: [
-    trigger('viewTransition', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
-      ])
-    ])
-  ]
+  styleUrls: ['./usuario.component.css']
 })
 export class UsuarioComponent implements OnInit {
 
@@ -209,14 +197,10 @@ export class UsuarioComponent implements OnInit {
    * @param pagina Número de página a cambiar
    */
   cambiarPagina(pagina: number): void {
-    // Activar estado de carga para evitar parpadeos
-    this.cargando = true;
-    
-    // Usar setTimeout para permitir actualizar la UI antes del cambio
-    setTimeout(() => {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
       this.paginaActual = pagina;
-      this.cargarUsuarios();
-    }, 50);
+      this.aplicarPaginacion();
+    }
   }
 
   /**
@@ -423,26 +407,44 @@ export class UsuarioComponent implements OnInit {
    * Exporta los usuarios a un archivo CSV
    */
   exportarUsuarios(): void {
-    // Cabeceras del CSV
-    const cabeceras = 'ID,Nombre,Apellido,Dirección,Email,Rol,Fecha Registro\n';
+    const usuariosExport = this.usuarios.map(usuario => ({
+      ID: usuario.id,
+      Nombre: usuario.nombre,
+      Apellido: usuario.apellido,
+      Email: usuario.email,
+      Rol: usuario.rol,
+      Dirección: usuario.direccion || '',
+      'Fecha Registro': new Date(usuario.fechaRegistro).toLocaleDateString('es-ES'),
+      Ubicación: usuario.getNombreUbicacion()
+    }));
+
+    // Convertir a CSV
+    const headers = Object.keys(usuariosExport[0]);
+    const csvContent = [
+      headers.join(','),
+      ...usuariosExport.map(row => 
+        headers.map(header => {
+          const value = row[header as keyof typeof row] || '';
+          // Escape commas and quotes in CSV values
+          return typeof value === 'string' && (value.includes(',') || value.includes('"')) 
+            ? `"${value.replace(/"/g, '""')}"` 
+            : value;
+        }).join(',')
+      )
+    ].join('\n');
+
+    // Crear y descargar el archivo CSV
+    const BOM = '\uFEFF'; // UTF-8 BOM para caracteres especiales
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `usuarios_export_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
     
-    // Datos de los usuarios
-    const datos = this.usuarios.map(usuario => {
-      return `${usuario.id},"${usuario.nombre}","${usuario.apellido}","${usuario.direccion || ''}","${usuario.email}","${usuario.rol}","${formatDate(new Date(usuario.fechaRegistro), 'dd/MM/yyyy', 'es-ES')}"`;
-    }).join('\n');
-    
-    // Archivo completo
-    const csv = cabeceras + datos;
-    
-    // Crear el archivo y descargarlo
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'usuarios.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Limpiar recursos
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 }
