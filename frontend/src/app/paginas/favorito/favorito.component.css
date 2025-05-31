@@ -130,7 +130,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Botones */
 .btn {
   transition: all var(--transition-speed) ease;
-  border-radius: var(--border-radius);
+  border-radius: 10px;
   font-weight: 500;
   border-radius: 10px;
 }
@@ -229,7 +229,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Tarjetas de servicio - Vista Grid */
 .service-card {
   background: linear-gradient(145deg, #1a1a1a, #232323);
-  border-radius: var(--border-radius-lg);
+  border-radius: 10px;
   border: 1px solid var(--color-border);
   box-shadow: var(--card-shadow);
   transition: all var(--transition-speed) ease;
@@ -392,7 +392,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .favorite-item {
   background: linear-gradient(145deg, #1a1a1a, #232323);
-  border-radius: var(--border-radius-lg);
+  border-radius: 10px;
   border: 1px solid var(--color-border);
   box-shadow: var(--card-shadow);
   padding: 1.5rem;
@@ -408,7 +408,7 @@ h1, h2, h3, h4, h5, h6 {
 .favorite-image-container {
   position: relative;
   height: 120px;
-  border-radius: var(--border-radius);
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -563,7 +563,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .btn-group .btn {
-    border-radius: var(--border-radius) !important;
+    border-radius: 10px !important;
     margin-bottom: 0.25rem;
   }
 }

@@ -49,6 +49,12 @@ public class FavoritoServiceImpl implements FavoritoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<Favorito> findByUsuarioIdWithJoinFetch(Long usuarioId, Pageable pageable) {
+        return favoritoDao.findByUsuarioIdWithJoinFetch(usuarioId, pageable);
+    }
+
+    @Override
     @Transactional
     public Favorito save(Favorito favorito) {
         return favoritoDao.save(favorito);

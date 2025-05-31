@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Anuncio } from '../../entidades/anuncio/anuncio';
 
 export interface Favorito {
@@ -33,7 +33,19 @@ export class FavoritoService {
    * Obtiene todos los favoritos de un usuario con paginación
    */
   getFavoritosByUsuario(usuarioId: number, page: number = 0, size: number = 12): Observable<FavoritoResponse> {
-    return this.http.get<FavoritoResponse>(`${this.urlEndPoint}/favoritos/usuario/${usuarioId}?page=${page}&size=${size}`);
+    return this.http.get<FavoritoResponse>(`${this.urlEndPoint}/favoritos/usuario/${usuarioId}?page=${page}&size=${size}`)
+      .pipe(
+        map(response => {
+          // Procesar los anuncios con el método fromBackend para asegurar el mapeo correcto
+          if (response.favoritos) {
+            response.favoritos = response.favoritos.map(favorito => ({
+              ...favorito,
+              anuncio: Anuncio.fromBackend(favorito.anuncio)
+            }));
+          }
+          return response;
+        })
+      );
   }
 
   /**
@@ -60,7 +72,18 @@ export class FavoritoService {
    * Marca/desmarca un anuncio como favorito (toggle)
    */
   toggleFavorito(anuncioId: number, usuarioId: number): Observable<any> {
-    return this.http.post(`${this.urlEndPoint}/favorito/${anuncioId}/${usuarioId}`, {}, { headers: this.httpHeaders });
+    // Primero verificar si ya existe
+    return this.checkFavorito(anuncioId, usuarioId).pipe(
+      switchMap(esFavorito => {
+        if (esFavorito) {
+          // Si ya existe, eliminarlo (DELETE)
+          return this.http.delete(`${this.urlEndPoint}/favorito/${anuncioId}/${usuarioId}`);
+        } else {
+          // Si no existe, crearlo (POST)
+          return this.http.post(`${this.urlEndPoint}/favorito/${anuncioId}/${usuarioId}`, {}, { headers: this.httpHeaders });
+        }
+      })
+    );
   }
 
   /**

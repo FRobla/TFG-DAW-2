@@ -315,6 +315,9 @@ public class PedidoController {
             if (pedido.getNotas_cliente() != null) {
                 currentPedido.setNotas_cliente(pedido.getNotas_cliente());
             }
+            if (pedido.getNotas_internas() != null) {
+                currentPedido.setNotas_internas(pedido.getNotas_internas());
+            }
             if (pedido.getFecha_entrega_estimada() != null) {
                 currentPedido.setFecha_entrega_estimada(pedido.getFecha_entrega_estimada());
             }
@@ -738,45 +741,47 @@ public class PedidoController {
     private CheckoutResponseDto convertirPedidoADto(Pedido pedido) {
         CheckoutResponseDto.UsuarioSimpleDto usuarioDto = null;
         if (pedido.getUsuario() != null) {
-            usuarioDto = CheckoutResponseDto.UsuarioSimpleDto.builder()
-                .id(pedido.getUsuario().getId())
-                .nombre(pedido.getUsuario().getNombreCompleto())
-                .email(pedido.getUsuario().getEmail())
-                .build();
+            usuarioDto = new CheckoutResponseDto.UsuarioSimpleDto();
+            usuarioDto.setId(pedido.getUsuario().getId());
+            usuarioDto.setNombre(pedido.getUsuario().getNombreCompleto());
+            usuarioDto.setEmail(pedido.getUsuario().getEmail());
         }
 
         List<CheckoutResponseDto.DetallePedidoSimpleDto> detallesDto = null;
         if (pedido.getDetallesPedido() != null) {
             detallesDto = pedido.getDetallesPedido().stream()
-                .map(detalle -> CheckoutResponseDto.DetallePedidoSimpleDto.builder()
-                    .id(detalle.getId())
-                    .cantidad(detalle.getCantidad())
-                    .precio_unitario(detalle.getPrecio_unitario())
-                    .subtotal(detalle.getSubtotal())
-                    .especificaciones(detalle.getEspecificaciones())
-                    .tituloAnuncio(detalle.getAnuncio() != null ? detalle.getAnuncio().getTitulo() : "")
-                    .nombreProveedor(detalle.getAnuncio() != null && detalle.getAnuncio().getUsuario() != null ? 
-                        detalle.getAnuncio().getUsuario().getNombreCompleto() : "")
-                    .build())
+                .map(detalle -> {
+                    CheckoutResponseDto.DetallePedidoSimpleDto detalleDto = new CheckoutResponseDto.DetallePedidoSimpleDto();
+                    detalleDto.setId(detalle.getId());
+                    detalleDto.setCantidad(detalle.getCantidad());
+                    detalleDto.setPrecio_unitario(detalle.getPrecio_unitario());
+                    detalleDto.setSubtotal(detalle.getSubtotal());
+                    detalleDto.setEspecificaciones(detalle.getEspecificaciones());
+                    detalleDto.setTituloAnuncio(detalle.getAnuncio() != null ? detalle.getAnuncio().getTitulo() : "");
+                    detalleDto.setNombreProveedor(detalle.getAnuncio() != null && detalle.getAnuncio().getUsuario() != null ? 
+                        detalle.getAnuncio().getUsuario().getNombreCompleto() : "");
+                    return detalleDto;
+                })
                 .collect(Collectors.toList());
         }
 
-        return CheckoutResponseDto.builder()
-            .id(pedido.getId())
-            .numero_pedido(pedido.getNumero_pedido())
-            .fecha_pedido(pedido.getFecha_pedido())
-            .estado(pedido.getEstado())
-            .total(pedido.getTotal())
-            .subtotal(pedido.getSubtotal())
-            .metodo_pago(pedido.getMetodo_pago())
-            .referencia_pago(pedido.getReferencia_pago())
-            .direccion_envio(pedido.getDireccion_envio())
-            .codigo_postal(pedido.getCodigo_postal())
-            .ciudad(pedido.getCiudad())
-            .provincia(pedido.getProvincia())
-            .notas_cliente(pedido.getNotas_cliente())
-            .usuario(usuarioDto)
-            .detallesPedido(detallesDto)
-            .build();
+        CheckoutResponseDto responseDto = new CheckoutResponseDto();
+        responseDto.setId(pedido.getId());
+        responseDto.setNumero_pedido(pedido.getNumero_pedido());
+        responseDto.setFecha_pedido(pedido.getFecha_pedido());
+        responseDto.setEstado(pedido.getEstado());
+        responseDto.setTotal(pedido.getTotal());
+        responseDto.setSubtotal(pedido.getSubtotal());
+        responseDto.setMetodo_pago(pedido.getMetodo_pago());
+        responseDto.setReferencia_pago(pedido.getReferencia_pago());
+        responseDto.setDireccion_envio(pedido.getDireccion_envio());
+        responseDto.setCodigo_postal(pedido.getCodigo_postal());
+        responseDto.setCiudad(pedido.getCiudad());
+        responseDto.setProvincia(pedido.getProvincia());
+        responseDto.setNotas_cliente(pedido.getNotas_cliente());
+        responseDto.setUsuario(usuarioDto);
+        responseDto.setDetallesPedido(detallesDto);
+
+        return responseDto;
     }
 } 

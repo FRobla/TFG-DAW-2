@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CarritoService, CarritoElemento, CarritoResponse } from './carrito.service';
+import { AuthService } from '../../auth/auth.service';
 import swal from 'sweetalert2';
 
 // Extendemos la interfaz para incluir la propiedad showServices
@@ -42,8 +43,8 @@ export class CarritoComponent implements OnInit {
   cargando: boolean = true;
   procesando: boolean = false;
   
-  // ID del usuario (simulado - en el futuro vendrá del servicio de autenticación)
-  usuarioId: number = 1;
+  // ID del usuario obtenido del servicio de autenticación
+  usuarioId: number = 0;
   
   // Estados de interacción
   elementoEliminando: number | null = null;
@@ -54,11 +55,41 @@ export class CarritoComponent implements OnInit {
 
   constructor(
     private carritoService: CarritoService,
-    private router: Router
+    private router: Router,
+    public authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    this.cargarCarrito();
+    // Obtener el ID del usuario autenticado
+    this.usuarioId = this.authService.getCurrentUserId();
+    console.log('=== DEBUG CARRITO: Usuario ID obtenido ===', this.usuarioId);
+    
+    // Verificar que tenemos un usuario válido antes de cargar el carrito
+    if (this.usuarioId && this.usuarioId > 0) {
+      console.log('=== DEBUG CARRITO: Usuario válido, cargando carrito ===');
+      this.cargarCarrito();
+    } else {
+      console.error('No se pudo obtener un ID de usuario válido');
+      this.cargando = false;
+      swal({
+        title: 'Error de autenticación',
+        text: 'No se pudo identificar al usuario. Por favor, inicia sesión nuevamente.',
+        type: 'error',
+        confirmButtonColor: '#dc3545',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        this.router.navigate(['/login']);
+      });
+    }
+
+    // Suscribirse a cambios en la autenticación del usuario
+    this.authService.usuarioActual.subscribe(usuario => {
+      if (!usuario && !this.authService.estaHaciendoLogout) {
+        // Si el usuario se desautentica y no es durante un logout manual
+        console.warn('Usuario desautenticado durante el uso del carrito');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   /**
@@ -66,17 +97,46 @@ export class CarritoComponent implements OnInit {
    */
   cargarCarrito(): void {
     this.cargando = true;
+    console.log('=== DEBUG CARRITO: Iniciando carga de carrito para usuario ===', this.usuarioId);
     
     this.carritoService.obtenerCarritoUsuario(this.usuarioId).subscribe({
       next: (response: CarritoResponse) => {
+        console.log('=== DEBUG CARRITO: Respuesta del backend ===', response);
         this.elementosCarrito = response.carrito;
         this.totalElementos = response.totalElementos;
         this.totalPrecio = response.totalPrecio;
         this.cargando = false;
+        console.log('=== DEBUG CARRITO: Elementos cargados ===', this.elementosCarrito.length);
       },
       error: (error) => {
         console.error('Error al cargar el carrito:', error);
         this.cargando = false;
+        
+        // Mostrar un mensaje más específico basado en el tipo de error
+        if (error.status === 401) {
+          swal({
+            title: 'Sesión expirada',
+            text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+            type: 'warning',
+            confirmButtonColor: '#ffc107',
+            confirmButtonText: 'Iniciar sesión'
+          }).then(() => {
+            this.router.navigate(['/login']);
+          });
+        } else if (error.status === 404) {
+          // Si el carrito no existe, simplemente mostrar carrito vacío
+          this.elementosCarrito = [];
+          this.totalElementos = 0;
+          this.totalPrecio = 0;
+        } else {
+          swal({
+            title: 'Error al cargar carrito',
+            text: 'Ha ocurrido un error al cargar tu carrito. Por favor, inténtalo de nuevo.',
+            type: 'error',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Aceptar'
+          });
+        }
       }
     });
   }
@@ -413,6 +473,39 @@ export class CarritoComponent implements OnInit {
       type: 'error',
       confirmButtonColor: '#dc3545',
       confirmButtonText: 'Aceptar'
+    });
+  }
+
+  /**
+   * Recarga el carrito manualmente (método de debug)
+   */
+  recargarCarrito(): void {
+    console.log('=== DEBUG: Recargando carrito manualmente ===');
+    this.cargarCarrito();
+  }
+
+  /**
+   * Muestra información del usuario (método de debug)
+   */
+  mostrarInfoUsuario(): void {
+    const usuario = this.authService.getCurrentUser();
+    console.log('=== DEBUG: Información del usuario ===', usuario);
+    
+    swal({
+      title: 'Información del Usuario',
+      html: `
+        <div style="text-align: left;">
+          <p><strong>ID:</strong> ${this.authService.getCurrentUserId()}</p>
+          <p><strong>Email:</strong> ${this.authService.getCurrentUserEmail()}</p>
+          <p><strong>Usuario Completo:</strong></p>
+          <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; font-size: 12px; text-align: left;">${JSON.stringify(usuario, null, 2)}</pre>
+          <p><strong>Token:</strong> ${this.authService.getToken() ? 'Presente' : 'No presente'}</p>
+          <p><strong>LocalStorage Usuario:</strong></p>
+          <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; font-size: 12px; text-align: left;">${localStorage.getItem('usuario') || 'No encontrado'}</pre>
+        </div>
+      `,
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#5d4fff'
     });
   }
 }

@@ -37,12 +37,12 @@ public class Favorito implements Serializable {
     @JsonProperty("fecha_marcado")
     private Date fechaMarcado; // Cuándo se marcó como favorito
 
-    // Relaciones
-    @ManyToOne(fetch = FetchType.LAZY)
+    // Relaciones - Cambiado a EAGER para evitar problemas de serialización
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "anuncio_id", nullable = false)
     private Anuncio anuncio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 

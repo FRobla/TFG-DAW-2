@@ -16,8 +16,8 @@
                 <i class="fas fa-clock"></i>
             </div>
             <div class="stat-info">
-                <h3 class="stat-number">{{getPedidosPorEstado('pendiente')}}</h3>
-                <p class="stat-label">Pendientes</p>
+                <h3 class="stat-number">{{getPedidosPorEstado('en_proceso')}}</h3>
+                <p class="stat-label">En Proceso</p>
             </div>
         </div>
         <div class="stat-card">
@@ -46,7 +46,6 @@
             <div class="filtro-grupo">
                 <select class="filtro-select" [(ngModel)]="filtroEstado" (change)="filtrarPorEstado()">
                     <option value="">Todos los estados</option>
-                    <option value="pendiente">Pendientes</option>
                     <option value="en_proceso">En Proceso</option>
                     <option value="completado">Completados</option>
                     <option value="cancelado">Cancelados</option>
@@ -350,7 +349,13 @@
                 <div class="form-group">
                     <label for="notas_cliente">Notas del Cliente</label>
                     <textarea id="notas_cliente" name="notas_cliente" [(ngModel)]="pedidoActual.notas_cliente" 
-                              rows="3" class="form-control"></textarea>
+                              rows="3" class="form-control" placeholder="Notas visibles para el cliente..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notas_internas">Notas Internas</label>
+                    <textarea id="notas_internas" name="notas_internas" [(ngModel)]="pedidoActual.notas_internas" 
+                              rows="3" class="form-control" placeholder="Notas internas de gestión..."></textarea>
                 </div>
             </form>
         </div>
@@ -376,11 +381,11 @@
             <div class="pedido-details">
                 <div class="details-row">
                     <div class="detail-group">
-                        <label>Cliente:</label>
-                        <span>{{pedidoActual.getNombreCliente()}}</span>
+                        <label>Cliente: </label>
+                        <span> {{pedidoActual.getNombreCliente()}}</span>
                     </div>
                     <div class="detail-group">
-                        <label>Estado:</label>
+                        <label>Estado: </label>
                         <span class="estado-badge" [ngClass]="pedidoActual.getEstadoClase()">
                             {{pedidoActual.getEstadoTexto()}}
                         </span>
@@ -390,18 +395,18 @@
                 <div class="details-row">
                     <div class="detail-group">
                         <label>Fecha del Pedido:</label>
-                        <span>{{pedidoActual.fechaPedido | date:'dd/MM/yyyy HH:mm'}}</span>
+                        <span> {{pedidoActual.fechaPedido | date:'dd/MM/yyyy HH:mm'}}</span>
                     </div>
                     <div class="detail-group">
                         <label>Método de Pago:</label>
-                        <span>{{pedidoActual.getMetodoPagoTexto()}}</span>
+                        <span> {{pedidoActual.getMetodoPagoTexto()}}</span>
                     </div>
                 </div>
 
                 <div class="details-row">
                     <div class="detail-group full-width">
                         <label>Dirección de Envío:</label>
-                        <span>{{pedidoActual.direccion_envio}}</span>
+                        <span> {{pedidoActual.direccion_envio}}</span>
                         <span *ngIf="pedidoActual.codigo_postal">, {{pedidoActual.codigo_postal}}</span>
                         <span *ngIf="pedidoActual.ciudad">, {{pedidoActual.ciudad}}</span>
                         <span *ngIf="pedidoActual.provincia">, {{pedidoActual.provincia}}</span>
@@ -409,24 +414,33 @@
                 </div>
 
                 <div class="details-row">
-                    <div class="detail-group">
-                        <label>Subtotal:</label>
-                        <span>{{pedidoActual.subtotal | currency:'EUR':'symbol':'1.2-2'}}</span>
-                    </div>
                     <div class="detail-group total">
                         <label>Total:</label>
-                        <span class="total-amount">{{pedidoActual.total | currency:'EUR':'symbol':'1.2-2'}}</span>
+                        <span class="total-amount"> {{pedidoActual.total | currency:'EUR':'symbol':'1.2-2'}}</span>
                     </div>
-                </div>
+                </div> <br />
 
                 <div class="notes-section" *ngIf="pedidoActual.notas_cliente">
-                    <label>Notas del Cliente:</label>
+                    <label class="underline">Notas del Cliente</label>
                     <p>{{pedidoActual.notas_cliente}}</p>
                 </div>
+
+                <div class="notes-section">
+                    <label class="underline">Notas Internas</label>
+                    <div class="editable-notes">
+                        <textarea 
+                            [(ngModel)]="pedidoActual.notas_internas" 
+                            rows="4" 
+                            class="form-control notes-textarea"
+                            placeholder="Añadir notas internas de gestión..."></textarea>
+                        <div class="notes-actions">
+                            <button type="button" class="btn btn-sm btn-primary" (click)="guardarNotasInternas()">
+                                <i class="fas fa-save"></i> Guardar Notas
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
         </div>
     </div>
 </div>

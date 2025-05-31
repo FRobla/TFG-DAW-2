@@ -19,6 +19,14 @@ public interface FavoritoDao extends JpaRepository<Favorito, Long> {
 	// Obtener favoritos por usuario (paginado)
 	Page<Favorito> findByUsuarioIdOrderByFechaMarcadoDesc(Long usuarioId, Pageable pageable);
 	
+	// Obtener favoritos por usuario con JOIN FETCH (paginado)
+	@Query("SELECT f FROM Favorito f " +
+           "JOIN FETCH f.anuncio a " +
+           "JOIN FETCH f.usuario u " +
+           "WHERE f.usuario.id = :usuarioId " +
+           "ORDER BY f.fechaMarcado DESC")
+	Page<Favorito> findByUsuarioIdWithJoinFetch(@Param("usuarioId") Long usuarioId, Pageable pageable);
+	
 	// Obtener favoritos por anuncio
 	List<Favorito> findByAnuncioId(Long anuncioId);
 	

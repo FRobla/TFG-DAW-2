@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { PedidoService } from './pedido.service';
 import { Pedido } from './pedido';
 import swal from 'sweetalert2';
@@ -10,7 +11,18 @@ import { formatDate } from '@angular/common';
   selector: 'app-pedido',
   standalone: false,
   templateUrl: './pedido.component.html',
-  styleUrls: ['./pedido.component.css']
+  styleUrls: ['./pedido.component.css'],
+  animations: [
+    trigger('viewTransition', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ]
 })
 export class PedidoComponent implements OnInit {
 
@@ -360,7 +372,18 @@ export class PedidoComponent implements OnInit {
       next: (pedidoActualizado) => {
         const index = this.pedidos.findIndex(p => p.id === pedidoActualizado.id);
         if (index !== -1) {
+          // Preservar las propiedades de UI antes de actualizar
+          const estadoUIAnterior = {
+            notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+            notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+          };
+          
+          // Actualizar el pedido
           this.pedidos[index] = pedidoActualizado;
+          
+          // Restaurar las propiedades de UI
+          this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+          this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
         }
         this.filtrarPedidos();
         this.cerrarModal();
@@ -391,7 +414,18 @@ export class PedidoComponent implements OnInit {
           pedidoActualizado => {
             const index = this.pedidos.findIndex(p => p.id === pedidoActualizado.id);
             if (index !== -1) {
+              // Preservar las propiedades de UI antes de actualizar
+              const estadoUIAnterior = {
+                notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+                notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+              };
+              
+              // Actualizar el pedido
               this.pedidos[index] = pedidoActualizado;
+              
+              // Restaurar las propiedades de UI
+              this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+              this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
             }
             this.filtrarPedidos();
             swal('Éxito', 'Estado actualizado correctamente', 'success');
@@ -413,7 +447,18 @@ export class PedidoComponent implements OnInit {
       pedidoActualizado => {
         const index = this.pedidos.findIndex(p => p.id === pedidoActualizado.id);
         if (index !== -1) {
+          // Preservar las propiedades de UI antes de actualizar
+          const estadoUIAnterior = {
+            notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+            notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+          };
+          
+          // Actualizar el pedido
           this.pedidos[index] = pedidoActualizado;
+          
+          // Restaurar las propiedades de UI
+          this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+          this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
         }
         this.filtrarPedidos();
         swal('Éxito', 'Pedido completado correctamente', 'success');
@@ -443,7 +488,18 @@ export class PedidoComponent implements OnInit {
           pedidoActualizado => {
             const index = this.pedidos.findIndex(p => p.id === pedidoActualizado.id);
             if (index !== -1) {
+              // Preservar las propiedades de UI antes de actualizar
+              const estadoUIAnterior = {
+                notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+                notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+              };
+              
+              // Actualizar el pedido
               this.pedidos[index] = pedidoActualizado;
+              
+              // Restaurar las propiedades de UI
+              this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+              this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
             }
             this.filtrarPedidos();
             swal('Éxito', 'Pedido cancelado correctamente', 'success');
@@ -548,7 +604,18 @@ export class PedidoComponent implements OnInit {
           next: (response) => {
             const index = this.pedidos.findIndex(p => p.id === response.pedido.id);
             if (index !== -1) {
+              // Preservar las propiedades de UI antes de actualizar
+              const estadoUIAnterior = {
+                notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+                notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+              };
+              
+              // Actualizar el pedido
               this.pedidos[index] = response.pedido;
+              
+              // Restaurar las propiedades de UI
+              this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+              this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
             }
             this.filtrarPedidos();
             swal('Éxito', response.mensaje || 'Pago confirmado correctamente', 'success');
@@ -580,7 +647,18 @@ export class PedidoComponent implements OnInit {
           next: (response) => {
             const index = this.pedidos.findIndex(p => p.id === response.pedido.id);
             if (index !== -1) {
+              // Preservar las propiedades de UI antes de actualizar
+              const estadoUIAnterior = {
+                notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+                notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+              };
+              
+              // Actualizar el pedido
               this.pedidos[index] = response.pedido;
+              
+              // Restaurar las propiedades de UI
+              this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+              this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
             }
             this.filtrarPedidos();
             swal('Éxito', response.mensaje || 'Pedido marcado como completado', 'success');
@@ -607,5 +685,51 @@ export class PedidoComponent implements OnInit {
    */
   toggleNotasInternas(pedido: Pedido): void {
     pedido.notasInternasExpandidas = !pedido.notasInternasExpandidas;
+  }
+
+  /**
+   * Guarda las notas internas desde el modal de detalles
+   */
+  guardarNotasInternas(): void {
+    if (!this.pedidoActual || !this.pedidoActual.id) {
+      swal('Error', 'No hay un pedido válido seleccionado', 'error');
+      return;
+    }
+
+    this.pedidoService.actualizarNotasInternas(this.pedidoActual.id, this.pedidoActual.notas_internas || '').subscribe({
+      next: (pedidoActualizado) => {
+        // Actualizar el pedido en la lista principal
+        const index = this.pedidos.findIndex(p => p.id === pedidoActualizado.id);
+        if (index !== -1) {
+          // Preservar las propiedades de UI antes de actualizar
+          const estadoUIAnterior = {
+            notasClienteExpandidas: this.pedidos[index].notasClienteExpandidas,
+            notasInternasExpandidas: this.pedidos[index].notasInternasExpandidas
+          };
+          
+          // Actualizar el pedido
+          this.pedidos[index] = pedidoActualizado;
+          
+          // Restaurar las propiedades de UI
+          this.pedidos[index].notasClienteExpandidas = estadoUIAnterior.notasClienteExpandidas;
+          this.pedidos[index].notasInternasExpandidas = estadoUIAnterior.notasInternasExpandidas;
+        }
+        
+        // Actualizar también el pedido actual del modal
+        this.pedidoActual = pedidoActualizado;
+        
+        this.filtrarPedidos();
+        
+        // Cerrar el modal después de guardar exitosamente
+        this.cerrarModal();
+        
+        swal('Éxito', 'Notas internas guardadas correctamente', 'success');
+      },
+      error: (error) => {
+        console.error('Error al guardar notas internas', error);
+        const mensaje = error.error?.mensaje || 'No se pudieron guardar las notas internas';
+        swal('Error', mensaje, 'error');
+      }
+    });
   }
 }

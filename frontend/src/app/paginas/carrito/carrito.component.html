@@ -41,6 +41,22 @@
   <!-- Contenido principal -->
   <div class="carrito-content">
     <div class="container">
+      
+      <!-- PANEL DE DEBUG TEMPORAL 
+      <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #444; margin-bottom: 20px; color: #fff;">
+        <h5 style="color: #ffc107; margin-bottom: 10px;"><i class="fas fa-bug"></i> Panel de Debug</h5>
+        <p><strong>Usuario ID:</strong> {{ usuarioId }}</p>
+        <p><strong>Usuario logueado:</strong> {{ authService.usuarioLogueado?.email || 'No logueado' }}</p>
+        <p><strong>Token presente:</strong> {{ authService.estaLogueado() ? 'Sí' : 'No' }}</p>
+        <p><strong>Total elementos carrito:</strong> {{ elementosCarrito.length }}</p>
+        <button class="btn btn-sm btn-info" (click)="recargarCarrito()">
+          <i class="fas fa-refresh"></i> Recargar Carrito
+        </button>
+        <button class="btn btn-sm btn-warning" (click)="mostrarInfoUsuario()">
+          <i class="fas fa-user"></i> Info Usuario
+        </button>
+      </div> -->
+
       <!-- Estado de carga -->
       <div *ngIf="cargando" class="loader-section">
         <div class="loader-container">

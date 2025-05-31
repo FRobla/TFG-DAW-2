@@ -35,14 +35,13 @@ export class FavoritoComponent implements OnInit {
   constructor(
     private favoritoService: FavoritoService,
     public router: Router,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    console.log('FavoritoComponent iniciando...');
-    // Temporalmente simplificado para debugging
+    console.log('=== DEBUG FAVORITOS: Componente iniciando ===');
     this.obtenerUsuarioId();
-    // this.cargarFavoritos(); // Comentado temporalmente
+    this.cargarFavoritos(); // Descomentado para que funcione
   }
 
   /**
@@ -56,7 +55,7 @@ export class FavoritoComponent implements OnInit {
     }
 
     this.usuarioId = this.authService.getCurrentUserId();
-    console.log('Usuario ID obtenido:', this.usuarioId);
+    console.log('=== DEBUG FAVORITOS: Usuario ID obtenido ===', this.usuarioId);
     
     if (!this.usuarioId || this.usuarioId <= 0) {
       console.error('ID de usuario inválido');
@@ -68,7 +67,10 @@ export class FavoritoComponent implements OnInit {
    * Carga los favoritos del usuario con paginación
    */
   cargarFavoritos(): void {
+    console.log('=== DEBUG FAVORITOS: Iniciando carga de favoritos para usuario ===', this.usuarioId);
+    
     if (this.usuarioId <= 0) {
+      console.error('=== DEBUG FAVORITOS: Usuario ID inválido ===', this.usuarioId);
       return;
     }
 
@@ -78,6 +80,7 @@ export class FavoritoComponent implements OnInit {
     this.favoritoService.getFavoritosByUsuario(this.usuarioId, this.paginaActual, this.tamañoPagina)
       .subscribe({
         next: (response: FavoritoResponse) => {
+          console.log('=== DEBUG FAVORITOS: Respuesta del backend ===', response);
           this.favoritos = response.favoritos || [];
           this.favoritosAnuncios = this.favoritos.map(fav => fav.anuncio);
           this.totalItems = response.totalItems || 0;
@@ -90,10 +93,24 @@ export class FavoritoComponent implements OnInit {
           this.ultimaPagina = this.paginaActual >= this.totalPaginas - 1;
           
           this.cargando = false;
-          console.log('Favoritos cargados:', this.favoritos);
+          console.log('=== DEBUG FAVORITOS: Favoritos cargados ===', {
+            total: this.favoritos.length,
+            favoritos: this.favoritos,
+            anuncios: this.favoritosAnuncios
+          });
+          
+          // Debug específico para precios
+          this.favoritosAnuncios.forEach((anuncio, index) => {
+            console.log(`=== DEBUG FAVORITO ${index}: Precio ===`, {
+              titulo: anuncio.titulo,
+              precio: anuncio.precio,
+              tipoPrecio: typeof anuncio.precio,
+              anuncioCompleto: anuncio
+            });
+          });
         },
         error: (error) => {
-          console.error('Error al cargar favoritos:', error);
+          console.error('=== DEBUG FAVORITOS: Error al cargar favoritos ===', error);
           this.error = 'Error al cargar tus favoritos. Por favor, inténtalo de nuevo.';
           this.cargando = false;
         }
@@ -108,18 +125,42 @@ export class FavoritoComponent implements OnInit {
       return;
     }
 
-    this.favoritoService.deleteFavorito(anuncio.id, this.usuarioId)
-      .subscribe({
-        next: () => {
-          // Recargar favoritos para actualizar la lista
-          this.cargarFavoritos();
-          console.log('Favorito eliminado correctamente');
-        },
-        error: (error) => {
-          console.error('Error al eliminar favorito:', error);
-          this.error = 'Error al eliminar el favorito. Por favor, inténtalo de nuevo.';
-        }
+    // Confirmar eliminación
+    if (confirm(`¿Estás seguro de que quieres eliminar "${anuncio.titulo}" de tus favoritos?`)) {
+      console.log('=== DEBUG FAVORITOS: Eliminando favorito ===', {
+        anuncioId: anuncio.id,
+        usuarioId: this.usuarioId,
+        titulo: anuncio.titulo
       });
+
+      this.favoritoService.deleteFavorito(anuncio.id, this.usuarioId)
+        .subscribe({
+          next: (response) => {
+            console.log('=== DEBUG FAVORITOS: Favorito eliminado ===', response);
+            // Recargar favoritos para actualizar la lista
+            this.cargarFavoritos();
+          },
+          error: (error) => {
+            console.error('=== DEBUG FAVORITOS: Error al eliminar favorito ===', error);
+            
+            let mensaje = 'Error al eliminar el favorito. Por favor, inténtalo de nuevo.';
+            if (error.status === 404) {
+              mensaje = 'El favorito ya había sido eliminado.';
+              // Recargar para actualizar la vista
+              this.cargarFavoritos();
+            } else if (error.status === 500) {
+              mensaje = 'Error del servidor. Por favor, inténtalo más tarde.';
+            }
+            
+            this.error = mensaje;
+            
+            // Limpiar error después de 5 segundos
+            setTimeout(() => {
+              this.error = '';
+            }, 5000);
+          }
+        });
+    }
   }
 
   /**
@@ -187,6 +228,11 @@ export class FavoritoComponent implements OnInit {
    * Formatea el precio de un anuncio
    */
   formatearPrecio(precio: number): string {
+    // Verificar si el precio es válido
+    if (precio === null || precio === undefined || isNaN(precio) || precio < 0) {
+      return 'Precio no disponible';
+    }
+    
     return new Intl.NumberFormat('es-ES', {
       style: 'currency',
       currency: 'EUR'
@@ -238,8 +284,23 @@ export class FavoritoComponent implements OnInit {
    * Maneja errores de carga de imágenes
    */
   onImageError(event: any): void {
-    if (event && event.target) {
-      event.target.src = '/assets/img/default-service.jpg';
-    }
+    event.target.src = 'https://placehold.co/300x200/2a2a2a/ffffff?text=Servicio+3D';
+  }
+
+  /**
+   * Muestra información del usuario (método de debug)
+   */
+  mostrarInfoUsuario(): void {
+    const usuario = this.authService.getCurrentUser();
+    console.log('=== DEBUG FAVORITOS: Información del usuario ===', usuario);
+    
+    alert(`
+      Información del Usuario (DEBUG):
+      - ID: ${this.authService.getCurrentUserId()}
+      - Email: ${this.authService.getCurrentUserEmail()}
+      - Token presente: ${this.authService.getToken() ? 'Sí' : 'No'}
+      - Usuario completo: ${JSON.stringify(usuario, null, 2)}
+      - LocalStorage: ${localStorage.getItem('usuario') || 'No encontrado'}
+    `);
   }
 }
