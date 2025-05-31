@@ -49,9 +49,17 @@
               <span *ngIf="!esMiPerfil && !esAdmin">Perfil de Usuario</span>
             </h3>
             <div class="nav-items">
-              <div class="nav-item active">
+              <div class="nav-item" 
+                   [class.active]="esSeccionActiva('informacion-personal')"
+                   (click)="cambiarSeccion('informacion-personal')">
                 <i class="fas fa-user"></i>
                 <span>Información Personal</span>
+              </div>
+              <div class="nav-item" 
+                   [class.active]="esSeccionActiva('mis-pedidos')"
+                   (click)="cambiarSeccion('mis-pedidos')">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Mis Pedidos</span>
               </div>
             </div>
           </div>
@@ -69,7 +77,9 @@
           <div class="perfil-sections">
             
             <!-- Sección Datos Personales -->
-            <div class="perfil-section" data-view-transition="card">
+            <div class="perfil-section" 
+                 *ngIf="esSeccionActiva('informacion-personal')"
+                 data-view-transition="card">
               <div class="section-header">
                 <div class="section-title">
                   <i class="fas fa-user-circle"></i>
@@ -95,7 +105,9 @@
             </div>
 
             <!-- Sección Información de Contacto -->
-            <div class="perfil-section" data-view-transition="card">
+            <div class="perfil-section" 
+                 *ngIf="esSeccionActiva('informacion-personal')"
+                 data-view-transition="card">
               <div class="section-header">
                 <div class="section-title">
                   <i class="fas fa-envelope"></i>
@@ -125,7 +137,9 @@
             </div>
 
             <!-- Sección Seguridad -->
-            <div class="perfil-section" data-view-transition="card">
+            <div class="perfil-section" 
+                 *ngIf="esSeccionActiva('informacion-personal')"
+                 data-view-transition="card">
               <div class="section-header">
                 <div class="section-title">
                   <i class="fas fa-shield-alt"></i>
@@ -140,6 +154,111 @@
                 <div class="info-item">
                   <label>Contraseña</label>
                   <span>••••••••••••</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sección Mis Pedidos -->
+            <div class="perfil-section" 
+                 *ngIf="esSeccionActiva('mis-pedidos')"
+                 data-view-transition="card">
+              <div class="section-header">
+                <div class="section-title">
+                  <i class="fas fa-shopping-bag"></i>
+                  <h3>
+                    <span *ngIf="esMiPerfil">Mis Pedidos</span>
+                    <span *ngIf="!esMiPerfil">Pedidos del Usuario</span>
+                  </h3>
+                </div>
+                <div class="pedidos-resumen" *ngIf="!cargandoPedidos">
+                  <span class="total-pedidos">{{totalPedidos}} pedido{{totalPedidos !== 1 ? 's' : ''}}</span>
+                </div>
+              </div>
+              <div class="section-content">
+                <!-- Indicador de carga -->
+                <div *ngIf="cargandoPedidos" class="pedidos-loading">
+                  <div class="spinner-small"></div>
+                  <p>Cargando pedidos...</p>
+                </div>
+
+                <!-- Lista de pedidos -->
+                <div *ngIf="!cargandoPedidos && pedidosUsuario.length > 0" class="pedidos-lista">
+                  <div *ngFor="let pedido of pedidosUsuario" class="pedido-card" (click)="verDetallesPedido(pedido)">
+                    <div class="pedido-header">
+                      <div class="pedido-numero">
+                        <span class="numero-label">Pedido</span>
+                        <span class="numero-valor">#{{pedido.numero_pedido}}</span>
+                      </div>
+                      <div class="pedido-estado">
+                        <span class="estado-badge" [ngClass]="getEstadoPedidoClase(pedido.estado)">
+                          {{getEstadoPedidoTexto(pedido.estado)}}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="pedido-info">
+                      <div class="info-row">
+                        <div class="info-col">
+                          <label>Fecha</label>
+                          <span>{{formatearFecha(pedido.fecha_pedido)}}</span>
+                        </div>
+                        <div class="info-col">
+                          <label>Total</label>
+                          <span class="precio-total">{{formatearPrecio(pedido.total)}}</span>
+                        </div>
+                      </div>
+                      <div class="info-row" *ngIf="pedido.metodo_pago || pedido.direccion_envio">
+                        <div class="info-col" *ngIf="pedido.metodo_pago">
+                          <label>Método de Pago</label>
+                          <span>{{pedido.metodo_pago}}</span>
+                        </div>
+                        <div class="info-col" *ngIf="pedido.direccion_envio">
+                          <label>Dirección de Envío</label>
+                          <span>{{pedido.direccion_envio}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pedido-actions">
+                      <button class="btn-ver-detalles" (click)="verDetallesPedido(pedido); $event.stopPropagation()">
+                        <i class="fas fa-eye"></i>
+                        Ver Detalles
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mensaje cuando no hay pedidos -->
+                <div *ngIf="!cargandoPedidos && pedidosUsuario.length === 0" class="no-pedidos">
+                  <div class="no-pedidos-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                  </div>
+                  <h4>No hay pedidos</h4>
+                  <p *ngIf="esMiPerfil">Aún no has realizado ningún pedido. ¡Explora nuestros servicios!</p>
+                  <p *ngIf="!esMiPerfil">Este usuario no ha realizado ningún pedido.</p>
+                  <a *ngIf="esMiPerfil" href="/servicios" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Explorar Servicios
+                  </a>
+                </div>
+
+                <!-- Paginación -->
+                <div *ngIf="!cargandoPedidos && totalPaginasPedidos > 1" class="pedidos-paginacion">
+                  <button 
+                    class="btn-paginacion" 
+                    [disabled]="paginaPedidos === 0"
+                    (click)="cambiarPaginaPedidos(paginaPedidos - 1)">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  
+                  <span class="info-paginacion">
+                    Página {{paginaPedidos + 1}} de {{totalPaginasPedidos}}
+                  </span>
+                  
+                  <button 
+                    class="btn-paginacion" 
+                    [disabled]="paginaPedidos >= totalPaginasPedidos - 1"
+                    (click)="cambiarPaginaPedidos(paginaPedidos + 1)">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
                 </div>
               </div>
             </div>

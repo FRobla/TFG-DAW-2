@@ -273,10 +273,10 @@ export class Pedido {
      */
     getMetodoPagoTexto(): string {
         const metodos: { [key: string]: string } = {
-            'paypal': 'PayPal',
-            'tarjeta': 'Tarjeta de Crédito',
+            'efectivo': 'Efectivo',
             'transferencia': 'Transferencia Bancaria',
-            'efectivo': 'Efectivo'
+            'tarjeta': 'Tarjeta de Crédito',
+            'paypal': 'PayPal'
         };
         return metodos[this.metodo_pago] || this.metodo_pago;
     }

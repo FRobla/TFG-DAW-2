@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from './usuario';
 import swal from 'sweetalert2';
@@ -11,7 +12,18 @@ import { formatDate } from '@angular/common';
   selector: 'app-usuario',
   standalone: false,
   templateUrl: './usuario.component.html',
-  styleUrls: ['./usuario.component.css']
+  styleUrls: ['./usuario.component.css'],
+  animations: [
+    trigger('viewTransition', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ]
 })
 export class UsuarioComponent implements OnInit {
 

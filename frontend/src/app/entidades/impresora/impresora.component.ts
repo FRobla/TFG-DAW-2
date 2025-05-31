@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { ImpresoraService } from './impresora.service';
 import { Impresora } from './impresora';
 import swal from 'sweetalert2';
@@ -12,7 +13,18 @@ import { Categoria } from '../categoria/categoria';
   selector: 'app-impresora',
   standalone: false,
   templateUrl: './impresora.component.html',
-  styleUrl: './impresora.component.css'
+  styleUrl: './impresora.component.css',
+  animations: [
+    trigger('viewTransition', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ]
 })
 export class ImpresoraComponent implements OnInit {
 

@@ -892,6 +892,10 @@ select {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
+.underline {
+  text-decoration: underline;
+}
+
 /* Botones de acción específicos para gestión de estados */
 .action-btn.confirm-btn {
   background: linear-gradient(135deg, #28a745, #20c997);
@@ -1013,4 +1017,89 @@ select {
     height: 32px;
     font-size: 12px;
   }
+}
+
+/* Estilos básicos para las notas internas en modal de detalles */
+.notes-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.notes-section label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.notes-section p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Estilos para el área de edición de notas internas */
+.editable-notes {
+  margin-top: 12px;
+}
+
+.notes-textarea {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.3s ease;
+}
+
+.notes-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.notes-textarea::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+.notes-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  background: linear-gradient(145deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(145deg, #0056b3, #004085);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }

@@ -174,9 +174,9 @@ export class AuthService {
       console.warn('No se encontró información de usuario en localStorage');
     }
 
-    // Si no se puede obtener el ID, devolver un ID temporal para pruebas
-    console.warn('No se pudo obtener un ID de usuario válido. Usando ID temporal.');
-    return 1; // ID temporal para pruebas
+    // Si no se puede obtener el ID, devolver 0 para indicar usuario no autenticado
+    console.warn('No se pudo obtener un ID de usuario válido. Usuario no autenticado.');
+    return 0; // Devolver 0 en lugar de 1 para indicar que no hay usuario autenticado
   }
 
   registro(usuario: { 
@@ -223,11 +223,11 @@ export class AuthService {
       return Number(matches[1]);
     }
     
-    // Si no podemos extraer un número, usamos un valor temporal
+    // Si no podemos extraer un número, devolver 0 para indicar usuario no autenticado
     // En una implementación real, deberíamos hacer una petición al backend
     // para obtener el ID real del usuario basado en su email o username
-    console.warn('No se pudo extraer un ID numérico del token. Usando ID temporal.');
-    return 1; // ID temporal para pruebas
+    console.warn('No se pudo extraer un ID numérico del token. Usuario no autenticado.');
+    return 0; // Devolver 0 en lugar de 1 para indicar que no hay usuario autenticado
   }
 
   // Método para obtener el email del usuario actual

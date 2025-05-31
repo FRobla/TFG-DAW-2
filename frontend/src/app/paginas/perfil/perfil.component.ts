@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Usuario } from '../../entidades/usuario/usuario';
 import { Ubicacion } from '../../entidades/ubicacion/ubicacion';
+import { Pedido } from '../../entidades/pedido/pedido';
 import { UsuarioService } from '../../entidades/usuario/usuario.service';
+import { PedidoService } from '../../entidades/pedido/pedido.service';
 import { AuthService } from '../../auth/auth.service';
 import { HeroBuscadorService } from '../../recursos/hero-buscador/hero-buscador.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -47,8 +49,22 @@ export class PerfilComponent implements OnInit, OnDestroy {
   ubicaciones: Ubicacion[] = [];
   ubicacionSeleccionadaId: number | string = '';
 
+  // Variables para los pedidos
+  pedidosUsuario: Pedido[] = [];
+  cargandoPedidos: boolean = false;
+  
+  // Paginación de pedidos
+  paginaPedidos: number = 0;
+  tamañoPagina: number = 10;
+  totalPedidos: number = 0;
+  totalPaginasPedidos: number = 0;
+
+  // Variables para navegación entre secciones
+  seccionActiva: string = 'informacion-personal';
+
   constructor(
     private usuarioService: UsuarioService,
+    private pedidoService: PedidoService,
     private authService: AuthService,
     private heroBuscadorService: HeroBuscadorService,
     private router: Router,
@@ -90,6 +106,10 @@ export class PerfilComponent implements OnInit, OnDestroy {
             next: (usuario) => {
               this.usuario = Usuario.fromBackend(usuario);
               this.cargando = false;
+              // Cargar pedidos solo si esa sección está activa
+              if (this.componenteActivo && this.esSeccionActiva('mis-pedidos')) {
+                this.cargarPedidosUsuario();
+              }
             },
             error: (error) => {
               console.error('Error al cargar datos del usuario:', error);
@@ -115,6 +135,10 @@ export class PerfilComponent implements OnInit, OnDestroy {
         next: (usuario) => {
           this.usuario = Usuario.fromBackend(usuario);
           this.cargando = false;
+          // Cargar pedidos solo si esa sección está activa
+          if (this.componenteActivo && this.esSeccionActiva('mis-pedidos')) {
+            this.cargarPedidosUsuario();
+          }
         },
         error: (error) => {
           console.error('Error al cargar datos del usuario:', error);
@@ -394,5 +418,182 @@ export class PerfilComponent implements OnInit, OnDestroy {
         this.puedeEditar = false;
       }
     });
+  }
+
+  /**
+   * Carga los pedidos del usuario visualizado
+   */
+  cargarPedidosUsuario(): void {
+    const usuarioId = this.esMiPerfil ? 
+      this.authService.getCurrentUser()?.id : 
+      this.usuarioIdPerfil;
+
+    if (!usuarioId) {
+      console.warn('No se pudo obtener el ID del usuario para cargar pedidos');
+      this.pedidosUsuario = [];
+      this.totalPedidos = 0;
+      this.totalPaginasPedidos = 0;
+      this.cargandoPedidos = false;
+      return;
+    }
+
+    // Verificar que el componente esté activo antes de hacer la petición
+    if (!this.componenteActivo) {
+      return;
+    }
+
+    this.cargandoPedidos = true;
+    
+    // Timeout de seguridad para evitar carga infinita
+    const timeoutId = setTimeout(() => {
+      if (this.cargandoPedidos) {
+        this.cargandoPedidos = false;
+        console.warn('Timeout al cargar pedidos del usuario');
+      }
+    }, 10000); // 10 segundos de timeout
+
+    this.pedidoService.getPedidosByUsuarioPage(usuarioId, this.paginaPedidos, this.tamañoPagina).subscribe({
+      next: (response) => {
+        clearTimeout(timeoutId);
+        if (this.componenteActivo) {
+          this.pedidosUsuario = response?.content || [];
+          this.totalPedidos = response?.totalElements || 0;
+          this.totalPaginasPedidos = response?.totalPages || 0;
+          this.cargandoPedidos = false;
+        }
+      },
+      error: (error) => {
+        clearTimeout(timeoutId);
+        console.error('Error al cargar pedidos del usuario:', error);
+        this.cargandoPedidos = false;
+        
+        // Inicializar valores por defecto en caso de error
+        this.pedidosUsuario = [];
+        this.totalPedidos = 0;
+        this.totalPaginasPedidos = 0;
+        
+        if (this.componenteActivo) {
+          // Solo mostrar el error si es relevante para el usuario
+          if (error.status !== 404) { // Si no es un 404 (usuario sin pedidos)
+            console.warn('Error al cargar pedidos. El servicio podría no estar disponible.');
+            // No mostrar alert para evitar interrumpir la experiencia del usuario
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * Cambia la página de pedidos
+   */
+  cambiarPaginaPedidos(nuevaPagina: number): void {
+    if (!this.componenteActivo || this.cargandoPedidos) {
+      return;
+    }
+    
+    if (nuevaPagina >= 0 && nuevaPagina < this.totalPaginasPedidos && nuevaPagina !== this.paginaPedidos) {
+      this.paginaPedidos = nuevaPagina;
+      this.cargarPedidosUsuario();
+    }
+  }
+
+  /**
+   * Obtiene el estado del pedido con formato legible
+   */
+  getEstadoPedidoTexto(estado: string): string {
+    const estados: { [key: string]: string } = {
+      'pendiente': 'Pendiente',
+      'en_proceso': 'En Proceso',
+      'completado': 'Completado',
+      'cancelado': 'Cancelado'
+    };
+    return estados[estado] || estado;
+  }
+
+  /**
+   * Obtiene la clase CSS para el estado del pedido
+   */
+  getEstadoPedidoClase(estado: string): string {
+    const clases: { [key: string]: string } = {
+      'pendiente': 'estado-pendiente',
+      'en_proceso': 'estado-proceso',
+      'completado': 'estado-completado',
+      'cancelado': 'estado-cancelado'
+    };
+    return clases[estado] || '';
+  }
+
+  /**
+   * Formatea el precio con símbolo de moneda
+   */
+  formatearPrecio(precio: number): string {
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(precio);
+  }
+
+  /**
+   * Formatea la fecha para mostrar
+   */
+  formatearFecha(fecha: string): string {
+    if (!fecha) return 'No especificada';
+    
+    return new Date(fecha).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  /**
+   * Navegar a los detalles del pedido
+   */
+  verDetallesPedido(pedido: Pedido): void {
+    if (!pedido || !pedido.numero_pedido) {
+      console.warn('Pedido inválido para mostrar detalles');
+      return;
+    }
+
+    // Se puede implementar navegación a una página de detalles del pedido
+    const numeroDisplayed = pedido.numero_pedido || 'N/A';
+    const estadoDisplayed = this.getEstadoPedidoTexto(pedido.estado || 'desconocido');
+    const totalDisplayed = pedido.total ? this.formatearPrecio(pedido.total) : 'N/A';
+    const fechaDisplayed = this.formatearFecha(pedido.fecha_pedido || '');
+    const metodoPagoDisplayed = pedido.metodo_pago || 'No especificado';
+    const direccionDisplayed = pedido.direccion_envio || 'No especificada';
+
+    swal('Detalles del Pedido', `
+      <div style="text-align: left;">
+        <p><strong>Número:</strong> ${numeroDisplayed}</p>
+        <p><strong>Estado:</strong> ${estadoDisplayed}</p>
+        <p><strong>Total:</strong> ${totalDisplayed}</p>
+        <p><strong>Fecha:</strong> ${fechaDisplayed}</p>
+        <p><strong>Método de Pago:</strong> ${metodoPagoDisplayed}</p>
+        <p><strong>Dirección de Envío:</strong> ${direccionDisplayed}</p>
+        ${pedido.notas_cliente ? `<p><strong>Notas:</strong> ${pedido.notas_cliente}</p>` : ''}
+      </div>
+    `, 'info');
+  }
+
+  /**
+   * Cambia la sección activa del perfil
+   */
+  cambiarSeccion(seccion: string): void {
+    this.seccionActiva = seccion;
+    
+    // Si se selecciona la sección de pedidos y aún no se han cargado
+    if (seccion === 'mis-pedidos' && this.pedidosUsuario.length === 0 && !this.cargandoPedidos) {
+      this.cargarPedidosUsuario();
+    }
+  }
+
+  /**
+   * Verifica si una sección está activa
+   */
+  esSeccionActiva(seccion: string): boolean {
+    return this.seccionActiva === seccion;
   }
 }

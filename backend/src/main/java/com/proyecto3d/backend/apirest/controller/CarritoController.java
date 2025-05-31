@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto3d.backend.apirest.model.dto.CarritoDTO;
-import com.proyecto3d.backend.apirest.model.entity.Carrito;
 import com.proyecto3d.backend.apirest.model.service.CarritoService;
 
 /**

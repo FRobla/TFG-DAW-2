@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { Categoria } from './categoria';
 import { CategoriaService } from './categoria.service';
 import swal from 'sweetalert2';
@@ -10,7 +11,18 @@ import { formatDate } from '@angular/common';
   selector: 'app-categoria',
   standalone: false,
   templateUrl: './categoria.component.html',
-  styleUrls: ['./categoria.component.css']
+  styleUrls: ['./categoria.component.css'],
+  animations: [
+    trigger('viewTransition', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ]
 })
 export class CategoriasComponent implements OnInit {
 

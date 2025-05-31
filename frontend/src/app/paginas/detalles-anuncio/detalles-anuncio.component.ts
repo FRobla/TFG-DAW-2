@@ -3,8 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritoService } from '../favorito/favorito.service';
 import { AnuncioService } from '../../entidades/anuncio/anuncio.service';
 import { CarritoService, AnadirCarritoRequest } from '../carrito/carrito.service';
+import { AuthService } from '../../auth/auth.service';
 import { Anuncio } from '../../entidades/anuncio/anuncio';
 import { Material } from '../../entidades/material/material';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-detalles-anuncio',
@@ -72,7 +74,8 @@ export class DetallesAnuncioComponent implements OnInit {
     private router: Router,
     private favoritoService: FavoritoService,
     private anuncioService: AnuncioService,
-    private carritoService: CarritoService
+    private carritoService: CarritoService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -298,25 +301,63 @@ export class DetallesAnuncioComponent implements OnInit {
    * Añade el elemento al carrito
    */
   anadirAlCarrito(): void {
+    // Verificar autenticación
+    const usuarioId = this.authService.getCurrentUserId();
+    if (!usuarioId || usuarioId === 0) {
+      swal({
+        title: 'Inicia sesión',
+        text: 'Necesitas iniciar sesión para añadir productos al carrito.',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#5d4fff',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Iniciar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.value) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
     if (!this.materialSeleccionado) {
-      alert('Por favor, selecciona un material antes de añadir al carrito');
+      swal({
+        title: 'Material requerido',
+        text: 'Por favor, selecciona un material antes de añadir al carrito.',
+        type: 'warning',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
 
     if (this.colores.length > 0 && !this.colorSeleccionado) {
-      alert('Por favor, selecciona un color antes de añadir al carrito');
+      swal({
+        title: 'Color requerido',
+        text: 'Por favor, selecciona un color antes de añadir al carrito.',
+        type: 'warning',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
 
     if (this.cantidad <= 0) {
-      alert('La cantidad debe ser mayor a 0');
+      swal({
+        title: 'Cantidad inválida',
+        text: 'La cantidad debe ser mayor a 0.',
+        type: 'warning',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
 
     this.agregandoAlCarrito = true;
 
     const request: AnadirCarritoRequest = {
-      usuarioId: 1, // Usuario simulado - en el futuro vendrá del servicio de autenticación
+      usuarioId: usuarioId, // Usar el ID del usuario autenticado
       anuncioId: this.anuncioId,
       cantidad: this.cantidad,
       materialSeleccionado: this.materialSeleccionado,
@@ -331,52 +372,35 @@ export class DetallesAnuncioComponent implements OnInit {
         console.log('Elemento añadido al carrito exitosamente:', response);
         this.agregandoAlCarrito = false;
         
-        // Mostrar mensaje de éxito
-        this.mostrarMensajeExito('Elemento añadido al carrito exitosamente');
-        
-        // Opcional: Redirigir al carrito
-        // this.router.navigate(['/carrito']);
+        // Mostrar mensaje de éxito con SweetAlert
+        swal({
+          title: '¡Añadido al carrito!',
+          text: 'El artículo se ha añadido correctamente al carrito.',
+          type: 'success',
+          confirmButtonColor: '#28a745',
+          confirmButtonText: 'Aceptar',
+          showCancelButton: true,
+          cancelButtonText: 'Ver carrito',
+          cancelButtonColor: '#5d4fff'
+        }).then((result) => {
+          if (result.dismiss === swal.DismissReason.cancel) {
+            this.router.navigate(['/carrito']);
+          }
+        });
       },
       error: (error) => {
         console.error('Error al añadir al carrito:', error);
         this.agregandoAlCarrito = false;
+        
+        swal({
+          title: 'Error',
+          text: 'Ha ocurrido un error al añadir el artículo al carrito. Por favor, inténtalo de nuevo.',
+          type: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Aceptar'
+        });
       }
     });
-  }
-
-  /**
-   * Muestra un mensaje de éxito temporal
-   */
-  private mostrarMensajeExito(mensaje: string): void {
-    // Crear elemento de mensaje
-    const messageElement = document.createElement('div');
-    messageElement.innerHTML = `
-      <div style="
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #4caf50;
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 10000;
-        font-family: Inter, sans-serif;
-        font-weight: 500;
-      ">
-        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
-        ${mensaje}
-      </div>
-    `;
-    
-    document.body.appendChild(messageElement);
-    
-    // Eliminar después de 3 segundos
-    setTimeout(() => {
-      if (messageElement.parentNode) {
-        messageElement.parentNode.removeChild(messageElement);
-      }
-    }, 3000);
   }
   
   /**
@@ -443,15 +467,27 @@ export class DetallesAnuncioComponent implements OnInit {
    * Verifica si el anuncio está marcado como favorito por el usuario actual
    */
   verificarEstadoFavorito(): void {
-    // Simulamos que tenemos un usuario logueado con ID 1
-    const usuarioId = 1;
+    const usuarioId = this.authService.getCurrentUserId();
+    console.log('=== DEBUG VERIFICAR FAVORITO: Usuario ID obtenido ===', usuarioId);
+    
+    if (!usuarioId || usuarioId === 0) {
+      this.esFavorito = false;
+      console.log('=== DEBUG VERIFICAR FAVORITO: Usuario no válido, marcando como no favorito ===');
+      return;
+    }
+    
+    console.log('=== DEBUG VERIFICAR FAVORITO: Verificando estado ===', {
+      anuncioId: this.anuncioId,
+      usuarioId: usuarioId
+    });
     
     this.favoritoService.checkFavorito(this.anuncioId, usuarioId).subscribe({
       next: (esFavorito) => {
+        console.log('=== DEBUG VERIFICAR FAVORITO: Respuesta del backend ===', esFavorito);
         this.esFavorito = esFavorito;
       },
       error: (error) => {
-        console.error('Error verificando estado de favorito:', error);
+        console.error('=== DEBUG VERIFICAR FAVORITO: Error ===', error);
         // En caso de error, asumimos que no es favorito
         this.esFavorito = false;
       }
@@ -462,26 +498,82 @@ export class DetallesAnuncioComponent implements OnInit {
    * Alterna el estado de favorito del anuncio
    */
   toggleFavorito(): void {
-    // Simulamos que tenemos un usuario logueado con ID 1
-    const usuarioId = 1;
+    const usuarioId = this.authService.getCurrentUserId();
+    console.log('=== DEBUG FAVORITO TOGGLE: Usuario ID obtenido ===', usuarioId);
     
+    if (!usuarioId || usuarioId === 0) {
+      swal({
+        title: 'Inicia sesión',
+        text: 'Necesitas iniciar sesión para añadir productos a favoritos.',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#5d4fff',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Iniciar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.value) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
     this.cargandoFavorito = true;
-    
+    console.log('=== DEBUG FAVORITO TOGGLE: Iniciando toggle ===', {
+      anuncioId: this.anuncioId,
+      usuarioId: usuarioId,
+      esFavorito: this.esFavorito
+    });
+
     this.favoritoService.toggleFavorito(this.anuncioId, usuarioId).subscribe({
       next: (response) => {
+        console.log('=== DEBUG FAVORITO TOGGLE: Respuesta del backend ===', response);
+        
+        // Cambiar el estado local
         this.esFavorito = !this.esFavorito;
         this.cargandoFavorito = false;
-        
-        // Mostrar mensaje de confirmación
+
+        // Mostrar mensaje apropiado
         if (this.esFavorito) {
           console.log('Anuncio añadido a favoritos');
+          // Mostrar feedback visual opcional
         } else {
           console.log('Anuncio eliminado de favoritos');
+          // Mostrar feedback visual opcional
         }
       },
       error: (error) => {
-        console.error('Error al cambiar estado de favorito:', error);
+        console.error('=== DEBUG FAVORITO TOGGLE: Error ===', error);
         this.cargandoFavorito = false;
+        
+        // Manejar diferentes tipos de errores
+        let mensaje = 'Ha ocurrido un error al procesar el favorito.';
+        
+        if (error.status === 409) {
+          // Si es 409, significa que ya existía, pero nuestro estado local estaba desactualizado
+          console.log('=== DEBUG: Error 409 - Favorito ya existía, actualizando estado ===');
+          this.esFavorito = true; // Actualizar estado local
+          mensaje = 'El anuncio ya estaba en favoritos.';
+        } else if (error.status === 404) {
+          mensaje = 'No se pudo encontrar el anuncio o usuario.';
+        } else if (error.status === 500) {
+          mensaje = 'Error del servidor. Por favor, inténtalo más tarde.';
+        }
+        
+        // Reverificar el estado real desde el servidor
+        this.verificarEstadoFavorito();
+        
+        // Mostrar mensaje de error solo si no es un 409
+        if (error.status !== 409) {
+          swal({
+            title: 'Error',
+            text: mensaje,
+            type: 'error',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Aceptar'
+          });
+        }
       }
     });
   }

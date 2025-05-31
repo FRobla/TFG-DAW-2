@@ -18,6 +18,8 @@ public interface FavoritoService {
 	
 	public Page<Favorito> findByUsuarioId(Long usuarioId, Pageable pageable);
 	
+	public Page<Favorito> findByUsuarioIdWithJoinFetch(Long usuarioId, Pageable pageable);
+	
 	public Favorito save(Favorito favorito);
 	
 	public void delete(Favorito favorito);

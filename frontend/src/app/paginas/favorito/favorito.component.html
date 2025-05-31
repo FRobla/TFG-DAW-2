@@ -48,6 +48,25 @@
   <section class="favorites-content">
     <div class="container">
       
+      <!-- PANEL DE DEBUG TEMPORAL 
+      <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #444; margin-bottom: 20px; color: #fff;">
+        <h5 style="color: #ffc107; margin-bottom: 10px;"><i class="fas fa-bug"></i> Panel de Debug - Favoritos</h5>
+        <p><strong>Usuario ID:</strong> {{ usuarioId }}</p>
+        <p><strong>Usuario logueado:</strong> {{ authService.usuarioLogueado?.email || 'No logueado' }}</p>
+        <p><strong>Token presente:</strong> {{ authService.estaLogueado() ? 'Sí' : 'No' }}</p>
+        <p><strong>Total favoritos:</strong> {{ totalItems }}</p>
+        <p><strong>Favoritos array length:</strong> {{ favoritos.length }}</p>
+        <p><strong>Favoritos anuncios length:</strong> {{ favoritosAnuncios.length }}</p>
+        <p><strong>Cargando:</strong> {{ cargando ? 'Sí' : 'No' }}</p>
+        <p><strong>Error:</strong> {{ error || 'Ninguno' }}</p>
+        <button class="btn btn-sm btn-info" (click)="recargar()">
+          <i class="fas fa-refresh"></i> Recargar Favoritos
+        </button>
+        <button class="btn btn-sm btn-warning" (click)="mostrarInfoUsuario()">
+          <i class="fas fa-user"></i> Info Usuario
+        </button>
+      </div> -->
+
       <!-- Mensaje de error -->
       <div class="alert alert-danger" *ngIf="error && !cargando">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -87,7 +106,7 @@
             <div class="service-card h-100">
               <!-- Imagen del anuncio -->
               <div class="service-image-container">
-                <img [src]="anuncio.urlImagen || '/assets/img/default-service.jpg'" 
+                <img [src]="anuncio.urlImagen" 
                      [alt]="anuncio.titulo" 
                      class="service-image"
                      (error)="onImageError($event)">
@@ -126,18 +145,6 @@
                   <span class="categories-text">{{ getCategoriasString(anuncio) }}</span>
                 </div>
                 
-                <!-- Metadatos -->
-                <div class="service-meta">
-                  <div class="service-date">
-                    <i class="bi bi-calendar3 me-1"></i>
-                    {{ formatearFecha(anuncio.fechaPublicacion) }}
-                  </div>
-                  <div class="service-views" *ngIf="anuncio.vistas">
-                    <i class="bi bi-eye me-1"></i>
-                    {{ anuncio.vistas }} vistas
-                  </div>
-                </div>
-                
                 <!-- Precio y acciones -->
                 <div class="service-footer">
                   <div class="service-price">
@@ -159,7 +166,7 @@
               <!-- Imagen -->
               <div class="col-md-3 col-lg-2">
                 <div class="favorite-image-container">
-                  <img [src]="anuncio.urlImagen || '/assets/img/default-service.jpg'" 
+                  <img [src]="anuncio.urlImagen" 
                        [alt]="anuncio.titulo" 
                        class="favorite-image"
                        (error)="onImageError($event)">
