@@ -1,40 +1,250 @@
 /* Estilos para View Transitions API */
 
-/* Estilo base durante las transiciones */
+/* Configuración base para ViewTransitions */
 :root {
   view-transition-name: none;
 }
 
-/* Estilos para la transición de página completa */
+/* Transiciones de página completa */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.3s;
-  animation-timing-function: ease;
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Transición de desvanecimiento para toda la página */
 ::view-transition-old(root) {
+  animation-name: slide-out-left;
+}
+
+::view-transition-new(root) {
+  animation-name: slide-in-right;
+}
+
+/* Animaciones personalizadas para el dashboard */
+@keyframes slide-out-left {
+  from { 
+    opacity: 1; 
+    transform: translateX(0);
+  }
+  to { 
+    opacity: 0; 
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes slide-in-right {
+  from { 
+    opacity: 0; 
+    transform: translateX(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0);
+  }
+}
+
+/* Transiciones específicas para elementos del dashboard */
+
+/* Navbar admin - se mantiene estable */
+::view-transition-old(navbar-admin),
+::view-transition-new(navbar-admin) {
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-old(navbar-admin) {
+  animation-name: fade-out-subtle;
+}
+
+::view-transition-new(navbar-admin) {
+  animation-name: fade-in-subtle;
+}
+
+/* Tabs de entidades - transición suave */
+::view-transition-old(entity-tabs),
+::view-transition-new(entity-tabs) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(entity-tabs) {
   animation-name: fade-out;
 }
 
-::view-transition-new(root) {
+::view-transition-new(entity-tabs) {
   animation-name: fade-in;
 }
 
-/* Animaciones */
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Contenedor principal del dashboard */
+::view-transition-old(dashboard-container),
+::view-transition-new(dashboard-container) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+::view-transition-old(dashboard-container) {
+  animation-name: scale-out;
+}
+
+::view-transition-new(dashboard-container) {
+  animation-name: scale-in;
+}
+
+/* Tarjetas de estadísticas */
+::view-transition-old(stat-card-0),
+::view-transition-new(stat-card-0),
+::view-transition-old(stat-card-1),
+::view-transition-new(stat-card-1),
+::view-transition-old(stat-card-2),
+::view-transition-new(stat-card-2),
+::view-transition-old(stat-card-3),
+::view-transition-new(stat-card-3) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+::view-transition-old(stat-card-0) { animation-name: bounce-out; animation-delay: 0s; }
+::view-transition-old(stat-card-1) { animation-name: bounce-out; animation-delay: 0.1s; }
+::view-transition-old(stat-card-2) { animation-name: bounce-out; animation-delay: 0.2s; }
+::view-transition-old(stat-card-3) { animation-name: bounce-out; animation-delay: 0.3s; }
+
+::view-transition-new(stat-card-0) { animation-name: bounce-in; animation-delay: 0s; }
+::view-transition-new(stat-card-1) { animation-name: bounce-in; animation-delay: 0.1s; }
+::view-transition-new(stat-card-2) { animation-name: bounce-in; animation-delay: 0.2s; }
+::view-transition-new(stat-card-3) { animation-name: bounce-in; animation-delay: 0.3s; }
+
+/* Contenedor de tabla */
+::view-transition-old(table-container),
+::view-transition-new(table-container) {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(table-container) {
+  animation-name: slide-up-out;
+}
+
+::view-transition-new(table-container) {
+  animation-name: slide-up-in;
+}
+
+/* Animaciones para elementos específicos */
+@keyframes fade-out-subtle {
+  from { opacity: 1; }
+  to { opacity: 0.7; }
+}
+
+@keyframes fade-in-subtle {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
 }
 
 @keyframes fade-out {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-/* Clase añadida durante la transición */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-out {
+  from { 
+    opacity: 1; 
+    transform: scale(1) translateY(0);
+  }
+  to { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(-10px);
+  }
+}
+
+@keyframes scale-in {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(10px);
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bounce-out {
+  0% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: scale(1.05) translateY(-5px);
+  }
+  100% { 
+    opacity: 0; 
+    transform: scale(0.9) translateY(20px);
+  }
+}
+
+@keyframes bounce-in {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.9) translateY(-20px);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: scale(1.05) translateY(5px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slide-up-out {
+  from { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+  to { 
+    opacity: 0; 
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes slide-up-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para elementos con IDs de transición específicos */
+[data-view-id] {
+  contain: layout;
+}
+
+/* Fallback para navegadores sin soporte */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.1s !important;
+    animation-timing-function: ease !important;
+  }
+}
+
+/* Mejorar el rendimiento durante las transiciones */
 .view-transition-active {
-  overflow: hidden; /* Evitar desplazamiento durante transiciones */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.view-transition-active * {
+  will-change: transform, opacity;
 }
 
 /* Estilos específicos para ciertos elementos durante las transiciones */
@@ -48,11 +258,6 @@
 
 [data-view-transition="image"] {
   view-transition-name: image;
-}
-
-/* Estilos específicos para elementos con IDs de transición */
-[data-view-id] {
-  contain: paint;
 }
 
 /* Específico para cada tipo de entidad - permite transiciones entre diferentes componentes */

@@ -1,4 +1,4 @@
-<div class="dashboard-container" @viewTransition>
+<div class="dashboard-container">
   <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarEvent)="exportarCategorias()"></app-navbar-admin>
 
   <div class="dashboard-stats">
@@ -60,6 +60,7 @@
         </button>
       </div>
     </div>
+
     <div class="table-container" [class.loading]="cargando" data-view-transition="card">
       <table class="categorias-table">
         <thead>
@@ -81,7 +82,7 @@
               </div>
             </td>
             <td class="cat-name" data-label="Nombre">
-              <span class="nombre" data-view-transition="header" [attr.data-view-id]="'categoria-name-' + categoria.id">{{categoria.nombre}}</span>
+              <span class="nombre" data-view-transition="header" [attr.data-view-id]="'categoria-title-' + categoria.id">{{categoria.nombre}}</span>
             </td>
             <td class="cat-description" data-label="Descripción">
               <span class="descripcion">{{categoria.descripcion | slice:0:100}}{{categoria.descripcion.length > 100 ? '...' : ''}}</span>
@@ -105,8 +106,8 @@
       </table>
     </div>
 
-    <!-- Indicador de carga con transición fluida -->
-    <div *ngIf="cargando" class="loading-container" data-view-transition="loading-indicator">
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" class="loading-container">
       <div class="spinner"></div>
     </div>
     
@@ -140,7 +141,7 @@
     </div>
   </div>
 
-  <div class="dashboard-actions" data-view-transition="action-buttons" *ngIf="!cargando">
+  <div class="dashboard-actions">
     <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
       <i class="fas fa-trash-alt"></i> Eliminar Todas
     </button>

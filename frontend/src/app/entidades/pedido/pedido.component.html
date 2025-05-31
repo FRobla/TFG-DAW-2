@@ -1,5 +1,5 @@
-<div class="dashboard-container" @viewTransition>
-    <app-navbar-admin (busquedaChange)="aplicarFiltro($event)"></app-navbar-admin>
+<div class="dashboard-container">
+    <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarEvent)="exportarPedidos()"></app-navbar-admin>
 
     <div class="dashboard-stats">
         <div class="stat-card">
@@ -99,23 +99,31 @@
                     <tr *ngFor="let pedido of getPedidosPaginados()">
                         <td class="user-id" data-label="ID">{{pedido.id}}</td>
                         <td class="user-name" data-label="Número">
-                            <div class="user-info" data-view-transition="header" [attr.data-view-id]="'pedido-numero-' + pedido.id">
+                            <div class="user-info" data-view-transition="header" [attr.data-view-id]="'pedido-title-' + pedido.id">
                                 <span class="nombre">{{pedido.numero_pedido}}</span>
                             </div>
                         </td>
                         <td class="user-name" data-label="Cliente">
-                            <div class="user-info" data-view-transition="header" [attr.data-view-id]="'pedido-cliente-' + pedido.id">
+                            <div class="user-info" data-view-transition="image" [attr.data-view-id]="'pedido-cliente-' + pedido.id">
                                 <span class="nombre">{{pedido.getNombreCliente()}}</span>
                                 <span class="direccion" *ngIf="pedido.usuario">{{pedido.usuario.email}}</span>
                             </div>
                         </td>
-                        <td class="user-date text-center" data-label="Fecha">{{pedido.fechaPedido | date:'dd/MM/yyyy HH:mm'}}</td>
+                        <td class="user-date text-center" data-label="Fecha">
+                            <span class="fecha-badge" data-view-transition="card" [attr.data-view-id]="'pedido-fecha-' + pedido.id">
+                                {{pedido.fechaPedido | date:'dd/MM/yyyy HH:mm'}}
+                            </span>
+                        </td>
                         <td class="user-role text-center" data-label="Estado">
                             <span class="role-badge" [ngClass]="pedido.getEstadoClase()" data-view-transition="card" [attr.data-view-id]="'pedido-estado-' + pedido.id">
                                 {{pedido.getEstadoTexto()}}
                             </span>
                         </td>
-                        <td class="user-email text-center" data-label="Total">{{pedido.total | currency:'EUR':'symbol':'1.2-2'}}</td>
+                        <td class="user-email text-center" data-label="Total">
+                            <span class="total-badge" data-view-transition="card" [attr.data-view-id]="'pedido-total-' + pedido.id">
+                                {{pedido.total | currency:'EUR':'symbol':'1.2-2'}}
+                            </span>
+                        </td>
                         <td class="user-email text-center" data-label="Método Pago">{{pedido.getMetodoPagoTexto()}}</td>
                         <td class="notas-column" data-label="Notas">
                             <div class="notas-container">
@@ -220,7 +228,7 @@
         </div>
 
         <!-- Indicador de carga -->
-        <div *ngIf="cargando" class="loading-container" data-view-transition="loading-indicator">
+        <div *ngIf="cargando" class="loading-container">
             <div class="spinner"></div>
         </div>
         
@@ -256,7 +264,7 @@
     </div>
 
     <!-- Botones de acción -->
-    <div class="dashboard-actions" data-view-transition="action-buttons" *ngIf="!cargando">
+    <div class="dashboard-actions">
         <button class="btn btn-success" (click)="abrirModalCrearPedido()">
             <i class="fas fa-plus"></i> Nuevo Pedido
         </button>

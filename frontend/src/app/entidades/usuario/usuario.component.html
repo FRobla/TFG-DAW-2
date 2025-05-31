@@ -1,5 +1,5 @@
-<div class="dashboard-container" @viewTransition>
-  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarUsuariosEvent)="exportarUsuarios()"></app-navbar-admin>
+<div class="dashboard-container">
+  <app-navbar-admin (busquedaChange)="aplicarFiltro($event)" (exportarEvent)="exportarUsuarios()"></app-navbar-admin>
 
   <div class="dashboard-stats">
     <div class="stat-card">
@@ -68,6 +68,7 @@
         </button>
       </div>
     </div>
+
     <div class="table-container" [class.loading]="cargando" data-view-transition="card">
       <table class="usuarios-table">
         <thead>
@@ -90,7 +91,7 @@
               </div>
             </td>
             <td class="user-name" data-label="Nombre">
-              <div class="user-info" data-view-transition="header" [attr.data-view-id]="'usuario-name-' + usuario.id">
+              <div class="user-info" data-view-transition="header" [attr.data-view-id]="'usuario-title-' + usuario.id">
                 <span class="nombre">{{usuario.nombre}} {{usuario.apellido}}</span>
                 <span class="direccion">{{usuario.direccion || 'Sin dirección'}}</span>
               </div>
@@ -101,7 +102,11 @@
                 {{usuario.rol}}
               </span>
             </td>
-            <td class="user-date text-center" data-label="Fecha">{{usuario.fechaRegistro | date:'dd/MM/yyyy'}}</td>
+            <td class="user-date text-center" data-label="Fecha">
+              <span class="user-badge" data-view-transition="card" [attr.data-view-id]="'usuario-fecha-' + usuario.id">
+                {{usuario.fechaRegistro | date:'dd/MM/yyyy'}}
+              </span>
+            </td>
             <td class="user-actions" data-label="Acciones">
               <button class="action-btn edit-btn" (click)="editarUsuario(usuario)" title="Editar">
                 <i class="fas fa-edit"></i>
@@ -118,8 +123,8 @@
       </table>
     </div>
 
-    <!-- Indicador de carga con transición fluida -->
-    <div *ngIf="cargando" class="loading-container" data-view-transition="loading-indicator">
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" class="loading-container">
       <div class="spinner"></div>
     </div>
     
@@ -153,7 +158,7 @@
     </div>
   </div>
 
-  <div class="dashboard-actions" data-view-transition="action-buttons" *ngIf="!cargando">
+  <div class="dashboard-actions">
     <button class="btn btn-danger" (click)="confirmarEliminarTodos()">
       <i class="fas fa-trash-alt"></i> Eliminar Todos
     </button>

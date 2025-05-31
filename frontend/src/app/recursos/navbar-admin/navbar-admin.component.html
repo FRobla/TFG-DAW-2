@@ -11,7 +11,7 @@
       <button class="btn btn-add" (click)="exportarUsuarios()">
         <i class="fas fa-download"></i> Exportar a CSV
       </button>
-      <button class="btn btn-outline-light btn-lg" routerLink="/">
+      <button class="btn btn-outline-light btn-lg" (click)="navegarConTransicion('/')">
         <i class="fas fa-home"></i> Ir a inicio
       </button>
     </div>
@@ -19,19 +19,19 @@
 </div>
 <div class="entity-tabs">
   <div class="tabs-container">
-    <a routerLink="/admin/usuarios" class="tab-item" [ngClass]="{ active: router.url === '/admin/usuarios' }">
+    <a (click)="navegarConTransicion('/admin/usuarios')" class="tab-item" [ngClass]="{ active: router.url === '/admin/usuarios' }">
       <i class="fas fa-users"></i> Usuarios
     </a>
-    <a routerLink="/admin/anuncios" class="tab-item" [ngClass]="{ active: router.url === '/admin/anuncios' }">
+    <a (click)="navegarConTransicion('/admin/anuncios')" class="tab-item" [ngClass]="{ active: router.url === '/admin/anuncios' }">
       <i class="fas fa-ad"></i> Anuncios
     </a>
-    <a routerLink="/admin/categorias" class="tab-item" [ngClass]="{ active: router.url === '/admin/categorias' }">
+    <a (click)="navegarConTransicion('/admin/categorias')" class="tab-item" [ngClass]="{ active: router.url === '/admin/categorias' }">
       <i class="fas fa-tags"></i> Categorías
     </a>
-    <a routerLink="/admin/impresoras" class="tab-item" [ngClass]="{ active: router.url === '/admin/impresoras' }">
+    <a (click)="navegarConTransicion('/admin/impresoras')" class="tab-item" [ngClass]="{ active: router.url === '/admin/impresoras' }">
       <i class="fas fa-print"></i> Impresoras
     </a>
-    <a routerLink="/admin/pedidos" class="tab-item" [ngClass]="{ active: router.url === '/admin/pedidos' }">
+    <a (click)="navegarConTransicion('/admin/pedidos')" class="tab-item" [ngClass]="{ active: router.url === '/admin/pedidos' }">
       <i class="fas fa-shopping-cart"></i> Pedidos
     </a>
   </div>

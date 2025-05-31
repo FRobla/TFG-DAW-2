@@ -392,24 +392,44 @@ export class AnuncioComponent implements OnInit {
   exportarAnuncios(): void {
     const anunciosExport = this.anuncios.map(anuncio => {
       const categoria = this.getCategoriaById(anuncio.categoriaId);
+      const impresora = this.impresoras.find(i => i.id === anuncio.impresoraId);
       return {
-        id: anuncio.id,
-        titulo: anuncio.titulo,
-        descripcion: anuncio.descripcion,
-        precio: anuncio.precio,
-        categoria: categoria ? categoria.nombre : 'Sin categoría',
-        fechaPublicacion: new Date(anuncio.fechaPublicacion).toLocaleDateString()
+        ID: anuncio.id,
+        Título: anuncio.titulo,
+        Descripción: anuncio.descripcion,
+        'Precio (€)': anuncio.precio.toFixed(2),
+        Categoría: categoria ? categoria.nombre : 'Sin categoría',
+        Impresora: impresora ? impresora.modelo : 'Sin impresora',
+        'Fecha Publicación': new Date(anuncio.fechaPublicacion).toLocaleDateString('es-ES'),
+        Estado: anuncio.estado,
+        Vistas: anuncio.vistas,
+        'Valoración Media': anuncio.valoracionMedia.toFixed(1),
+        'Tiempo Estimado': anuncio.tiempoEstimado || 'No especificado'
       };
     });
-    
-    const jsonString = JSON.stringify(anunciosExport, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    
-    // Crear un enlace temporal para descargar el archivo
+
+    // Convertir a CSV
+    const headers = Object.keys(anunciosExport[0]);
+    const csvContent = [
+      headers.join(','),
+      ...anunciosExport.map(row => 
+        headers.map(header => {
+          const value = row[header as keyof typeof row] || '';
+          // Escape commas and quotes in CSV values
+          return typeof value === 'string' && (value.includes(',') || value.includes('"')) 
+            ? `"${value.replace(/"/g, '""')}"` 
+            : value;
+        }).join(',')
+      )
+    ].join('\n');
+
+    // Crear y descargar el archivo CSV
+    const BOM = '\uFEFF'; // UTF-8 BOM para caracteres especiales
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'anuncios_export.json';
+    a.download = `anuncios_export_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     
